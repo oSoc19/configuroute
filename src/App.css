@@ -1,0 +1,44 @@
+.App {
+  display: grid;
+  grid-template-rows: 6vh 90vh 4vh;
+  grid-template-columns: 50vw 50vw;
+  grid-template-areas:
+    "header header"
+    "main main"
+    "footer footer";
+}
+
+.App-header {
+  grid-area: header;
+  background-color: #0b132a;
+  color: white;
+}
+
+.App-logo {
+  height: 100%;
+  width: auto;
+  vertical-align: middle;
+}
+
+.App-name {
+  justify-content: center;
+}
+
+.App-content {
+  display: grid;
+  grid-template-columns: 50vw 50vw;
+  grid-template-areas: "leftpanel rightpanel";
+}
+
+.App-footer {
+  grid-area: footer;
+}
+
+.Left-panel {
+  grid-area: leftpanel;
+}
+
+.Right-panel {
+  grid-area: rightpanel;
+  background-color: aquamarine;
+}
