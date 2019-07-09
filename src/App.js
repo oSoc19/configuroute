@@ -1,9 +1,26 @@
 import React from "react";
-import Header from "./Header";
-import MainContent from "./MainContent";
-import Footer from "./Footer";
+import MainContent from "./mainPage/MainContent";
+import LandingPage from "./landingPage/LandingPage.js";
 import "./App.css";
-import LandingPage from "./landingPage/LandingPage.js"
+import logo from "./assets/logo.jpg";
+
+function Header() {
+  return (
+    <header className="App-header">
+      <img src={logo} className="App-logo" />
+      <span className="App-header"> Configuroute </span>
+    </header>
+  );
+}
+
+function Footer() {
+  return (
+    <div className="App-footer">
+      {" "}
+      <p> This is the footer </p>
+    </div>
+  );
+}
 
 function App() {
   return (
