@@ -38,6 +38,24 @@
   grid-area: leftpanel;
 }
 
+.Tab-selector {
+  border: none;
+  background-color: none;
+  text-decoration: none;
+  background-color: white;
+  margin: 10px;
+}
+
+.Tab {
+  height: 90%;
+  width: 95%;
+  margin: 1.5%;
+  padding: 2%;
+  border-style: outset;
+  border-radius: 2px;
+  border-color: lightgray;
+}
+
 .Right-panel {
   grid-area: rightpanel;
   background-color: aquamarine;
