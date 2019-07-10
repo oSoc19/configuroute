@@ -5,6 +5,7 @@
   "dependencies": {
     "create-react-app": "^3.0.1",
     "gulp": "^4.0.2",
+    "mapbox-gl": "^1.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-modal": "^3.8.2",

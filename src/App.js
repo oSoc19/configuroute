@@ -1,6 +1,6 @@
 import React from "react";
 import MainContent from "./mainPage/MainContent";
-import LandingPage from "./landingPage/LandingPage.js";
+import LandingPage from "./landingPage/LandingPage";
 import "./App.css";
 import logo from "./assets/logo.jpg";
 

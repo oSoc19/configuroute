@@ -2,8 +2,8 @@ import React from "react";
 import Modal from "react-modal";
 import { Button } from "semantic-ui-react";
 import "./landingPage.css";
-import Index from "./Index.js";
-import Upload from "./Upload.js";
+import Index from "./Index.jsx";
+import Upload from "./Upload.jsx";
 
 const customModalStyle = {
   content: {
@@ -19,7 +19,9 @@ const customModalStyle = {
     marginRight: "-50%",
     transform: "translate(-50%, -50%)"
   },
-  overlay: {}
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.7)"
+  }
 };
 
 function Content(props) {
