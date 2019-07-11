@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import { Table, Header } from 'semantic-ui-react';
-const Planner = require('./planner-latest');
+import Planner from 'plannerjs';
+
 const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
 mapboxgl.accessToken = 'pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg';
 
@@ -16,8 +17,28 @@ class Map extends React.Component{
           zoom: 6.83
         };
 
-        console.log(Planner)
-        this.planner = new Planner()
+        //console.log(Planner.Planner);
+        this.planner = new Planner.Planner();
+        this.planner.prefetchStops();
+        this.planner.prefetchConnections();
+        //PLANNER.JS QUERY
+        this.planner.query({
+          publicTransportOnly: true,
+          from: "Brussel-Noord/Bruxelles-Nord",
+          to: "Gent-Sint-Pieters",
+          minimumDepartureTime: new Date(),
+          maximumTransferDuration: Planner.Planner.Units.fromMinutes(30),
+        })
+            .take(5)
+            .on('data', (path) => {
+                console.log(path);
+            })
+            .on('end', () => {
+                console.log('No more paths!')
+            })
+            .on('error', (error) => {
+                console.error(error);
+            });
 
     }
 
@@ -37,28 +58,6 @@ class Map extends React.Component{
     }
 
       componentDidMount() {
-
-        //PLANNER.JS QUERYµ
-        /*this.planner.query({
-          publicTransportOnly: true,
-          from: "Brussel-Noord/Bruxelles-Nord",
-          to: "Gent-Sint-Pieters",
-          minimumDepartureTime: new Date(),
-          maximumTransferDuration: Planner.Units.fromMinutes(30),
-        })
-            .take(3)
-            .on('data', (path) => {
-                console.log(path);
-            })
-            .on('end', () => {
-                console.log('No more paths!')
-            })
-            .on('error', (error) => {
-                console.error(error);
-            });*/
-
-
-
 
         // Container to put React generated content in.
         this.tooltipContainer = document.createElement('div');
@@ -98,9 +97,6 @@ class Map extends React.Component{
     
         return (
           <div style={{height: '100%'}}>
-            <div>
-              <div>{`Longitude: ${lng} Latitude: ${lat} Zoom: ${zoom}`}</div>
-            </div>
             <div ref={el => this.mapContainer = el} style={{height: '100%'}}/>
           </div>
         );
