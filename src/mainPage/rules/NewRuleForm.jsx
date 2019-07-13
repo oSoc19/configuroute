@@ -9,13 +9,13 @@ class NewRuleForm extends React.Component {
       ruleType: "",
       key: "",
       value: "",
-      conclusion: ""
+      conclusion: "",
+      order: ""
     };
   }
 
   handleChange = (e, { name, value }) => {
     this.setState({ [name]: value });
-    console.log(name, value);
   };
 
   handleChangeChecked = e =>
@@ -118,6 +118,13 @@ class NewRuleForm extends React.Component {
         </Form.Group>
         <Form.Group />
         {conclusionForm}
+        <Form.Input
+          name="order"
+          placeholder="Order of priority"
+          label="Order of priority"
+          onChange={this.handleChange}
+          value={this.state.order}
+        />
         <Form.Button
           content="Submit"
           onClick={() => {

@@ -261,7 +261,7 @@ export default class LeftPanel extends React.Component {
       configFile: configFileContext,
       rulesSelectOptions: rulesSelectOptions,
       ruleTypes: ruleTypes,
-      rules: []
+      rulesMetadata: []
     };
   }
 
@@ -271,27 +271,27 @@ export default class LeftPanel extends React.Component {
     configFile["hasMaxSpeed"] = formValues.maxSpeed;
     configFile["usePublicTransport"] = formValues.usePublicTransport;
     this.setState({ configFile: configFile });
-    console.log(JSON.stringify(configFile));
   };
 
   onNewRuleSubmit = formValues => {
-    console.log(formValues);
-    let rule = {
-      type: formValues.ruleType,
-      condition: {
-        key: formValues.key,
-        value: formValues.value
-      },
-      conclusion: formValues.conclusion
-    };
+    let conclusionLabel = this.state.ruleTypes[formValues.ruleType];
+    let ruleMetadata = {};
+    ruleMetadata["type"] = formValues.ruleType;
+    ruleMetadata["rule"] = {};
+    ruleMetadata["rule"]["match"] = {};
+    ruleMetadata["rule"]["match"]["hasPredicate"] = formValues.key;
+    ruleMetadata["rule"]["match"]["hasObject"] = formValues.value;
+    ruleMetadata["rule"]["concludes"] = {};
+    ruleMetadata["rule"]["concludes"][conclusionLabel] = formValues.conclusion;
+    ruleMetadata["rule"]["hasOrder"] = formValues.order;
 
-    var rules = [...this.state.rules];
-    rules.push(rule);
-    this.setState({ rules: rules });
-    console.log(rules);
+    var rulesMetadata = [...this.state.rulesMetadata];
+    rulesMetadata.push(ruleMetadata);
+    this.setState({ rulesMetadata: rulesMetadata });
   };
 
   render() {
+    console.log(this.state.rulesMetadata);
     const { ruleTypes, rulesSelectOptions } = this.state;
     return (
       <div>
