@@ -13,11 +13,15 @@ class NewRuleForm extends React.Component {
     };
   }
 
-  handleChange = (e, { name, value }) => this.setState({ [name]: value });
+  handleChange = (e, { name, value }) => {
+    this.setState({ [name]: value });
+    console.log(name, value);
+  };
+
+  handleChangeChecked = e =>
+    this.setState({ conclusion: !this.state.conclusion });
 
   render() {
-    console.log(this.state.key);
-
     const ruleTypeOptions = Object.keys(this.props.ruleOptions).map(k => {
       return {
         key: k,
@@ -48,14 +52,14 @@ class NewRuleForm extends React.Component {
 
     let conclusionForm;
     if (
-      this.state.ruleType == "hasPriorityRules" ||
-      this.state.ruleType == "hasSpeedRules"
+      this.state.ruleType === "hasPriorityRules" ||
+      this.state.ruleType === "hasSpeedRules"
     ) {
       conclusionForm = (
         <Form.Input
           name="conclusion"
           placeholder={
-            this.state.ruleType == "hasPriorityRules"
+            this.state.ruleType === "hasPriorityRules"
               ? "priority level"
               : "speed"
           }
@@ -71,8 +75,12 @@ class NewRuleForm extends React.Component {
           name="conclusion"
           placeholder={label}
           label={label}
-          onChange={this.handleChange}
-          value={this.state.conclusion}
+          onChange={this.handleChangeChecked}
+          checked={
+            typeof this.state.conclusion === "string"
+              ? false
+              : this.state.conclusion
+          }
           slider
         />
       );
@@ -88,6 +96,7 @@ class NewRuleForm extends React.Component {
           onChange={this.handleChange}
           value={this.state.ruleType}
         />
+
         <Label> Condition </Label>
         <Form.Group>
           <Form.Select

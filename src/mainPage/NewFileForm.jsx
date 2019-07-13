@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Label, Checkbox } from "semantic-ui-react";
+import { Form } from "semantic-ui-react";
 
 class NewConfigFileForm extends React.Component {
   constructor(props) {

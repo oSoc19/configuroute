@@ -1,6 +1,5 @@
 import React from "react";
 import Modal from "react-modal";
-import { Button } from "semantic-ui-react";
 import "./landingPage.css";
 import Index from "./Index.js";
 import Upload from "./Upload.js";

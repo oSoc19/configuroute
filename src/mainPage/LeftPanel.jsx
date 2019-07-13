@@ -260,7 +260,8 @@ export default class LeftPanel extends React.Component {
     this.state = {
       configFile: configFileContext,
       rulesSelectOptions: rulesSelectOptions,
-      ruleTypes: ruleTypes
+      ruleTypes: ruleTypes,
+      rules: []
     };
   }
 
@@ -275,6 +276,19 @@ export default class LeftPanel extends React.Component {
 
   onNewRuleSubmit = formValues => {
     console.log(formValues);
+    let rule = {
+      type: formValues.ruleType,
+      condition: {
+        key: formValues.key,
+        value: formValues.value
+      },
+      conclusion: formValues.conclusion
+    };
+
+    var rules = [...this.state.rules];
+    rules.push(rule);
+    this.setState({ rules: rules });
+    console.log(rules);
   };
 
   render() {
