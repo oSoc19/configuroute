@@ -1,4 +1,5 @@
 import React from "react";
+import { Label, Menu, Button, Icon, Search } from "semantic-ui-react";
 
 class HomeTab extends React.Component {
   constructor(props) {
@@ -7,9 +8,9 @@ class HomeTab extends React.Component {
 
   render() {
     return (
-      <div className="Tab">
-        {" "}
-        <p> Put the accordeon here </p>
+      <div>
+        <Button>Add new rule</Button>
+        <p> Display rules </p>
       </div>
     );
   }

@@ -13,22 +13,12 @@ function Header() {
   );
 }
 
-function Footer() {
-  return (
-    <div className="App-footer">
-      {" "}
-      <p> This is the footer </p>
-    </div>
-  );
-}
-
 function App() {
   return (
     <div className="App">
-      <LandingPage />
+      {/*<LandingPage />*/}
       <Header />
       <MainContent />
-      <Footer />
     </div>
   );
 }

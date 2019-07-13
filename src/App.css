@@ -1,11 +1,9 @@
 .App {
   display: grid;
-  grid-template-rows: 6vh 90vh 4vh;
-  grid-template-columns: 50vw 50vw;
+  grid-template-rows: 6vh 94vh;
   grid-template-areas:
-    "header header"
-    "main main"
-    "footer footer";
+    "header"
+    "main";
 }
 
 .App-header {
@@ -25,35 +23,14 @@
 }
 
 .App-content {
+  grid-area: main;
   display: grid;
-  grid-template-columns: 50vw 50vw;
+  grid-template-columns: 33vw 67vw;
   grid-template-areas: "leftpanel rightpanel";
-}
-
-.App-footer {
-  grid-area: footer;
 }
 
 .Left-panel {
   grid-area: leftpanel;
-}
-
-.Tab-selector {
-  border: none;
-  background-color: none;
-  text-decoration: none;
-  background-color: white;
-  margin: 10px;
-}
-
-.Tab {
-  height: 90%;
-  width: 95%;
-  margin: 1.5%;
-  padding: 2%;
-  border-style: outset;
-  border-radius: 2px;
-  border-color: lightgray;
 }
 
 .Right-panel {
