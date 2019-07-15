@@ -1,7 +1,7 @@
 import React from "react";
 import NewConfigFileForm from "./NewFileForm";
 import NewRuleForm from "./rules/NewRuleForm";
-import LandingPage from "../landingPage/LandingPage.js";
+import LandingPage from "../landingPage/LandingPage.jsx";
 
 const configFileContext = {
   "@context": {
@@ -324,7 +324,6 @@ export default class LeftPanel extends React.Component {
     const { ruleTypes, rulesSelectOptions } = this.state;
     return (
       <div>
-        <LandingPage />
         <NewConfigFileForm onSubmit={this.onNewConfigFileCreation} />
         <NewRuleForm
           ruleOptions={ruleTypes}
