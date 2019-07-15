@@ -13,6 +13,25 @@ const Map = ReactMapboxGl({
   accessToken: "pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg"
 });
 
+const geojson = {
+  "type": "FeatureCollection",
+    "features": [
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [0, 0]
+        }
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "coordinates": [0, 0]
+        }
+      }]
+};
+
 const markerUrl = "assets/marker.png"
 
 
@@ -35,10 +54,12 @@ class MapPannel extends React.Component{
           },
         };
 
-        this.createFromMarker = this.createFromMarker.bind(this)
-        this.createToMarker = this.createToMarker.bind(this)
-        this.onStyleLoad = this.onStyleLoad.bind(this)
-        this.onMouseMove = this.onMouseMove.bind(this)
+        this.createFromMarker = this.createFromMarker.bind(this);
+        this.createToMarker = this.createToMarker.bind(this);
+        this.onStyleLoad = this.onStyleLoad.bind(this);
+        this.onMouseMove = this.onMouseMove.bind(this);
+        this.onMouseClick = this.onMouseClick.bind(this);
+
         /*
         this.planner = new Planner.RoadPlannerPathfinding();
         //PLANNER.JS QUERY
@@ -102,45 +123,96 @@ class MapPannel extends React.Component{
         });*/
       }
 
-      onStyleLoad(){
+      
 
+      onStyleLoad(map, evt){
+        map.addSource('point', {
+          "type": "geojson",
+          "data": geojson
+          });
+           
+          map.addLayer({
+            "id": "point",
+            "type": "circle",
+            "source": "point",
+            "paint": {
+            "circle-radius": 10,
+            "circle-color": "#3887be"
+          }
+          });
+      }
+
+      onMouseClick(map, evt){
+        console.log("click");
+        if(this.state.from_marker.enabled && !this.state.from_marker.placed){
+          console.log("placed from-marker at " + this.state.from_marker.lngLat);
+          this.setState((state, props) => ({
+            from_marker: {
+              placed: true,
+              enabled: true,
+              lngLat: state.from_marker.lngLat
+            }
+          }));
+        }
+        if(this.state.to_marker.enabled && !this.state.to_marker.placed){
+          console.log("placed to-marker at " + this.state.to_marker.lngLat);
+          this.setState((state, props) => ({
+            to_marker: {
+              placed: true,
+              enabled: true,
+              lngLat: state.to_marker.lngLat
+            }
+          }));
+        }
       }
 
       onMouseMove(map, evt){
-        console.log("event " + evt.lngLat);
-        console.log("state " + this.state.from_marker.lngLat)
-          if(this.state.to_marker.enabled && !this.state.to_marker.placed){
-              this.setState({
-                to_marker: {
-                  latLng: evt.lngLat
-                }
-              });
-          }
           if(this.state.from_marker.enabled && !this.state.from_marker.placed){
-            
-            this.setState({
+            console.log("moving from-marker");
+            geojson.features[0].geometry.coordinates = [evt.lngLat.lng, evt.lngLat.lat];
+            map.getSource('point').setData(geojson);
+
+            this.setState((state, props) => ({
               from_marker: {
-                placed: false,
-                enabled: true,
+                placed: state.from_marker.placed,
+                enabled: state.from_marker.enabled,
                 lngLat: evt.lngLat
               }
-            });
-        }
+            }));
+          }
+          else if(this.state.to_marker.enabled && !this.state.to_marker.placed){
+            console.log("moving to-marker");
+            geojson.features[1].geometry.coordinates = [evt.lngLat.lng, evt.lngLat.lat];
+            map.getSource('point').setData(geojson);
+            this.setState((state, props) => ({
+              to_marker: {
+                placed: state.to_marker.placed,
+                enabled: state.to_marker.enabled,
+                lngLat: evt.lngLat
+              }
+            }));
+          }
       }
 
       createFromMarker(){
         console.log(this.state.from_marker)
-        this.setState({
+        this.setState((state, props) => ({
           from_marker: {
             placed: false,
             enabled: true,
-            lngLat: [4.5118, 50.6282]
+            lngLat: state.from_marker.lngLat
           }
-        });
+        }));
       }
       createToMarker(){
         console.log(this.state.to_marker.lngLat)
-          this.setState({to_marker:{enabled: true}});
+        this.setState((state, props) => ({
+          to_marker: {
+            placed: false,
+            enabled: true,
+            lngLat: state.to_marker.lngLat
+          }
+        }));
       }
 
       render() {
@@ -150,10 +222,12 @@ class MapPannel extends React.Component{
             <Container className="fromToInputs">
               <Button icon onClick={() => {this.createFromMarker()} }>
                 <Icon name='map pin icon' />
+                from
               </Button>
               <Input/>
-              <Button icon onClick={() => {this.createFromMarker()} }>
+              <Button icon onClick={() => {this.createToMarker()} }>
                   <Icon name='map pin icon' />
+                  to
               </Button>
               <Input/>
             </Container>
@@ -167,21 +241,8 @@ class MapPannel extends React.Component{
               center={ center }
               zoom={ zoom }
               onStyleLoad={this.onStyleLoad}
-              onMouseMove={this.onMouseMove}>
-                { from_marker.enabled &&
-                <Marker
-                    coordinates={from_marker.lngLat}
-                    anchor="bottom">
-                    <img src="./assets/marker.png" style={{width: "40px", height: "40px"}}/>
-                </Marker>
-                }
-                { to_marker.enabled && !isNaN(to_marker.lngLat) &&
-                <Marker
-                    coordinates={to_marker.latLng}
-                    anchor="bottom">
-                    <img src="./assets/marker.png" style={{width: "40px", height: "40px"}}/>
-                </Marker>
-                }
+              onMouseMove={this.onMouseMove}
+              onClick={this.onMouseClick}>
             </Map>
             </div>
           </div>
