@@ -1,10 +1,10 @@
 import React from "react";
-import Map from "./map/map";
+import MapPannel from "./map/map";
 
 function RightPanel() {
   return(
   <div className="Right-panel">
-    <Map style={{height: '100%'}}/> 
+    <MapPannel style={{height: '100%'}}/> 
   </div>
   );
 }
