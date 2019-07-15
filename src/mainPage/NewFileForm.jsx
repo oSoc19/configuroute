@@ -5,8 +5,8 @@ class NewConfigFileForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      description: "hello",
-      maxSpeed: 0,
+      description: "",
+      maxSpeed: "",
       usePublicTransport: ""
     };
   }

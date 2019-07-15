@@ -1,6 +1,7 @@
 import React from "react";
 import NewConfigFileForm from "./NewFileForm";
 import NewRuleForm from "./rules/NewRuleForm";
+import LandingPage from "../landingPage/LandingPage.js";
 
 const configFileContext = {
   "@context": {
@@ -247,11 +248,26 @@ const rulesSelectOptions = {
 };
 
 const ruleTypes = {
-  hasAccessRules: "hasAccess",
-  hasObstacleRules: "isObstacle",
-  hasOnewayRules: "isOneway",
-  hasPriorityRules: "isRevesed",
-  hasSpeedRules: "hasSpeed"
+  hasAccessRules: {
+    conclusion: "hasAccess",
+    defaultValue: false
+  },
+  hasObstacleRules: {
+    conclusion: "isObstacle",
+    defaultValue: true
+  },
+  hasOnewayRules: {
+    conclusion: "isOneway",
+    defaultValue: true
+  },
+  hasPriorityRules: {
+    conclusion: "isReversed",
+    defaultValue: 0
+  },
+  hasSpeedRules: {
+    conclusion: "hasSpeed",
+    defaultValue: 35
+  }
 };
 
 export default class LeftPanel extends React.Component {
@@ -260,42 +276,56 @@ export default class LeftPanel extends React.Component {
     this.state = {
       configFile: configFileContext,
       rulesSelectOptions: rulesSelectOptions,
-      ruleTypes: ruleTypes,
-      rulesMetadata: []
+      ruleTypes: ruleTypes
     };
   }
 
-  onNewConfigFileSubmit = formValues => {
+  onNewConfigFileImport;
+  onNewConfigFileCreation = formValues => {
     var configFile = { ...this.state.configFile };
-    configFile["rdfs:label"] = formValues.description;
+    // Given by the form
     configFile["hasMaxSpeed"] = formValues.maxSpeed;
     configFile["usePublicTransport"] = formValues.usePublicTransport;
+    // creation of default rules for each type of rule
+    Object.keys(this.state.ruleTypes).map(k => {
+      configFile[k] = [];
+
+      var defaultRule = {};
+      defaultRule["concludes"] = {};
+      defaultRule["concludes"][
+        this.state.ruleTypes[k]["conclusion"]
+      ] = this.state.ruleTypes[k]["defaultValue"];
+
+      configFile[k].push(defaultRule);
+    });
+
     this.setState({ configFile: configFile });
   };
 
   onNewRuleSubmit = formValues => {
-    let conclusionLabel = this.state.ruleTypes[formValues.ruleType];
-    let ruleMetadata = {};
-    ruleMetadata["type"] = formValues.ruleType;
-    ruleMetadata["rule"] = {};
-    ruleMetadata["rule"]["match"] = {};
-    ruleMetadata["rule"]["match"]["hasPredicate"] = formValues.key;
-    ruleMetadata["rule"]["match"]["hasObject"] = formValues.value;
-    ruleMetadata["rule"]["concludes"] = {};
-    ruleMetadata["rule"]["concludes"][conclusionLabel] = formValues.conclusion;
-    ruleMetadata["rule"]["hasOrder"] = formValues.order;
+    let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
+      "conclusion"
+    ];
 
-    var rulesMetadata = [...this.state.rulesMetadata];
-    rulesMetadata.push(ruleMetadata);
-    this.setState({ rulesMetadata: rulesMetadata });
+    let newRule = {};
+    newRule["match"] = {};
+    newRule["match"]["hasPredicate"] = formValues.key;
+    newRule["match"]["hasObject"] = formValues.value;
+    newRule["concludes"] = {};
+    newRule["concludes"][conclusionLabel] = formValues.conclusion;
+    newRule["hasOrder"] = formValues.order;
+
+    var configFile = { ...this.state.configFile };
+    configFile[formValues.ruleType].unshift(newRule);
+    this.setState({ configFile: configFile });
   };
 
   render() {
-    console.log(this.state.rulesMetadata);
     const { ruleTypes, rulesSelectOptions } = this.state;
     return (
       <div>
-        <NewConfigFileForm onSubmit={this.onNewConfigFileSubmit} />
+        <LandingPage />
+        <NewConfigFileForm onSubmit={this.onNewConfigFileCreation} />
         <NewRuleForm
           ruleOptions={ruleTypes}
           selectOptions={rulesSelectOptions}

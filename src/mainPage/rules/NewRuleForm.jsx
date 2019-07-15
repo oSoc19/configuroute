@@ -66,10 +66,11 @@ class NewRuleForm extends React.Component {
           label="conclusion"
           onChange={this.handleChange}
           value={this.state.conclusion}
+          required={true}
         />
       );
-    } else {
-      let label = this.props.ruleOptions[this.state.ruleType];
+    } else if (this.state.ruleType != "") {
+      let label = this.props.ruleOptions[this.state.ruleType]["conclusion"];
       conclusionForm = (
         <Form.Checkbox
           name="conclusion"
@@ -82,10 +83,14 @@ class NewRuleForm extends React.Component {
               : this.state.conclusion
           }
           slider
+          required={true}
         />
       );
+    } else {
+      conclusionForm = null;
     }
 
+    // TODO: required not working ?
     return (
       <Form>
         <Form.Select
@@ -95,6 +100,7 @@ class NewRuleForm extends React.Component {
           options={ruleTypeOptions} //TODO: change it
           onChange={this.handleChange}
           value={this.state.ruleType}
+          required={true}
         />
 
         <Label> Condition </Label>
@@ -106,6 +112,7 @@ class NewRuleForm extends React.Component {
             options={keyOptions}
             onChange={this.handleChange}
             value={this.state.key}
+            required={true}
           />
           <Form.Select
             name="value"
@@ -114,6 +121,7 @@ class NewRuleForm extends React.Component {
             options={valueOptions}
             onChange={this.handleChange}
             value={this.state.value}
+            required={true}
           />
         </Form.Group>
         <Form.Group />

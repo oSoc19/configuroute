@@ -11,6 +11,7 @@ class Upload extends React.Component {
               <form method="post" action="#" id="#" style={{ height: "90%" }}>
                 <div className="form-group files" style={{ height: "100%" }}>
                   <Header as="h3">Upload Your File</Header>
+                  <script src="upload_script.js" />
                   <input
                     type="file"
                     className="form-control"
