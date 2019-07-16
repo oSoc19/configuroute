@@ -14,26 +14,17 @@ function Header() {
   );
 }
 
-function MainContent(props) {
-  return (
-    <div className="App-content">
-      <LeftPanel />
-      <RightPanel configFile={props.configFile} />
-    </div>
-  );
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      configFile: ""
+      hasUpdated: false,
+      configFile: {}
     };
   }
 
   handleFileConfirm = configFile => {
-    this.setState({ configFile: configFile });
-    console.log(configFile);
+    this.setState({ configFile: configFile, hasUpdated: true });
   };
 
   render() {
@@ -41,7 +32,13 @@ class App extends React.Component {
       <div className="App">
         <LandingPage onConfirm={this.handleFileConfirm} />
         <Header />
-        <MainContent configFile={this.state.configFile} />
+        <div className="App-content">
+          <LeftPanel
+            hasUpdated={this.state.hasUpdated}
+            configFile={this.state.configFile}
+          />
+          <RightPanel />
+        </div>
       </div>
     );
   }

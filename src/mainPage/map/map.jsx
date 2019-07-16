@@ -106,8 +106,6 @@ class MapPannel extends React.Component {
   onStyleLoad() {}
 
   onMouseMove(map, evt) {
-    console.log("event " + evt.lngLat);
-    console.log("state " + this.state.from_marker.lngLat);
     if (this.state.to_marker.enabled && !this.state.to_marker.placed) {
       this.setState({
         to_marker: {
@@ -127,7 +125,6 @@ class MapPannel extends React.Component {
   }
 
   createFromMarker() {
-    console.log(this.state.from_marker);
     this.setState({
       from_marker: {
         placed: false,
@@ -137,7 +134,6 @@ class MapPannel extends React.Component {
     });
   }
   createToMarker() {
-    console.log(this.state.to_marker.lngLat);
     this.setState({ to_marker: { enabled: true } });
   }
 

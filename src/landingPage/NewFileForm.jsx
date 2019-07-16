@@ -73,9 +73,10 @@ const configFileContext = {
 class NewConfigFileForm extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      description: "",
-      maxSpeed: "",
+      description: "E-bike",
+      maxSpeed: "50",
       usePublicTransport: false,
       showErrorMessage: false
     };

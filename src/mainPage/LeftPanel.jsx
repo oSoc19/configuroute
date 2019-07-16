@@ -205,15 +205,25 @@ export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      configFile: props.configFile,
+      configFile: {},
       rulesSelectOptions: rulesSelectOptions,
       ruleTypes: ruleTypes,
       showModal: false
     };
   }
 
+  isEmpty(obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) return false;
+    }
+    return true;
+  }
+
   onNewRuleSubmit = formValues => {
-    console.log(formValues.ruleType);
+    var configFile = this.isEmpty(this.state.configFile)
+      ? this.props.configFile
+      : { ...this.state.configFile };
+
     let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
       "conclusion"
     ];
@@ -226,10 +236,12 @@ export default class LeftPanel extends React.Component {
     newRule["concludes"][conclusionLabel] = formValues.conclusion;
     newRule["hasOrder"] = formValues.order;
 
-    var configFile = { ...this.state.configFile };
-    /* configFile[formValues.ruleType].unshift(newRule);
-    this.setState({ configFile: configFile });*/
-    console.log(configFile);
+    configFile[formValues.ruleType].unshift(newRule);
+    this.setState({ configFile: configFile, showModal: false });
+  };
+
+  handleSubmitRule = rule => {
+    this.setState({ showModal: false });
   };
 
   render() {
@@ -240,18 +252,20 @@ export default class LeftPanel extends React.Component {
           primary
           onClick={() => {
             this.setState({ showModal: true });
-            console.log(this.state.showModal);
           }}
         >
           {" "}
           Add a rule{" "}
-        </Button>
-        <NewRuleForm
-          showModal={this.state.showModal}
-          ruleOptions={ruleTypes}
-          selectOptions={rulesSelectOptions}
-          onSubmit={this.onNewRuleSubmit}
-        />
+        </Button>{" "}
+        {this.state.showModal && (
+          <NewRuleForm
+            showModal={this.state.showModal}
+            onSubmit={this.onNewRuleSubmit}
+            ruleOptions={ruleTypes}
+            selectOptions={rulesSelectOptions}
+            onSubmit={this.onNewRuleSubmit}
+          />
+        )}
       </div>
     );
   }

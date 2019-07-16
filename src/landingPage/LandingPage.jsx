@@ -91,8 +91,8 @@ class LandingPage extends React.Component {
   }
 
   handleConfirm(configFile) {
-    this.handleCloseModal();
     this.props.onConfirm(configFile);
+    this.handleCloseModal();
   }
 
   render() {

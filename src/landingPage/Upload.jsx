@@ -78,7 +78,7 @@ class Upload extends React.Component {
             <Button.Or />
             <ConfirmButton
               onClick={() => {
-                this.props.modal.handleConfirm("INDEX", {});
+                this.props.modal.handleConfirm(this.state.configFile);
               }}
               disabled={!this.state.valid}
             />
