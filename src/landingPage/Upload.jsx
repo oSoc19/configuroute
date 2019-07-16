@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Grid,
-  Icon,
-  Header,
-  Confirm,
-  Segment,
-  Label
-} from "semantic-ui-react";
+import { Button, Grid, Header, Segment, Label } from "semantic-ui-react";
 import BackButton from "./BackButton";
 import ConfirmButton from "./ConfirmButton";
 
@@ -29,8 +21,10 @@ class Upload extends React.Component {
     var nbOfRules = 0;
 
     if (this.state.configFile === undefined) return nbOfRules;
+
     Object.keys(this.props.modal.state.ruleTypes).map(k => {
       nbOfRules += this.state.configFile[k].length;
+      return nbOfRules;
     });
 
     return nbOfRules;

@@ -1,6 +1,7 @@
 import React from "react";
-import MainContent from "./mainPage/MainContent";
 import LandingPage from "./landingPage/LandingPage.jsx";
+import LeftPanel from "./mainPage/LeftPanel.jsx";
+import RightPanel from "./mainPage/RightPanel.jsx";
 import "./App.css";
 import logo from "./assets/logo.jpg";
 
@@ -10,6 +11,15 @@ function Header() {
       <img src={logo} className="App-logo" alt="logo" />
       <span className="App-header"> Configuroute </span>
     </header>
+  );
+}
+
+function MainContent(props) {
+  return (
+    <div className="App-content">
+      <LeftPanel />
+      <RightPanel configFile={props.configFile} />
+    </div>
   );
 }
 
@@ -31,7 +41,7 @@ class App extends React.Component {
       <div className="App">
         <LandingPage onConfirm={this.handleFileConfirm} />
         <Header />
-        <MainContent />
+        <MainContent configFile={this.state.configFile} />
       </div>
     );
   }

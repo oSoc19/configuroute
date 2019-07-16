@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  Button,
-  Grid,
-  Icon,
-  Header,
-  Image,
-  Label,
-  Segment
-} from "semantic-ui-react";
+import { Button, Grid, Header, Image } from "semantic-ui-react";
 import CreateButton from "./CreateButton";
 import ImportButton from "./ImportButton";
 
@@ -75,7 +67,8 @@ class Index extends React.Component {
 
             Object.keys(ruleTypes).map(k => {
               if (configFile[k] == null || !Array.isArray(configFile[k]))
-                validFile = false;
+                return false;
+              return true;
             });
           } catch (error) {
             validFile = false;

@@ -1,75 +1,6 @@
 import React from "react";
-import NewConfigFileForm from "./NewFileForm";
 import NewRuleForm from "./rules/NewRuleForm";
-import LandingPage from "../landingPage/LandingPage.jsx";
-
-const configFileContext = {
-  "@context": {
-    osm: "https://w3id.org/openstreetmap/terms#",
-    opp: "https://w3id.org/openplannerteam/profile#",
-    prov: "http://www.w3.org/ns/prov#",
-    hasMaxSpeed: {
-      "@id": "opp:hasMaxSpeed"
-    },
-    usePublicTransport: {
-      "@id": "opp:usePublicTransport"
-    },
-    hasAccessRules: {
-      "@id": "opp:hasAccessRules"
-    },
-    hasOnewayRules: {
-      "@id": "opp:hasOnewayRules"
-    },
-    hasSpeedRules: {
-      "@id": "opp:hasSpeedRules"
-    },
-    hasPriorityRules: {
-      "@id": "opp:hasPriorityRules"
-    },
-    hasObstacleRules: {
-      "@id": "opp:hasObstacleRules"
-    },
-    hasAccess: {
-      "@id": "opp:hasAccess"
-    },
-    isOneway: {
-      "@id": "opp:isOneway"
-    },
-    isReversed: {
-      "@id": "opp:isReversed"
-    },
-    hasSpeed: {
-      "@id": "opp:hasSpeed"
-    },
-    isObstacle: {
-      "@id": "opp:isObstacle"
-    },
-    hasPriority: {
-      "@id": "opp:hasPriority"
-    },
-    concludes: {
-      "@id": "opp:concludes"
-    },
-    hasOrder: {
-      "@id": "opp:hasOrder"
-    },
-    match: {
-      "@id": "opp:match"
-    },
-    fromProperty: {
-      "@id": "opp:fromProperty",
-      "@type": "@id"
-    },
-    hasPredicate: {
-      "@id": "opp:hasPredicate",
-      "@type": "@id"
-    },
-    hasObject: {
-      "@id": "opp:hasObject",
-      "@type": "@id"
-    }
-  }
-};
+import { Button } from "semantic-ui-react";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -274,35 +205,15 @@ export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      configFile: configFileContext,
+      configFile: props.configFile,
       rulesSelectOptions: rulesSelectOptions,
-      ruleTypes: ruleTypes
+      ruleTypes: ruleTypes,
+      showModal: false
     };
   }
 
-  onNewConfigFileImport;
-  onNewConfigFileCreation = formValues => {
-    var configFile = { ...this.state.configFile };
-    // Given by the form
-    configFile["hasMaxSpeed"] = formValues.maxSpeed;
-    configFile["usePublicTransport"] = formValues.usePublicTransport;
-    // creation of default rules for each type of rule
-    Object.keys(this.state.ruleTypes).map(k => {
-      configFile[k] = [];
-
-      var defaultRule = {};
-      defaultRule["concludes"] = {};
-      defaultRule["concludes"][
-        this.state.ruleTypes[k]["conclusion"]
-      ] = this.state.ruleTypes[k]["defaultValue"];
-
-      configFile[k].push(defaultRule);
-    });
-
-    this.setState({ configFile: configFile });
-  };
-
   onNewRuleSubmit = formValues => {
+    console.log(formValues.ruleType);
     let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
       "conclusion"
     ];
@@ -316,16 +227,27 @@ export default class LeftPanel extends React.Component {
     newRule["hasOrder"] = formValues.order;
 
     var configFile = { ...this.state.configFile };
-    configFile[formValues.ruleType].unshift(newRule);
-    this.setState({ configFile: configFile });
+    /* configFile[formValues.ruleType].unshift(newRule);
+    this.setState({ configFile: configFile });*/
+    console.log(configFile);
   };
 
   render() {
     const { ruleTypes, rulesSelectOptions } = this.state;
     return (
       <div>
-        <NewConfigFileForm onSubmit={this.onNewConfigFileCreation} />
+        <Button
+          primary
+          onClick={() => {
+            this.setState({ showModal: true });
+            console.log(this.state.showModal);
+          }}
+        >
+          {" "}
+          Add a rule{" "}
+        </Button>
         <NewRuleForm
+          showModal={this.state.showModal}
           ruleOptions={ruleTypes}
           selectOptions={rulesSelectOptions}
           onSubmit={this.onNewRuleSubmit}
