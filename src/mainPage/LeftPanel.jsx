@@ -1,6 +1,7 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button } from "semantic-ui-react";
+import RuleCard from "./rules/ruleCard";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -204,12 +205,18 @@ const ruleTypes = {
 export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       configFile: {},
       rulesSelectOptions: rulesSelectOptions,
       ruleTypes: ruleTypes,
       showModal: false
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.configFile !== this.props.configFile)
+      this.setState({ configFile: this.props.configFile });
   }
 
   isEmpty(obj) {
@@ -220,9 +227,7 @@ export default class LeftPanel extends React.Component {
   }
 
   onNewRuleSubmit = formValues => {
-    var configFile = this.isEmpty(this.state.configFile)
-      ? this.props.configFile
-      : { ...this.state.configFile };
+    var configFile = { ...this.state.configFile };
 
     let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
       "conclusion"
@@ -244,10 +249,28 @@ export default class LeftPanel extends React.Component {
     this.setState({ showModal: false });
   };
 
+  displayRules() {
+    if (!this.state.configFile) return;
+    var allRules = [];
+    Object.keys(ruleTypes).map(k => {
+      if (this.state.configFile[k]) {
+        this.state.configFile[k].map(rule => {
+          allRules.push(rule);
+        });
+        return k;
+      }
+    });
+
+    var counter = 0;
+    return allRules.map(rule => {
+      return <RuleCard key={counter} />;
+    });
+  }
+
   render() {
     const { ruleTypes, rulesSelectOptions } = this.state;
     return (
-      <div>
+      <div className="Left-panel">
         <Button
           primary
           onClick={() => {
@@ -257,6 +280,7 @@ export default class LeftPanel extends React.Component {
           {" "}
           Add a rule{" "}
         </Button>{" "}
+        {this.displayRules()}
         {this.state.showModal && (
           <NewRuleForm
             showModal={this.state.showModal}

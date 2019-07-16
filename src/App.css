@@ -31,6 +31,8 @@
 
 .Left-panel {
   grid-area: leftpanel;
+  overflow: auto;
+  height: 94vh;
 }
 
 .Right-panel {
