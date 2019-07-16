@@ -59,3 +59,7 @@
 .Right-panel {
   grid-area: rightpanel;
 }
+
+.fromToInputs{
+  margin: 12px;
+}
