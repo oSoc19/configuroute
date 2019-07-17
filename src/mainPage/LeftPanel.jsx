@@ -1,7 +1,7 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
-import RuleCard from "./rules/RuleCard";
+import RuleCard from "./rules/ruleCard";
 const Engine = require("./bundle.js");
 //import Engine from "./bundle.js";
 
@@ -236,8 +236,6 @@ export default class LeftPanel extends React.Component {
     ) {
       this.setState({ loaded: true, configFile: this.props.configFile });
     }
-
-    this.props.onConfigFileChance(this.state.configFile);
   }
 
   onNewRuleSubmit = formValues => {
