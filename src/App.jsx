@@ -36,9 +36,10 @@ class App extends React.Component {
           <LeftPanel
             hasUpdated={this.state.hasUpdated}
             configFile={this.state.configFile}
+            onConfigFileChange={this.state.handelConfirm}
             className="Left-panel"
           />
-          <RightPanel />
+          <RightPanel configFile={this.state.configFile} />
         </div>
       </div>
     );
