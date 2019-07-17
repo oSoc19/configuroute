@@ -1,7 +1,7 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon } from "semantic-ui-react";
-import RuleCard from "./rules/RuleCard";
+import RuleCard from "./rules/ruleCard";
 
 const rulesSelectOptions = {
   "osm:access": [
