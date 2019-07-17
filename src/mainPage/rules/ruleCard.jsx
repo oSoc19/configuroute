@@ -20,8 +20,7 @@ class RuleCard extends React.Component {
     };
   }
 
-  handleChange = (e, { value, checked, key }) => {
-    console.log(key);
+  handleChange = (e, { value, checked }) => {
     if (value === undefined) {
       this.props.onChange(this.props.type, this.props.index, checked);
     } else {
@@ -32,41 +31,39 @@ class RuleCard extends React.Component {
   content() {
     var key = 0;
     var option;
-    return Object.keys(this.props.rule.concludes).map(conclusion => {
-      switch (typeof this.props.rule.concludes[conclusion]) {
-        case "string":
-        case "number":
-          option = (
-            <Input
-              type="number"
-              value={this.props.rule.concludes[conclusion]}
-              onChange={this.handleChange}
-              key={conclusion}
-            />
-          );
-          break;
-        case "boolean":
-          option = (
-            <Checkbox
-              toggle
-              checked={this.props.rule.concludes[conclusion]}
-              onChange={this.handleChange}
-              key={conclusion}
-            />
-          );
-          break;
-        default:
-          option = null;
-          break;
-      }
-      key++;
-      return (
-        <Segment>
-          {" "}
-          {conclusion} {option}{" "}
-        </Segment>
-      );
-    });
+    // for now only take the first key
+    var conclusion = Object.keys(this.props.rule.concludes)[0];
+    switch (typeof this.props.rule.concludes[conclusion]) {
+      case "string":
+      case "number":
+        option = (
+          <Input
+            type="number"
+            value={this.props.rule.concludes[conclusion]}
+            onChange={this.handleChange}
+          />
+        );
+        break;
+      case "boolean":
+        option = (
+          <Checkbox
+            toggle
+            checked={this.props.rule.concludes[conclusion]}
+            onChange={this.handleChange}
+          />
+        );
+        break;
+      default:
+        option = null;
+        break;
+    }
+    key++;
+    return (
+      <Segment>
+        {" "}
+        {conclusion} {option}{" "}
+      </Segment>
+    );
   }
 
   handleCloseModal = () => {
