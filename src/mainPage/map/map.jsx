@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
-import { Label, Button, Icon, Container } from 'semantic-ui-react';
-import ReactMapboxGl, { Layer, Feature, Marker } from "react-mapbox-gl";
+import { Label, Button, Icon, Container, Input, Dropdown } from 'semantic-ui-react';
+import ReactMapboxGl, { Layer, Feature } from "react-mapbox-gl";
 import {Planner} from 'plannerjs';
 //import MapboxGL from "@react-native-mapbox-gl/maps";
 
@@ -42,7 +42,10 @@ const linePaint = {
   'line-width': 8
 };
 
-const markerUrl = "assets/marker.png"
+const savedRouteLinePaint = {
+  'line-color': '#BABABA',
+  'line-width': 5
+};
 
 
 class MapPannel extends React.Component{
@@ -63,7 +66,15 @@ class MapPannel extends React.Component{
             enabled: false,
             lngLat: undefined
           },
-          active_route: []
+          active_route: {
+            key: undefined,
+            text: undefined,
+            coordinates: []
+          },
+          active_route_label_input: undefined,
+          saved_routes: [],
+          selectable_routes: [],
+          selected_routes: []
         };
 
         this.createFromMarker = this.createFromMarker.bind(this);
@@ -72,6 +83,9 @@ class MapPannel extends React.Component{
         this.onMouseMove = this.onMouseMove.bind(this);
         this.onMouseClick = this.onMouseClick.bind(this);
         this.calculateRoute = this.calculateRoute.bind(this);
+        this.updateActiveRouteText = this.updateActiveRouteText.bind(this);
+        this.handleSelectedRoutesChange = this.handleSelectedRoutesChange.bind(this);
+        this.handleSelectedRouteAddition = this.handleSelectedRouteAddition.bind(this);
 
         
         this.planner = new Planner();
@@ -102,17 +116,22 @@ class MapPannel extends React.Component{
             console.log(error);
           })
           .on("data", (path) => {
-            console.log("got result:");
-              console.log(JSON.stringify(path, null, " "));
-              let coordinates = [];
+            //console.log("got result:");
+              //console.log(JSON.stringify(path, null, " "));
+              let route_coordinates = [];
               path.steps.forEach((step) => {
-                coordinates.push([step.startLocation.longitude, step.startLocation.latitude]);
-                coordinates.push([step.stopLocation.longitude, step.stopLocation.latitude]);
+                route_coordinates.push([step.startLocation.longitude, step.startLocation.latitude]);
+                route_coordinates.push([step.stopLocation.longitude, step.stopLocation.latitude]);
               });
               //console.log(coordinates);
-              map.setState({
-                active_route: coordinates
-              });
+              let date = new Date();
+              map.setState(prevState => ({
+                active_route: {
+                  key: prevState.saved_routes.length,
+                  text: date.toISOString(),
+                  coordinates: route_coordinates
+                }
+              }));
           })
           .on("end", () => {
             console.log("end\n");
@@ -120,7 +139,40 @@ class MapPannel extends React.Component{
           });
         }, 1000, this);
 
-      }      
+      }
+
+      saveCurrentRoute(){
+        //set the label
+        this.setState(prevState => ({
+          active_route: {
+            key: prevState.active_route.key,
+            text: prevState.active_route_label_input,
+            coordinates: prevState.active_route.coordinates
+          }
+        }));
+        let key = this.state.active_route.key;
+        let routeExists = false;
+        this.state.saved_routes.forEach((route) => {
+          if(route.key === key){
+            routeExists = true;
+            return;
+          }
+        });
+        if(!routeExists){
+          this.setState(prevState => ({
+            saved_routes: [prevState.active_route, ...prevState.saved_routes],
+            selectable_routes: [{key: prevState.active_route.key, text: prevState.active_route.text, value: prevState.active_route.key}, ...prevState.selectable_routes]
+          }));
+        }
+        
+        console.log(this.state.saved_routes);
+      }
+
+      updateActiveRouteText(evt) {
+        this.setState({
+          active_route_label_input: evt.target.value,
+        });
+      }
 
       onStyleLoad(map, evt){
         map.addSource('point', {
@@ -211,8 +263,40 @@ class MapPannel extends React.Component{
         }));
       }
 
+
+      handleSelectedRouteAddition = (e, { value }) => {
+        console.log("hadleAddition value");
+        console.log(value);
+        this.setState(prevState => ({
+          selectable_routes: [...prevState.selectable_routes, { key: value, text: value, value }],
+        }))
+      }
+    
+      handleSelectedRoutesChange = (e, { value }) => {
+        console.log("hadleChange value");
+        console.log(value);
+        console.log(this.state.saved_routes);
+        value.reverse();
+        this.setState({ selected_routes: value })
+      }
+
+
+
       render() {
         const { center, zoom, from_marker, to_marker } = this.state;
+        const routesToDraw = this.state.selected_routes.map((k) => {
+          let size = this.state.saved_routes.length;
+          let i = 0;
+          while(this.state.saved_routes[i].key != k && i < size){
+            i++;
+          }
+          return(
+          <Layer type="line" layout={lineLayout} paint={savedRouteLinePaint}>
+            <Feature coordinates={ this.state.saved_routes[i].coordinates } />
+          </Layer>);
+        }
+          
+        );
         return (
           <div style={{height: '100%'}}>
             <Container className="fromToInputs">
@@ -243,6 +327,24 @@ class MapPannel extends React.Component{
                       onClick={() => {this.calculateRoute()} }>
                   Calculate route
               </Button>
+              <Input type='text' placeholder='name' onChange={this.updateActiveRouteText} value={this.state.active_route_label_input} action
+              disabled={!(this.state.from_marker.lngLat && this.state.to_marker.lngLat) || this.state.calculating} >
+                  <input />
+                  <Button type='submit' onClick={() => {this.saveCurrentRoute()}} 
+                  disabled={!(this.state.from_marker.lngLat && this.state.to_marker.lngLat) || this.state.calculating} >Save route</Button>
+              </Input>
+              <Dropdown
+                options={this.state.selectable_routes}
+                placeholder='Choose routes to display'
+                search
+                selection
+                fluid
+                multiple
+                allowAdditions
+                value={this.state.selected_routes}
+                onAddItem={this.handleSelectedRouteAddition}
+                onChange={this.handleSelectedRoutesChange}
+              />
             </Container>
             <div style={{height: '100%'}}>
             <Map
@@ -257,8 +359,9 @@ class MapPannel extends React.Component{
               onMouseMove={this.onMouseMove}
               onClick={this.onMouseClick}>
                 <Layer type="line" layout={lineLayout} paint={linePaint}>
-                    <Feature coordinates={ this.state.active_route } />
+                    <Feature coordinates={ this.state.active_route.coordinates } />
                 </Layer>
+                {routesToDraw}
             </Map>
             </div>
           </div>
