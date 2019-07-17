@@ -44,6 +44,7 @@ class Index extends React.Component {
     var array = document.getElementsByClassName("import_file_button");
 
     var fileInput = array[0];
+    var ruleTypes = this.props.ruleTypes;
 
     fileInput.click();
     fileInput.addEventListener("change", function(e) {
@@ -62,10 +63,9 @@ class Index extends React.Component {
             if (configFile["@context"] == null) {
               validFile = false;
             }
-
             Object.keys(ruleTypes).map(k => {
               if (configFile[k] == null || !Array.isArray(configFile[k]))
-                return false;
+                validFile = false;
               return true;
             });
           } catch (error) {
@@ -73,13 +73,13 @@ class Index extends React.Component {
           }
 
           if (validFile) {
-            reactComponent.props.modal.handleChangeContent("UPLOAD", {
+            reactComponent.props.onChangeContent("UPLOAD", {
               valid: true,
               file: file,
               configFile: JSON.parse(reader.result)
             });
           } else {
-            reactComponent.props.modal.handleChangeContent("UPLOAD", {
+            reactComponent.props.onChangeContent("UPLOAD", {
               valid: false,
               file: null,
               configFile: null
@@ -89,7 +89,7 @@ class Index extends React.Component {
 
         reader.readAsText(file);
       } else {
-        reactComponent.props.modal.handleChangeContent("UPLOAD", {
+        reactComponent.props.onChangeContent("UPLOAD", {
           valid: false,
           file: null,
           configFile: null
@@ -135,7 +135,7 @@ class Index extends React.Component {
           <Button.Group style={{ width: "100%" }}>
             <CreateButton
               onClick={() => {
-                this.props.modal.handleChangeContent("NEW", {});
+                this.props.onChangeContent("NEW");
               }}
             />
             <Button.Or />

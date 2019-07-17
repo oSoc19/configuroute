@@ -7,12 +7,6 @@ class Upload extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      valid: this.props.modal.state.data.valid,
-      file: props.modal.state.data.file,
-      configFile: props.modal.state.data.configFile
-    };
-
     this.validFileScreen = this.validFileScreen.bind(this);
     this.errorScreen = this.errorScreen.bind(this);
   }
@@ -20,10 +14,10 @@ class Upload extends React.Component {
   computeNumberOfRules() {
     var nbOfRules = 0;
 
-    if (this.state.configFile === undefined) return nbOfRules;
+    if (this.props.data.configFile === undefined) return nbOfRules;
 
-    Object.keys(this.props.modal.state.ruleTypes).map(k => {
-      nbOfRules += this.state.configFile[k].length;
+    Object.keys(this.props.ruleTypes).map(k => {
+      nbOfRules += this.props.data.configFile[k].length;
       return nbOfRules;
     });
 
@@ -33,10 +27,10 @@ class Upload extends React.Component {
   validFileScreen() {
     return (
       <div>
-        <Header> {this.state.file.name} </Header>
+        <Header> {this.props.data.file.name} </Header>
         <Segment>
           {" "}
-          <Label> Label: </Label> {this.state.configFile["rdfs:label"]}{" "}
+          <Label> Label: </Label> {this.props.data.configFile["rdfs:label"]}{" "}
         </Segment>
         <Segment>
           {" "}
@@ -56,7 +50,7 @@ class Upload extends React.Component {
   }
 
   content() {
-    if (this.state.valid) {
+    if (this.props.data.valid) {
       return <this.validFileScreen />;
     } else {
       return <this.errorScreen />;
@@ -72,15 +66,16 @@ class Upload extends React.Component {
           <Button.Group style={{ width: "100%" }}>
             <BackButton
               onClick={() => {
-                this.props.modal.handleChangeContent("INDEX", {});
+                this.props.onChangeContent("INDEX");
               }}
             />
             <Button.Or />
             <ConfirmButton
               onClick={() => {
-                this.props.modal.handleConfirm(this.state.configFile);
+                console.log(this.props.data.configFile);
+                this.props.onConfirm(this.props.data.configFile);
               }}
-              disabled={!this.state.valid}
+              disabled={!this.props.data.valid}
             />
           </Button.Group>
         </Grid.Row>

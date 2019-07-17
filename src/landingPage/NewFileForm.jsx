@@ -83,14 +83,14 @@ class NewConfigFileForm extends React.Component {
   }
 
   onNewConfigFileCreation = formValues => {
-    var ruleTypes = this.props.modal.state.ruleTypes;
+    var ruleTypes = this.props.ruleTypes;
     var configFile = configFileContext;
     // Given by the form
     configFile["rdfs:label"] = formValues.description;
     configFile["hasMaxSpeed"] = Number(formValues.maxSpeed);
     configFile["usePublicTransport"] = formValues.usePublicTransport;
     // creation of default rules for each type of rule
-    Object.keys(ruleTypes).map(k => {
+    Object.keys(this.props.ruleTypes).map(k => {
       configFile[k] = [];
 
       var defaultRule = {};
@@ -152,7 +152,7 @@ class NewConfigFileForm extends React.Component {
           <Button.Group style={{ width: "100%" }}>
             <BackButton
               onClick={() => {
-                this.props.modal.handleChangeContent("INDEX", {});
+                this.props.onChangeContent("INDEX");
               }}
             />
             <Button.Or />
@@ -169,7 +169,7 @@ class NewConfigFileForm extends React.Component {
                 if (showErrorMessage) {
                   this.setState({ showErrorMessage: true });
                 } else {
-                  this.props.modal.handleConfirm(
+                  this.props.onConfirm(
                     this.onNewConfigFileCreation(this.state)
                   );
                 }

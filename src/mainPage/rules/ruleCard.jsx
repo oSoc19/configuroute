@@ -97,6 +97,7 @@ class RuleCard extends React.Component {
                 this.props.onDelete(this.props.type, this.props.index);
               }}
               icon
+              disabled={header === "Default rule"}
             >
               <Icon name="trash alternate outline" />
             </Button>
