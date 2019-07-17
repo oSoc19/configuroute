@@ -1,7 +1,9 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button, Accordion, Icon } from "semantic-ui-react";
+import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
 import RuleCard from "./rules/ruleCard";
+const Engine = require("./bundle.js");
+//import Engine from "./bundle.js";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -54,7 +56,7 @@ const rulesSelectOptions = {
   "osm:cycleway": [
     "osm:Lane",
     "osm:Opposite",
-    "osm:OppositeLane",
+    "osm:OpposciteLane",
     "osm:OppositeTrack",
     "osm:ShareBusway",
     "osm:Shared",
@@ -213,8 +215,11 @@ export default class LeftPanel extends React.Component {
       ruleTypes: ruleTypes,
       showModal: false,
       newRuleExists: false,
-      activeIndex: 0
+      activeIndex: 0,
+      queryValue: ""
     };
+
+    this.queryInformation = this.queryInformation.bind(this);
   }
 
   isEmpty(obj) {
@@ -346,6 +351,12 @@ export default class LeftPanel extends React.Component {
     }
   }
 
+  handleQueryChange = (e, { name, value }) => this.setState({ [name]: value });
+
+  queryInformation() {
+    var engine = new Engine("http://hdelva.be/tiles/ns/ontology");
+  }
+
   render() {
     const { ruleTypes, rulesSelectOptions, activeIndex } = this.state;
     return (
@@ -359,6 +370,19 @@ export default class LeftPanel extends React.Component {
           {" "}
           Add a rule{" "}
         </Button>{" "}
+        <Segment>
+          <Input
+            label="Query"
+            placeholder="Query information"
+            name="queryValue"
+            value={this.queryValue}
+            onChange={this.handleQueryChange}
+            required
+          />
+          <Button secondary onClick={this.queryInformation}>
+            query
+          </Button>
+        </Segment>
         <Accordion fluid styled>
           {this.displayContent()}
         </Accordion>
