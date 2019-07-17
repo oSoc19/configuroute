@@ -42,7 +42,6 @@ class Index extends React.Component {
 
   triggerImportFile(reactComponent) {
     var array = document.getElementsByClassName("import_file_button");
-    console.log("triggered");
 
     var fileInput = array[0];
 
@@ -52,7 +51,6 @@ class Index extends React.Component {
       var textType = /json.*/;
 
       if (file.type.match(textType)) {
-        console.log("good extension");
         var reader = new FileReader();
 
         reader.onload = function(e) {

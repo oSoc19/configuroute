@@ -33,6 +33,7 @@
   grid-area: leftpanel;
   overflow: auto;
   height: 94vh;
+  margin: 10px;
 }
 
 .Right-panel {

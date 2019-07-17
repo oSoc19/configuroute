@@ -6,7 +6,8 @@ import {
   Segment,
   Grid,
   Button,
-  Confirm
+  Confirm,
+  Message
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
@@ -41,8 +42,7 @@ class NewRuleForm extends React.Component {
       key: "osm:access",
       value: "osm:Customers",
       conclusion: true,
-      order: 1,
-      showErrorMessage: false
+      order: 1
     };
   }
 
@@ -169,6 +169,11 @@ class NewRuleForm extends React.Component {
             {" "}
             <Label> All field values must be completed </Label>
           </Segment>
+        )}
+        {this.props.triggerMessage && (
+          <Message>
+            This precise rule (type, key and value) already exists
+          </Message>
         )}
       </Form>
     );

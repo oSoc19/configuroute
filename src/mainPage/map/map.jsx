@@ -43,24 +43,6 @@ class MapPannel extends React.Component {
     this.createToMarker = this.createToMarker.bind(this);
     this.onStyleLoad = this.onStyleLoad.bind(this);
     this.onMouseMove = this.onMouseMove.bind(this);
-    /*
-        this.planner = new Planner.RoadPlannerPathfinding();
-        //PLANNER.JS QUERY
-        this.planner.query({
-          publicTransportOnly: true,
-          from: { latitude: 50.860812, longitude: 4.356574},
-          to: { latitude: 50.860832, longitude: 4.356594}
-        })
-            .take(1)
-            .on('data', (path) => {
-                console.log(path);
-            })
-            .on('end', () => {
-                console.log('No more paths!')
-            })
-            .on('error', (error) => {
-                console.error(error);
-            });*/
   }
 
   setTooltip(features) {

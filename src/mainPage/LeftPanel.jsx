@@ -1,7 +1,7 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button } from "semantic-ui-react";
-import RuleCard from "./rules/ruleCard";
+import { Button, Accordion, Icon } from "semantic-ui-react";
+import RuleCard from "./rules/RuleCard";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -207,16 +207,14 @@ export default class LeftPanel extends React.Component {
     super(props);
 
     this.state = {
+      loaded: false,
       configFile: {},
       rulesSelectOptions: rulesSelectOptions,
       ruleTypes: ruleTypes,
-      showModal: false
+      showModal: false,
+      newRuleExists: false,
+      activeIndex: 0
     };
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.configFile !== this.props.configFile)
-      this.setState({ configFile: this.props.configFile });
   }
 
   isEmpty(obj) {
@@ -226,49 +224,130 @@ export default class LeftPanel extends React.Component {
     return true;
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.configFile !== this.props.configFile &&
+      this.isEmpty(this.state.configFile)
+    ) {
+      this.setState({ loaded: true, configFile: this.props.configFile });
+    }
+  }
+
   onNewRuleSubmit = formValues => {
-    var configFile = { ...this.state.configFile };
+    var isANewRule = true;
+    this.state.configFile[formValues.ruleType].map(rule => {
+      if (
+        rule["match"] &&
+        rule["match"]["hasPredicate"] == formValues.key &&
+        rule["match"]["hasObject"] == formValues.value
+      ) {
+        isANewRule = false;
+        return false;
+      }
+      return true;
+    });
 
-    let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
-      "conclusion"
-    ];
+    if (isANewRule) {
+      var configFile = { ...this.state.configFile };
 
-    let newRule = {};
-    newRule["match"] = {};
-    newRule["match"]["hasPredicate"] = formValues.key;
-    newRule["match"]["hasObject"] = formValues.value;
-    newRule["concludes"] = {};
-    newRule["concludes"][conclusionLabel] = formValues.conclusion;
-    newRule["hasOrder"] = formValues.order;
+      let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
+        "conclusion"
+      ];
 
-    configFile[formValues.ruleType].unshift(newRule);
-    this.setState({ configFile: configFile, showModal: false });
+      let newRule = {};
+      newRule["match"] = {};
+      newRule["match"]["hasPredicate"] = formValues.key;
+      newRule["match"]["hasObject"] = formValues.value;
+      newRule["concludes"] = {};
+      newRule["concludes"][conclusionLabel] = formValues.conclusion;
+      newRule["hasOrder"] = formValues.order;
+
+      configFile[formValues.ruleType].unshift(newRule);
+      this.setState({ configFile: configFile, showModal: false });
+    } else {
+      this.setState({ triggerMessage: true });
+    }
   };
 
   handleSubmitRule = rule => {
     this.setState({ showModal: false });
   };
 
-  displayRules() {
-    if (!this.state.configFile) return;
-    var allRules = [];
-    Object.keys(ruleTypes).map(k => {
-      if (this.state.configFile[k]) {
-        this.state.configFile[k].map(rule => {
-          allRules.push(rule);
-        });
-        return k;
+  handleCloseModal = () => {
+    this.setState({ showModal: false });
+  };
+
+  handleClick = (e, titleProps) => {
+    const { index } = titleProps;
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+
+    this.setState({ activeIndex: newIndex });
+  };
+
+  handleChange = (type, index, value) => {
+    var configFile = { ...this.state.configFile };
+    configFile[type][index]["concludes"][
+      [ruleTypes[type]["conclusion"]]
+    ] = value;
+    this.setState({ configFile: configFile });
+  };
+
+  handelDelete = (type, index) => {
+    var array = this.state.configFile[type];
+    array.splice(index, 1);
+
+    this.setState({
+      ...this.state,
+      configFile: {
+        ...this.state.configFile,
+        [type]: array
       }
     });
+  };
 
-    var counter = 0;
-    return allRules.map(rule => {
-      return <RuleCard key={counter} />;
-    });
+  displayContent() {
+    if (this.state.loaded) {
+      var i = -1;
+      return Object.keys(ruleTypes).map(k => {
+        i++;
+        var j = 0;
+        return (
+          <React.Fragment key={i}>
+            <Accordion.Title
+              active={this.state.activeIndex === i}
+              index={i}
+              onClick={this.handleClick}
+            >
+              <Icon name="dropdown" />
+              {k}
+            </Accordion.Title>
+            <Accordion.Content active={this.state.activeIndex === i}>
+              {[
+                this.state.configFile[k].map(rule => {
+                  return (
+                    <RuleCard
+                      type={k}
+                      index={j}
+                      key={j++}
+                      rule={rule}
+                      onChange={this.handleChange}
+                      onDelete={this.handelDelete}
+                    />
+                  );
+                })
+              ]}
+            </Accordion.Content>
+          </React.Fragment>
+        );
+      });
+    } else {
+      return null;
+    }
   }
 
   render() {
-    const { ruleTypes, rulesSelectOptions } = this.state;
+    const { ruleTypes, rulesSelectOptions, activeIndex } = this.state;
     return (
       <div className="Left-panel">
         <Button
@@ -280,7 +359,9 @@ export default class LeftPanel extends React.Component {
           {" "}
           Add a rule{" "}
         </Button>{" "}
-        {this.displayRules()}
+        <Accordion fluid styled>
+          {this.displayContent()}
+        </Accordion>
         {this.state.showModal && (
           <NewRuleForm
             showModal={this.state.showModal}
@@ -288,6 +369,7 @@ export default class LeftPanel extends React.Component {
             ruleOptions={ruleTypes}
             selectOptions={rulesSelectOptions}
             onSubmit={this.onNewRuleSubmit}
+            onClose={this.handleCloseModal}
           />
         )}
       </div>
