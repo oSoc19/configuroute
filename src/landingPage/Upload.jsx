@@ -29,6 +29,9 @@ class Upload extends React.Component {
       <div>
         <Header> {this.props.data.file.name} </Header>
         <Segment>
+          <Label> Size: </Label> {this.props.data.file.size + " bytes"}
+        </Segment>
+        <Segment>
           {" "}
           <Label> Label: </Label> {this.props.data.configFile["rdfs:label"]}{" "}
         </Segment>

@@ -46,7 +46,7 @@ export default class LeftPanel extends React.Component {
                 return (
                   <RuleCard
                     type={ruleType}
-                    index={j}
+                    index={j++}
                     key={JSON.stringify(rule)}
                     rule={rule}
                     onChange={this.props.onRuleConclusionChange}
@@ -91,7 +91,7 @@ export default class LeftPanel extends React.Component {
         {this.state.showModal && (
           <NewRuleForm
             showModal={this.state.showModal}
-            ruleOptions={this.props.ruleTypes}
+            ruleTypes={this.props.ruleTypes}
             selectOptions={this.props.rulesSelectOptions}
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}

@@ -110,8 +110,9 @@ class NewConfigFileForm extends React.Component {
   form() {
     const { description, maxSpeed, usePublicTransport } = this.state;
     return (
-      <Form error>
+      <Form>
         <Form.Input
+          type="number"
           label="Description"
           placeholder="Vehicle profile for..."
           name="description"

@@ -125,8 +125,7 @@ class Index extends React.Component {
                 journey should always be adapted to your very specific mobility
                 needs. For this reason, we created *ConfiguRoute* : a tool to
                 quickly and easily create finely tuned configuration files for
-                your transport profiles. These configs can then be used to
-                design existing or new route planners.
+                your transport profiles.
               </p>
             </div>
           </Grid.Column>

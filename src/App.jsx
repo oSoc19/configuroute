@@ -183,22 +183,27 @@ const rulesSelectOptions = {
 const ruleTypes = {
   hasAccessRules: {
     conclusion: "hasAccess",
+    type: "boolean",
     defaultValue: false
   },
   hasObstacleRules: {
     conclusion: "isObstacle",
+    type: "boolean",
     defaultValue: true
   },
   hasOnewayRules: {
     conclusion: "isOneway",
+    type: "boolean",
     defaultValue: true
   },
   hasPriorityRules: {
-    conclusion: "isReversed",
+    conclusion: "hasPriority",
+    type: "number",
     defaultValue: 0
   },
   hasSpeedRules: {
     conclusion: "hasSpeed",
+    type: "number",
     defaultValue: 35
   }
 };
