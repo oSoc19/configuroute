@@ -5,9 +5,7 @@ import {
   Icon,
   Input,
   Checkbox,
-  Label,
   Segment,
-  Header,
   Modal
 } from "semantic-ui-react";
 

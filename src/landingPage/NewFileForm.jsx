@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Grid, Button, Label, Segment } from "semantic-ui-react";
+import { Form, Grid, Button, Segment } from "semantic-ui-react";
 import BackButton from "./BackButton.jsx";
 import ConfirmButton from "./ConfirmButton.jsx";
 

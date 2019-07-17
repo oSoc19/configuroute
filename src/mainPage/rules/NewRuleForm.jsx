@@ -6,7 +6,6 @@ import {
   Segment,
   Grid,
   Button,
-  Confirm,
   Message
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";

@@ -1,8 +1,8 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
+import { Button, Accordion, Icon } from "semantic-ui-react";
 import RuleCard from "./rules/RuleCard";
-const Engine = require("./bundle.js");
+//const Engine = require("./bundle.js");
 //import Engine from "./bundle.js";
 
 const rulesSelectOptions = {
@@ -214,71 +214,15 @@ export default class LeftPanel extends React.Component {
       rulesSelectOptions: rulesSelectOptions,
       ruleTypes: ruleTypes,
       showModal: false,
-      newRuleExists: false,
-      activeIndex: 0,
-      queryValue: ""
+      activeIndex: 0
     };
-
-    this.queryInformation = this.queryInformation.bind(this);
-  }
-
-  isEmpty(obj) {
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) return false;
-    }
-    return true;
   }
 
   componentDidUpdate(prevProps) {
-    if (
-      prevProps.configFile !== this.props.configFile &&
-      this.isEmpty(this.state.configFile)
-    ) {
+    if (prevProps.configFile !== this.props.configFile) {
       this.setState({ loaded: true, configFile: this.props.configFile });
     }
-
-    this.props.onConfigFileChance(this.state.configFile);
   }
-
-  onNewRuleSubmit = formValues => {
-    var isANewRule = true;
-    this.state.configFile[formValues.ruleType].map(rule => {
-      if (
-        rule["match"] &&
-        rule["match"]["hasPredicate"] == formValues.key &&
-        rule["match"]["hasObject"] == formValues.value
-      ) {
-        isANewRule = false;
-        return false;
-      }
-      return true;
-    });
-
-    if (isANewRule) {
-      var configFile = { ...this.state.configFile };
-
-      let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
-        "conclusion"
-      ];
-
-      let newRule = {};
-      newRule["match"] = {};
-      newRule["match"]["hasPredicate"] = formValues.key;
-      newRule["match"]["hasObject"] = formValues.value;
-      newRule["concludes"] = {};
-      newRule["concludes"][conclusionLabel] = formValues.conclusion;
-      newRule["hasOrder"] = formValues.order;
-
-      configFile[formValues.ruleType].unshift(newRule);
-      this.setState({ configFile: configFile, showModal: false });
-    } else {
-      this.setState({ triggerMessage: true });
-    }
-  };
-
-  handleSubmitRule = rule => {
-    this.setState({ showModal: false });
-  };
 
   handleCloseModal = () => {
     this.setState({ showModal: false });
@@ -290,27 +234,6 @@ export default class LeftPanel extends React.Component {
     const newIndex = activeIndex === index ? -1 : index;
 
     this.setState({ activeIndex: newIndex });
-  };
-
-  handleChange = (type, index, value) => {
-    var configFile = { ...this.state.configFile };
-    configFile[type][index]["concludes"][
-      [ruleTypes[type]["conclusion"]]
-    ] = value;
-    this.setState({ configFile: configFile });
-  };
-
-  handelDelete = (type, index) => {
-    var array = this.state.configFile[type];
-    array.splice(index, 1);
-
-    this.setState({
-      ...this.state,
-      configFile: {
-        ...this.state.configFile,
-        [type]: array
-      }
-    });
   };
 
   displayContent() {
@@ -338,8 +261,8 @@ export default class LeftPanel extends React.Component {
                       index={j}
                       key={j++}
                       rule={rule}
-                      onChange={this.handleChange}
-                      onDelete={this.handelDelete}
+                      onChange={this.props.onRuleConclusionChange}
+                      onDelete={this.props.onRuleDelete}
                     />
                   );
                 })
@@ -351,12 +274,6 @@ export default class LeftPanel extends React.Component {
     } else {
       return null;
     }
-  }
-
-  handleQueryChange = (e, { name, value }) => this.setState({ [name]: value });
-
-  queryInformation() {
-    var engine = new Engine("http://hdelva.be/tiles/ns/ontology");
   }
 
   render() {
@@ -372,19 +289,6 @@ export default class LeftPanel extends React.Component {
           {" "}
           Add a rule{" "}
         </Button>{" "}
-        <Segment>
-          <Input
-            label="Query"
-            placeholder="Query information"
-            name="queryValue"
-            value={this.queryValue}
-            onChange={this.handleQueryChange}
-            required
-          />
-          <Button secondary onClick={this.queryInformation}>
-            query
-          </Button>
-        </Segment>
         <Accordion fluid styled>
           {this.displayContent()}
         </Accordion>
@@ -394,7 +298,10 @@ export default class LeftPanel extends React.Component {
             onSubmit={this.onNewRuleSubmit}
             ruleOptions={ruleTypes}
             selectOptions={rulesSelectOptions}
-            onSubmit={this.onNewRuleSubmit}
+            onSubmit={formValues => {
+              this.handleCloseModal();
+              this.props.onNewRuleSubmit(formValues);
+            }}
             onClose={this.handleCloseModal}
           />
         )}
