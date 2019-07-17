@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from 'react-dom';
 import { Label, Button, Icon, Container, Input, Dropdown } from 'semantic-ui-react';
-import ReactMapboxGl, { Layer, Feature } from "react-mapbox-gl";
+import ReactMapboxGl, { Layer, Feature, Marker } from "react-mapbox-gl";
 import {Planner} from 'plannerjs';
 //import MapboxGL from "@react-native-mapbox-gl/maps";
 
@@ -291,9 +291,10 @@ class MapPannel extends React.Component{
             i++;
           }
           return(
-          <Layer type="line" layout={lineLayout} paint={savedRouteLinePaint}>
-            <Feature coordinates={ this.state.saved_routes[i].coordinates } />
-          </Layer>);
+            <Layer type="line" layout={lineLayout} paint={savedRouteLinePaint}>
+              <Feature coordinates={ this.state.saved_routes[i].coordinates } />
+            </Layer>
+          );
         }
           
         );
@@ -344,6 +345,7 @@ class MapPannel extends React.Component{
                 value={this.state.selected_routes}
                 onAddItem={this.handleSelectedRouteAddition}
                 onChange={this.handleSelectedRoutesChange}
+                className="routeSelectDropdown"
               />
             </Container>
             <div style={{height: '100%'}}>
