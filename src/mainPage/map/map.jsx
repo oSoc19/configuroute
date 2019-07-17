@@ -1,4 +1,5 @@
 import React from "react";
+
 import ReactDOM from 'react-dom';
 import { Label, Button, Icon, Container, Input, Dropdown } from 'semantic-ui-react';
 import ReactMapboxGl, { Layer, Feature, Marker } from "react-mapbox-gl";
@@ -10,7 +11,8 @@ import {Planner} from 'plannerjs';
 //MapboxGL.setAccessToken("pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg");
 
 const Map = ReactMapboxGl({
-  accessToken: "pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg"
+  accessToken:
+    "pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg"
 });
 
 const markerGeojson = {
@@ -93,7 +95,7 @@ class MapPannel extends React.Component{
         /*this.planner.setDevelopmentProfile(//PUT CONFIG HERE);*/
           
     }
-
+    
       componentDidMount() {        
         
       }
@@ -252,6 +254,7 @@ class MapPannel extends React.Component{
           }
         }));
       }
+
       createToMarker(){
         console.log(this.state.to_marker.lngLat)
         this.setState((state, props) => ({
@@ -262,7 +265,6 @@ class MapPannel extends React.Component{
           }
         }));
       }
-
 
       handleSelectedRouteAddition = (e, { value }) => {
         console.log("hadleAddition value");
@@ -371,6 +373,5 @@ class MapPannel extends React.Component{
         );
       }
 }
-
 
 export default MapPannel;
