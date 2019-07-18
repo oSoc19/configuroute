@@ -114,9 +114,8 @@ export default class LeftPanel extends React.Component {
                 this.setState({ showModal: true });
               }}
             >
-              {" "}
-              Add a rule{" "}
-            </Button>{" "}
+              Add a rule
+            </Button>
           </Menu.Item>
           <Menu.Item>
             <Button
