@@ -107,7 +107,6 @@ class MapPannel extends React.Component{
       console.log("config file loaded:");
       console.log(this.props.configFile);
     }
-    
   }
 
 
