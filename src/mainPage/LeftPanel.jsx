@@ -2,8 +2,7 @@ import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
 import RuleCard from "./rules/ruleCard";
-const Engine = require("./bundle.js");
-//import Engine from "./bundle.js";
+import OntologyReader from "../lib/OntologyReader";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -291,6 +290,14 @@ export default class LeftPanel extends React.Component {
     this.handleCloseModal();
     this.props.onNewRuleSubmit(formValues);
   };
+
+  handleQueryChange = (e, { name, value }) => this.setState({ [name]: value });
+
+  async queryInformation() {
+    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
+    let options = await engine.getNamedIndividualsForProperty('https://w3id.org/openstreetmap/terms#highway');
+    console.log(options)
+  }
 
   render() {
     return (
