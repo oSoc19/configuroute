@@ -39,12 +39,5 @@
 .Right-panel {
   grid-area: rightpanel;
   height: 94vh;
-}
-
-.fromToInputs{
-  margin: 12px;
-}
-
-.routeSelectDropdown{
-  padding: 12px;
+  margin: 10px;
 }

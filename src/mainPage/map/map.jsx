@@ -50,10 +50,10 @@ const savedRouteLinePaint = {
 };
 
 const containerStyle = {
-  height: "100%",
+  height: "80vh",
   width: "100%",
   cursor: ''
-}
+};
 
 
 class MapPannel extends React.Component{
@@ -401,17 +401,18 @@ class MapPannel extends React.Component{
     );
     return (
       <div style={{height: '100%', width: '100%'}}>
-        <MapToolbar calculating={this.state.calculating}
-                          from_marker={this.state.from_marker}
-                          to_marker={this.state.to_marker}
-                          createFromMarker={this.createFromMarker}
-                          createToMarker={this.createToMarker}
-                          selectable_routes={this.state.selectable_routes}
-                          selected_routes={this.state.selected_routes}
-                          handleSelectedRouteAddition={this.handleSelectedRouteAddition}
-                          handleSelectedRoutesChange={this.handleSelectedRoutesChange}
-                          calculateRoute={this.calculateRoute}
-                          saveCurrentRoute={this.saveCurrentRoute}/>
+        <MapToolbar style={{height: '20vh', width: '100vh'}}
+              calculating={this.state.calculating}
+              from_marker={this.state.from_marker}
+              to_marker={this.state.to_marker}
+              createFromMarker={this.createFromMarker}
+              createToMarker={this.createToMarker}
+              selectable_routes={this.state.selectable_routes}
+              selected_routes={this.state.selected_routes}
+              handleSelectedRouteAddition={this.handleSelectedRouteAddition}
+              handleSelectedRoutesChange={this.handleSelectedRoutesChange}
+              calculateRoute={this.calculateRoute}
+              saveCurrentRoute={this.saveCurrentRoute}/>
         <Map
           style="mapbox://styles/mapbox/streets-v11"
           containerStyle={ this.state.container_style } 
