@@ -8,6 +8,7 @@
     "mapbox-gl": "^1.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
+    "react-json-editor-ajrm": "^2.5.9",
     "react-mapbox-gl": "^4.5.1",
     "react-modal": "^3.8.2",
     "react-scripts": "^3.0.1",

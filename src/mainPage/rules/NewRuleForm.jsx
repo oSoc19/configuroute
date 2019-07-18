@@ -82,7 +82,7 @@ class NewRuleForm extends React.Component {
           placeholder={label}
           label={label}
           onChange={this.handleChangeChecked}
-          checked={this.props.ruleTypes[this.state.ruleType].defaultValue}
+          checked={this.state.conclusion}
           slider
         />
       );

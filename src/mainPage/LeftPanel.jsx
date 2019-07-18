@@ -1,7 +1,8 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button, Accordion, Icon } from "semantic-ui-react";
+import { Button, Accordion, Icon, Menu, Segment } from "semantic-ui-react";
 import RuleCard from "./rules/RuleCard";
+import ConfigFileModal from "./ConfigFileModal";
 
 export default class LeftPanel extends React.Component {
   constructor(props) {
@@ -9,6 +10,7 @@ export default class LeftPanel extends React.Component {
 
     this.state = {
       showModal: false,
+      showConfigFile: false,
       activeIndex: 0
     };
   }
@@ -73,19 +75,62 @@ export default class LeftPanel extends React.Component {
     this.props.onNewRuleSubmit(formValues);
   };
 
+  displayBasicProperties = () => {
+    return (
+      <React.Fragment key={10}>
+        <Accordion.Title
+          active={this.state.activeIndex === 10}
+          index={10}
+          onClick={this.handleClick}
+        >
+          <Icon name="dropdown" />
+          {"Basic properties"}
+        </Accordion.Title>
+        <Accordion.Content active={this.state.activeIndex === 10}>
+          {Object.keys(this.props.configFile).map(key => {
+            var value = this.props.configFile[key];
+            if (!Array.isArray(value) && !(typeof value === "object")) {
+              var text = key + " : " + value;
+              return <Segment key={text}> {text} </Segment>;
+            }
+          })}
+        </Accordion.Content>
+      </React.Fragment>
+    );
+  };
+
   render() {
     return (
       <div className="Left-panel">
-        <Button
-          primary
-          onClick={() => {
-            this.setState({ showModal: true });
-          }}
-        >
-          {" "}
-          Add a rule{" "}
-        </Button>{" "}
+        <Menu>
+          {/*<Menu.Item>
+            <img src="./assets/logo.jpg" />
+          </Menu.Item>*/}
+          <Menu.Item>
+            <Button
+              primary
+              onClick={() => {
+                this.setState({ showModal: true });
+              }}
+            >
+              {" "}
+              Add a rule{" "}
+            </Button>{" "}
+          </Menu.Item>
+          <Menu.Item>
+            <Button
+              onClick={() => {
+                this.setState({ showConfigFile: true });
+              }}
+              secondary
+            >
+              Display config file
+            </Button>
+          </Menu.Item>
+        </Menu>
+
         <Accordion fluid styled>
+          {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
         {this.state.showModal && (
@@ -95,6 +140,15 @@ export default class LeftPanel extends React.Component {
             selectOptions={this.props.rulesSelectOptions}
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
+          />
+        )}
+        {this.state.showConfigFile && (
+          <ConfigFileModal
+            open={this.state.showConfigFile}
+            configFile={this.props.configFile}
+            onClose={() => {
+              this.setState({ showConfigFile: false });
+            }}
           />
         )}
       </div>
