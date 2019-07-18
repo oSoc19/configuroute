@@ -55,6 +55,12 @@ const savedRouteLinePaint = {
   'line-width': 5
 };
 
+const containerStyle = {
+  height: "100%",
+  width: "100%",
+  cursor: ''
+}
+
 
 class MapPannel extends React.Component{
     
@@ -84,7 +90,8 @@ class MapPannel extends React.Component{
         active_route_label_input: undefined,
         saved_routes: [],
         selectable_routes: [],
-        selected_routes: []
+        selected_routes: [],
+        container_style: containerStyle
       };
 
       this.createFromMarker = this.createFromMarker.bind(this);
@@ -234,12 +241,14 @@ class MapPannel extends React.Component{
       // When the cursor enters a feature in the point layer, prepare for dragging.
       map.on('mouseenter', 'from_marker', function() {
         map.setPaintProperty('from_marker', 'circle-color', '#3bb2d0');
-        //canvas.style.cursor = 'move';
+        containerStyle.cursor = "move";
+        parent.setState({container_style: containerStyle});
       });
           
       map.on('mouseleave', 'from_marker', function() {
         map.setPaintProperty('from_marker', 'circle-color', '#3887be');
-        //canvas.style.cursor = '';
+        containerStyle.cursor = "";
+        parent.setState({container_style: containerStyle});
       });
       
       map.on('mousedown', 'from_marker', function(e) {
@@ -254,15 +263,20 @@ class MapPannel extends React.Component{
             lngLat: prevState.from_marker.lngLat
           }
         }));
-        //canvas.style.cursor = 'grab';
+        containerStyle.cursor = "grab";
+        parent.setState({container_style: containerStyle});
       });
 
       map.on('mouseenter', 'to_marker', function() {
         map.setPaintProperty('to_marker', 'circle-color', '#3bb2d0');
+        containerStyle.cursor = "move";
+        parent.setState({container_style: containerStyle});
       });
           
       map.on('mouseleave', 'to_marker', function() {
         map.setPaintProperty('to_marker', 'circle-color', '#9f7feb');
+        containerStyle.cursor = "";
+        parent.setState({container_style: containerStyle});
       });
       
       map.on('mousedown', 'to_marker', function(e) {
@@ -276,6 +290,8 @@ class MapPannel extends React.Component{
             lngLat: prevState.to_marker.lngLat
           }
         }));
+        containerStyle.cursor = "grab";
+        parent.setState({container_style: containerStyle});
       });
     }
 
@@ -434,10 +450,7 @@ class MapPannel extends React.Component{
             <div style={{height: '100%'}}>
             <Map
               style="mapbox://styles/mapbox/streets-v11"
-              containerStyle={{
-                height: "100%",
-                width: "100%"
-              }} 
+              containerStyle={ this.state.container_style } 
               center={ center }
               zoom={ zoom }
               onStyleLoad={this.onStyleLoad}
