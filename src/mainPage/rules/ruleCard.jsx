@@ -8,6 +8,7 @@ import {
   Segment,
   Modal
 } from "semantic-ui-react";
+import ConfigFileModal from "../ConfigFileModal";
 
 class RuleCard extends React.Component {
   constructor(props) {
@@ -111,14 +112,15 @@ class RuleCard extends React.Component {
               <Icon name="code" />
             </Button>
           </Button.Group>{" "}
-          <Modal open={this.state.showModal}>
-            {" "}
-            {JSON.stringify(this.props.rule, null, 4)}{" "}
-            <Button onClick={this.handleCloseModal} icon>
-              {" "}
-              <Icon name="close"> </Icon>
-            </Button>
-          </Modal>
+          {this.state.showModal && (
+            <ConfigFileModal
+              open={this.state.showModal}
+              onClose={() => {
+                this.setState({ showModal: false });
+              }}
+              configFile={this.props.rule}
+            />
+          )}
         </Card.Content>
       </Card>
     );
