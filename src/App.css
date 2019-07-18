@@ -38,6 +38,7 @@
 
 .Right-panel {
   grid-area: rightpanel;
+  height: 94vh;
 }
 
 .fromToInputs{

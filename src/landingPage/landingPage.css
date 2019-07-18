@@ -1,6 +1,7 @@
 .ReactModal__Overlay {
   opacity: 0;
   transition: opacity 500ms ease-in-out;
+  z-index: 3;
 }
 
 .ReactModal__Overlay--after-open {
@@ -18,16 +19,6 @@
 .ReactModal__Content.ReactModal__Content--after-open > .ui.grid {
   height: 100%;
   margin: 0 !important;
-}
-
-.ReactModal__Content.ReactModal__Content--after-open
-  > .ui.grid
-  > .row
-  > .ui.buttons
-  > .ui.button {
-  padding: 0;
-  margin: 0;
-  border-radius: 0;
 }
 
 .ReactModal__Content.ReactModal__Content--after-open

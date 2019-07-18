@@ -2,8 +2,7 @@ import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
 import RuleCard from "./rules/ruleCard";
-const Engine = require("./bundle.js");
-//import Engine from "./bundle.js";
+import OntologyReader from "../lib/OntologyReader";
 
 const rulesSelectOptions = {
   "osm:access": [
@@ -203,21 +202,15 @@ const ruleTypes = {
     defaultValue: 35
   }
 };
-
 export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      loaded: false,
-      configFile: {},
-      rulesSelectOptions: rulesSelectOptions,
-      ruleTypes: ruleTypes,
       showModal: false,
-      newRuleExists: false,
-      activeIndex: 0,
-      queryValue: ""
+      activeIndex: 0
     };
+
 
     this.queryInformation = this.queryInformation.bind(this);
   }
@@ -238,46 +231,6 @@ export default class LeftPanel extends React.Component {
     }
   }
 
-  onNewRuleSubmit = formValues => {
-    var isANewRule = true;
-    this.state.configFile[formValues.ruleType].map(rule => {
-      if (
-        rule["match"] &&
-        rule["match"]["hasPredicate"] == formValues.key &&
-        rule["match"]["hasObject"] == formValues.value
-      ) {
-        isANewRule = false;
-        return false;
-      }
-      return true;
-    });
-
-    if (isANewRule) {
-      var configFile = { ...this.state.configFile };
-
-      let conclusionLabel = this.state.ruleTypes[formValues.ruleType][
-        "conclusion"
-      ];
-
-      let newRule = {};
-      newRule["match"] = {};
-      newRule["match"]["hasPredicate"] = formValues.key;
-      newRule["match"]["hasObject"] = formValues.value;
-      newRule["concludes"] = {};
-      newRule["concludes"][conclusionLabel] = formValues.conclusion;
-      newRule["hasOrder"] = formValues.order;
-
-      configFile[formValues.ruleType].unshift(newRule);
-      this.setState({ configFile: configFile, showModal: false });
-    } else {
-      this.setState({ triggerMessage: true });
-    }
-  };
-
-  handleSubmitRule = rule => {
-    this.setState({ showModal: false });
-  };
-
   handleCloseModal = () => {
     this.setState({ showModal: false });
   };
@@ -290,31 +243,10 @@ export default class LeftPanel extends React.Component {
     this.setState({ activeIndex: newIndex });
   };
 
-  handleChange = (type, index, value) => {
-    var configFile = { ...this.state.configFile };
-    configFile[type][index]["concludes"][
-      [ruleTypes[type]["conclusion"]]
-    ] = value;
-    this.setState({ configFile: configFile });
-  };
-
-  handelDelete = (type, index) => {
-    var array = this.state.configFile[type];
-    array.splice(index, 1);
-
-    this.setState({
-      ...this.state,
-      configFile: {
-        ...this.state.configFile,
-        [type]: array
-      }
-    });
-  };
-
   displayContent() {
-    if (this.state.loaded) {
+    if (this.props.loaded) {
       var i = -1;
-      return Object.keys(ruleTypes).map(k => {
+      return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
         return (
@@ -325,23 +257,21 @@ export default class LeftPanel extends React.Component {
               onClick={this.handleClick}
             >
               <Icon name="dropdown" />
-              {k}
+              {ruleType}
             </Accordion.Title>
             <Accordion.Content active={this.state.activeIndex === i}>
-              {[
-                this.state.configFile[k].map(rule => {
-                  return (
-                    <RuleCard
-                      type={k}
-                      index={j}
-                      key={j++}
-                      rule={rule}
-                      onChange={this.handleChange}
-                      onDelete={this.handelDelete}
-                    />
-                  );
-                })
-              ]}
+              {this.props.configFile[ruleType].map(rule => {
+                return (
+                  <RuleCard
+                    type={ruleType}
+                    index={j++}
+                    key={JSON.stringify(rule)}
+                    rule={rule}
+                    onChange={this.props.onRuleConclusionChange}
+                    onDelete={this.props.onRuleDelete}
+                  />
+                );
+              })}
             </Accordion.Content>
           </React.Fragment>
         );
@@ -351,14 +281,25 @@ export default class LeftPanel extends React.Component {
     }
   }
 
+  handleSubmit = formValues => {
+    var newActiveIndex = Object.keys(this.props.ruleTypes).indexOf(
+      formValues.ruleType
+    );
+    if (newActiveIndex != this.state.activeIndex)
+      this.setState({ activeIndex: newActiveIndex });
+    this.handleCloseModal();
+    this.props.onNewRuleSubmit(formValues);
+  };
+
   handleQueryChange = (e, { name, value }) => this.setState({ [name]: value });
 
-  queryInformation() {
-    var engine = new Engine("http://hdelva.be/tiles/ns/ontology");
+  async queryInformation() {
+    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
+    let options = await engine.getNamedIndividualsForProperty('https://w3id.org/openstreetmap/terms#highway');
+    console.log(options)
   }
 
   render() {
-    const { ruleTypes, rulesSelectOptions, activeIndex } = this.state;
     return (
       <div className="Left-panel">
         <Button
@@ -370,29 +311,15 @@ export default class LeftPanel extends React.Component {
           {" "}
           Add a rule{" "}
         </Button>{" "}
-        <Segment>
-          <Input
-            label="Query"
-            placeholder="Query information"
-            name="queryValue"
-            value={this.queryValue}
-            onChange={this.handleQueryChange}
-            required
-          />
-          <Button secondary onClick={this.queryInformation}>
-            query
-          </Button>
-        </Segment>
         <Accordion fluid styled>
           {this.displayContent()}
         </Accordion>
         {this.state.showModal && (
           <NewRuleForm
             showModal={this.state.showModal}
-            onSubmit={this.onNewRuleSubmit}
-            ruleOptions={ruleTypes}
-            selectOptions={rulesSelectOptions}
-            onSubmit={this.onNewRuleSubmit}
+            ruleTypes={this.props.ruleTypes}
+            selectOptions={this.props.rulesSelectOptions}
+            onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
           />
         )}

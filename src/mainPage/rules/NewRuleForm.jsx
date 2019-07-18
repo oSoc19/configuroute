@@ -6,31 +6,11 @@ import {
   Segment,
   Grid,
   Button,
-  Confirm,
   Message
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
 import "../../landingPage/landingPage.css";
-
-const customModalStyle = {
-  content: {
-    width: "80%",
-    height: "80%",
-    padding: "0",
-    borderRadius: "12px",
-    outline: "none",
-    border: "none",
-    top: "50%",
-    left: "50%",
-    position: "absolute",
-    marginRight: "-50%",
-    transform: "translate(-50%, -50%)"
-  },
-  overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.7)"
-  }
-};
 
 class NewRuleForm extends React.Component {
   constructor(props) {
@@ -54,7 +34,7 @@ class NewRuleForm extends React.Component {
     this.setState({ conclusion: !this.state.conclusion });
 
   form() {
-    const ruleTypeOptions = Object.keys(this.props.ruleOptions).map(k => {
+    const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
         key: k,
         value: k,
@@ -83,39 +63,27 @@ class NewRuleForm extends React.Component {
           });
 
     let conclusionForm;
-    if (
-      this.state.ruleType === "hasPriorityRules" ||
-      this.state.ruleType === "hasSpeedRules"
-    ) {
+    if (this.props.ruleTypes[this.state.ruleType].type === "number") {
       conclusionForm = (
         <Form.Input
+          type="number"
           name="conclusion"
-          placeholder={
-            this.state.ruleType === "hasPriorityRules"
-              ? "priority level"
-              : "speed"
-          }
+          placeholder={this.props.ruleTypes[this.state.ruleType].conclusion}
           label="conclusion"
           onChange={this.handleChange}
           value={this.state.conclusion}
-          required={true}
         />
       );
     } else if (this.state.ruleType !== "") {
-      let label = this.props.ruleOptions[this.state.ruleType]["conclusion"];
+      let label = this.props.ruleTypes[this.state.ruleType]["conclusion"];
       conclusionForm = (
         <Form.Checkbox
           name="conclusion"
           placeholder={label}
           label={label}
           onChange={this.handleChangeChecked}
-          checked={
-            typeof this.state.conclusion === "string"
-              ? false
-              : this.state.conclusion
-          }
+          checked={this.props.ruleTypes[this.state.ruleType].defaultValue}
           slider
-          required={true}
         />
       );
     } else {
@@ -131,10 +99,8 @@ class NewRuleForm extends React.Component {
           options={ruleTypeOptions} //TODO: change it
           onChange={this.handleChange}
           value={this.state.ruleType}
-          required={true}
         />
 
-        <Label> Condition </Label>
         <Form.Group>
           <Form.Select
             name="key"
@@ -143,7 +109,6 @@ class NewRuleForm extends React.Component {
             options={keyOptions}
             onChange={this.handleChange}
             value={this.state.key}
-            required={true}
           />
           <Form.Select
             name="value"
@@ -152,7 +117,6 @@ class NewRuleForm extends React.Component {
             options={valueOptions}
             onChange={this.handleChange}
             value={this.state.value}
-            required={true}
           />
         </Form.Group>
         <Form.Group />
@@ -170,24 +134,18 @@ class NewRuleForm extends React.Component {
             <Label> All field values must be completed </Label>
           </Segment>
         )}
-        {this.props.triggerMessage && (
-          <Message>
-            This precise rule (type, key and value) already exists
-          </Message>
-        )}
       </Form>
     );
   }
 
   content = () => {
     return (
-      //TODO: problem: style is not applied
-      <Grid centered>
-        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "0" }}>
+      <Grid centered style={{height: '100%', margin: 0}}>
+        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "12px" }}>
           <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "50%", padding: "0" }}>
-          <Button.Group style={{ width: "100%" }}>
+        <Grid.Row columns={2} stretched style={{ height: "50px", padding: "0" }}>
+          <Button.Group style={{ width: "100%"}}>
             <BackButton onClick={this.props.onClose} />
             <Button.Or />
             <ConfirmButton
@@ -215,7 +173,7 @@ class NewRuleForm extends React.Component {
   render() {
     // TODO: required not working ?
     return (
-      <Modal open={this.props.showModal} style={customModalStyle}>
+      <Modal open={this.props.showModal} style={{'border-radius': '12px'}}>
         <this.content />
       </Modal>
     );
