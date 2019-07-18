@@ -292,6 +292,7 @@ class MapPannel extends React.Component{
     }
 
   onMouseClick(map, evt) {
+    var coords = evt.lngLat;
     if (this.state.from_marker.enabled && !this.state.from_marker.placed && !this.state.from_marker.dragging) {
       console.log("placed from-marker at " + this.state.from_marker.lngLat);
       this.setState(prevState => ({
@@ -299,7 +300,7 @@ class MapPannel extends React.Component{
           placed: true,
           enabled: true,
           dragging: false,
-          lngLat: prevState.from_marker.lngLat
+          lngLat: coords
         }
       }));
       console.log(this.state.from_marker);
@@ -311,7 +312,7 @@ class MapPannel extends React.Component{
           placed: true,
           enabled: true,
           dragging: false,
-          lngLat: prevState.to_marker.lngLat
+          lngLat: coords
         }
       }));
       console.log(this.state.to_marker);
