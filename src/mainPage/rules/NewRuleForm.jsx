@@ -140,13 +140,12 @@ class NewRuleForm extends React.Component {
 
   content = () => {
     return (
-      //TODO: problem: style is not applied
-      <Grid centered>
-        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "0" }}>
+      <Grid centered style={{height: '100%', margin: 0}}>
+        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "12px" }}>
           <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "50%", padding: "0" }}>
-          <Button.Group style={{ width: "100%" }}>
+        <Grid.Row columns={2} stretched style={{ height: "50px", padding: "0" }}>
+          <Button.Group style={{ width: "100%"}}>
             <BackButton onClick={this.props.onClose} />
             <Button.Or />
             <ConfirmButton
@@ -174,7 +173,7 @@ class NewRuleForm extends React.Component {
   render() {
     // TODO: required not working ?
     return (
-      <Modal open={this.props.showModal}>
+      <Modal open={this.props.showModal} style={{'border-radius': '12px'}}>
         <this.content />
       </Modal>
     );
