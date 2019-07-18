@@ -3,11 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@comunica/actor-init-sparql": "^1.8.0",
     "create-react-app": "^3.0.1",
     "gulp": "^4.0.2",
+    "mapbox-gl": "^1.1.0",
+    "plannerjs": "0.0.4-alpha",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1",
+    "react-json-editor-ajrm": "^2.5.9",
+    "react-mapbox-gl": "^4.5.1",
+    "react-modal": "^3.8.2",
+    "react-scripts": "^3.0.1",
     "semantic-ui-react": "^0.87.2",
     "yarn": "^1.16.0"
   },
@@ -15,7 +21,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -31,5 +38,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.5.0"
   }
 }
