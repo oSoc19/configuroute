@@ -5,7 +5,7 @@ import MapToolbar from './maptoolbar';
 
 const Map = ReactMapboxGl({
   accessToken:
-    "pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg"
+    "pk.eyJ1IjoiZ3VndWwiLCJhIjoiY2p4cDVqZXZvMGN6ejNjcm5zdjF6OWR1dSJ9._vc_H7CbewiDCHWYvD4CdQ"
 });
 
 
@@ -40,12 +40,12 @@ const lineLayout = {
 };
 
 const linePaint = {
-  "line-color": "#B52700",
+  "line-color": "#28A987",
   "line-width": 8
 };
 
 const savedRouteLinePaint = {
-  'line-color': '#BABABA',
+  'line-color': '#0B3463',
   'line-width': 5
 };
 
@@ -96,6 +96,7 @@ class MapPannel extends React.Component{
     this.handleSelectedRoutesChange = this.handleSelectedRoutesChange.bind(this);
     this.handleSelectedRouteAddition = this.handleSelectedRouteAddition.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
+    this.saveCurrentRoute = this.saveCurrentRoute.bind(this);
 
     this.planner = new Planner();
     this.planner.setProfileID("PEDESTRIAN");
@@ -415,7 +416,7 @@ class MapPannel extends React.Component{
               calculateRoute={this.calculateRoute}
               saveCurrentRoute={this.saveCurrentRoute}/>
         <Map
-          style="mapbox://styles/mapbox/streets-v11"
+          style="mapbox://styles/gugul/cjy77yl1713rg1cn0wiwq2ong/draft"
           containerStyle={ this.state.container_style } 
           center={ center }
           zoom={ zoom }

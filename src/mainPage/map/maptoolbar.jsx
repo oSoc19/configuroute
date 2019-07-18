@@ -8,6 +8,7 @@ class MapToolbar extends React.Component{
         this.state = {
             active_route_label_input: undefined,
         }
+        this.updateActiveRouteText=this.updateActiveRouteText.bind(this);
     }
 
     updateActiveRouteText(evt) {
