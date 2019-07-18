@@ -3,6 +3,7 @@ import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon, Menu, Segment } from "semantic-ui-react";
 import RuleCard from "./rules/RuleCard";
 import ConfigFileModal from "./ConfigFileModal";
+import OntologyReader from "../lib/OntologyReader";
 
 export default class LeftPanel extends React.Component {
   constructor(props) {
@@ -28,6 +29,7 @@ export default class LeftPanel extends React.Component {
   };
 
   displayContent() {
+    this.test();
     if (this.props.loaded) {
       var i = -1;
       return Object.keys(this.props.ruleTypes).map(ruleType => {
@@ -98,6 +100,16 @@ export default class LeftPanel extends React.Component {
       </React.Fragment>
     );
   };
+
+  async test() {
+    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
+    let options = await engine.getNamedIndividualsForProperty(
+      "https://w3id.org/openstreetmap/terms#highway"
+    );
+
+    console.log(options);
+    console.log(await engine.getEntityDescription(options[0]));
+  }
 
   render() {
     return (
