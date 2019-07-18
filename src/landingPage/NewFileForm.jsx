@@ -75,8 +75,8 @@ class NewConfigFileForm extends React.Component {
     super(props);
 
     this.state = {
-      description: "E-bike",
-      maxSpeed: "50",
+      description: "",
+      maxSpeed: "",
       usePublicTransport: false,
       showErrorMessage: false
     };
@@ -112,7 +112,6 @@ class NewConfigFileForm extends React.Component {
     return (
       <Form>
         <Form.Input
-          type="number"
           label="Description"
           placeholder="Vehicle profile for..."
           name="description"
@@ -122,6 +121,7 @@ class NewConfigFileForm extends React.Component {
         />
 
         <Form.Input
+          type="number"
           label="Maximum speed"
           placeholder="Speed in km/h"
           name="maxSpeed"

@@ -12,7 +12,7 @@ function ConfirmButton(props) {
       style={{'padding': 0, 'margin': 0, 'border-radius': '0px 0px 12px 0px'}}
     >
       <Icon name={"check"} style={{ width: "20%" }} size="large" />
-      Confirm selection
+      {props.label ? props.label : "Confirm selection"}
     </Button>
   );
 }
