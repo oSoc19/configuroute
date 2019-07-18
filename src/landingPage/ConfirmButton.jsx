@@ -11,7 +11,7 @@ function ConfirmButton(props) {
       disabled={props.disabled}
     >
       <Icon name={"check"} style={{ width: "20%" }} size="large" />
-      Confirm selection
+      {props.label ? props.label : "Confirm selection"}
     </Button>
   );
 }

@@ -1,234 +1,19 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button, Accordion, Icon, Segment, Input } from "semantic-ui-react";
-import RuleCard from "./rules/ruleCard";
+import { Button, Accordion, Icon, Menu, Segment } from "semantic-ui-react";
+import RuleCard from "./rules/RuleCard";
+import ConfigFileModal from "./ConfigFileModal";
 import OntologyReader from "../lib/OntologyReader";
 
-const rulesSelectOptions = {
-  "osm:access": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Discouraged",
-    "osm:Dismount",
-    "osm:Emergency",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:barrier": [
-    "osm:Block",
-    "osm:Bollard",
-    "osm:BorderControl",
-    "osm:BumpGate",
-    "osm:BusTrap",
-    "osm:CattleGrid",
-    "osm:Chain",
-    "osm:CycleBarrier",
-    "osm:Debris",
-    "osm:Entrance",
-    "osm:Gate",
-    "osm:LiftGate",
-    "osm:SallyPort",
-    "osm:SwingGate",
-    "osm:TollBooth",
-    "osm:Turnstile"
-  ],
-  "osm:bicycle": [
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Dismount",
-    "osm:NoAccess",
-    "osm:OfficialAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:construction": ["osm:UnderConstruction"],
-  "osm:crossing": ["osm:Uncontrolled", "osm:Unmarked"],
-  "osm:cycleway": [
-    "osm:Lane",
-    "osm:Opposite",
-    "osm:OpposciteLane",
-    "osm:OppositeTrack",
-    "osm:ShareBusway",
-    "osm:Shared",
-    "osm:SharedLane",
-    "osm:Track"
-  ],
-  "osm:footway": ["osm:Sidewalk"],
-  "osm:highway": [
-    "osm:Bridleway",
-    "osm:UnderConstruction",
-    "osm:HighwayCrossing",
-    "osm:CycleHighway",
-    "osm:FootHighway",
-    "osm:GiveWay",
-    "osm:LivingStreet",
-    "osm:Motorway",
-    "osm:MotorwayLink",
-    "osm:Path",
-    "osm:Primary",
-    "osm:PrimaryLink",
-    "osm:Proposed",
-    "osm:Residential",
-    "osm:Road",
-    "osm:Secondary",
-    "osm:SecondaryLink",
-    "osm:Service",
-    "osm:Steps",
-    "osm:Stop",
-    "osm:Tertiary",
-    "osm:TertiaryLink",
-    "osm:Track",
-    "osm:TrafficSignals",
-    "osm:Trunk",
-    "osm:TrunkLink",
-    "osm:Unclassified"
-  ],
-  "osm:motor_vehicle": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:motorcar": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:oneway_bicycle": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:Bidirectional",
-    "osm:InOrder"
-  ],
-  "osm:oneway": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:InOrder",
-    "osm:Bidirectional"
-  ],
-  "osm:smoothness": [
-    "osm:BadSmoothness",
-    "osm:ExcellentSmoothness",
-    "osm:GoodSmoothness",
-    "osm:HorribleSmoothness",
-    "osm:ImpassableSmoothness",
-    "osm:IntermediateSmoothness",
-    "osm:VeryBadSmoothness",
-    "osm:VeryHorribleSmoothness"
-  ],
-  "osm:surface": [
-    "osm:Asphalt",
-    "osm:Cobblestone",
-    "osm:Compacted",
-    "osm:Concrete",
-    "osm:Dirt",
-    "osm:Dirt",
-    "osm:FineGravel",
-    "osm:Grass",
-    "osm:Gravel",
-    "osm:Ground",
-    "osm:Mud",
-    "osm:Paved",
-    "osm:PavingStones",
-    "osm:Pebblestone",
-    "osm:Sand",
-    "osm:Sett",
-    "osm:UnhewnCobblestone",
-    "osm:Unpaved",
-    "osm:Wood"
-  ],
-  "osm:tracktype": [
-    "osm:Grade1",
-    "osm:Grade2",
-    "osm:Grade3",
-    "osm:Grade4",
-    "osm:Grade5"
-  ],
-  "osm:vehicle": [
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ]
-};
-
-const ruleTypes = {
-  hasAccessRules: {
-    conclusion: "hasAccess",
-    defaultValue: false
-  },
-  hasObstacleRules: {
-    conclusion: "isObstacle",
-    defaultValue: true
-  },
-  hasOnewayRules: {
-    conclusion: "isOneway",
-    defaultValue: true
-  },
-  hasPriorityRules: {
-    conclusion: "isReversed",
-    defaultValue: 0
-  },
-  hasSpeedRules: {
-    conclusion: "hasSpeed",
-    defaultValue: 35
-  }
-};
 export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
       showModal: false,
+      showConfigFile: false,
       activeIndex: 0
     };
-
-
-    this.queryInformation = this.queryInformation.bind(this);
-  }
-
-  isEmpty(obj) {
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) return false;
-    }
-    return true;
-  }
-
-  componentDidUpdate(prevProps) {
-    if (
-      prevProps.configFile !== this.props.configFile &&
-      this.isEmpty(this.state.configFile)
-    ) {
-      this.setState({ loaded: true, configFile: this.props.configFile });
-    }
   }
 
   handleCloseModal = () => {
@@ -291,27 +76,62 @@ export default class LeftPanel extends React.Component {
     this.props.onNewRuleSubmit(formValues);
   };
 
-  handleQueryChange = (e, { name, value }) => this.setState({ [name]: value });
-
-  async queryInformation() {
-    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
-    let options = await engine.getNamedIndividualsForProperty('https://w3id.org/openstreetmap/terms#highway');
-    console.log(options)
-  }
+  displayBasicProperties = () => {
+    return (
+      <React.Fragment key={10}>
+        <Accordion.Title
+          active={this.state.activeIndex === 10}
+          index={10}
+          onClick={this.handleClick}
+        >
+          <Icon name="dropdown" />
+          {"Basic properties"}
+        </Accordion.Title>
+        <Accordion.Content active={this.state.activeIndex === 10}>
+          {Object.keys(this.props.configFile).map(key => {
+            var value = this.props.configFile[key];
+            if (!Array.isArray(value) && !(typeof value === "object")) {
+              var text = key + " : " + value;
+              return <Segment key={text}> {text} </Segment>;
+            }
+          })}
+        </Accordion.Content>
+      </React.Fragment>
+    );
+  };
 
   render() {
     return (
       <div className="Left-panel">
-        <Button
-          primary
-          onClick={() => {
-            this.setState({ showModal: true });
-          }}
-        >
-          {" "}
-          Add a rule{" "}
-        </Button>{" "}
+        <Menu>
+          {/*<Menu.Item>
+            <img src="./assets/logo.jpg" />
+          </Menu.Item>*/}
+          <Menu.Item>
+            <Button
+              primary
+              onClick={() => {
+                this.setState({ showModal: true });
+              }}
+            >
+              {" "}
+              Add a rule{" "}
+            </Button>{" "}
+          </Menu.Item>
+          <Menu.Item>
+            <Button
+              onClick={() => {
+                this.setState({ showConfigFile: true });
+              }}
+              secondary
+            >
+              Display config file
+            </Button>
+          </Menu.Item>
+        </Menu>
+
         <Accordion fluid styled>
+          {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
         {this.state.showModal && (
@@ -321,6 +141,15 @@ export default class LeftPanel extends React.Component {
             selectOptions={this.props.rulesSelectOptions}
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
+          />
+        )}
+        {this.state.showConfigFile && (
+          <ConfigFileModal
+            open={this.state.showConfigFile}
+            configFile={this.props.configFile}
+            onClose={() => {
+              this.setState({ showConfigFile: false });
+            }}
           />
         )}
       </div>
