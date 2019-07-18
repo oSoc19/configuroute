@@ -1,9 +1,10 @@
 import React from "react";
 
+
 import ReactDOM from 'react-dom';
 import { Label, Button, Icon, Container, Input, Dropdown } from 'semantic-ui-react';
 import ReactMapboxGl, { Layer, Feature, Marker } from "react-mapbox-gl";
-import { Planner } from 'plannerjs';
+import { Planner } from "plannerjs";
 //import MapboxGL from "@react-native-mapbox-gl/maps";
 
 //const mapboxgl = require('mapbox-gl/dist/mapbox-gl.js');
@@ -14,6 +15,7 @@ const Map = ReactMapboxGl({
   accessToken:
     "pk.eyJ1Ijoid291dGVydmRkIiwiYSI6ImNqczRvbzRlMzA2a2UzeWx4MHlqem1lajYifQ.-kYtzbZnQhJTVeh8zDfgYg"
 });
+
 
 const markerFromGeojson = {
   "type": "FeatureCollection",
@@ -41,13 +43,13 @@ const markerToGeojson = {
 };
 
 const lineLayout = {
-  'line-cap': 'round',
-  'line-join': 'round'
+  "line-cap": "round",
+  "line-join": "round"
 };
 
 const linePaint = {
-  'line-color': '#B52700',
-  'line-width': 8
+  "line-color": "#B52700",
+  "line-width": 8
 };
 
 const savedRouteLinePaint = {

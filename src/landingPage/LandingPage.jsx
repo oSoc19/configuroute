@@ -24,52 +24,15 @@ const customModalStyle = {
   }
 };
 
-function Content(props) {
-  switch (props.modal.state.content) {
-    case "INDEX":
-      return <Index modal={props.modal} />;
-    case "UPLOAD":
-      return <Upload modal={props.modal} />;
-    case "NEW":
-      return <NewConfigFileForm modal={props.modal} />;
-    default:
-      return null;
-  }
-}
-
 Modal.setAppElement("#root");
 
-const ruleTypes = {
-  hasAccessRules: {
-    conclusion: "hasAccess",
-    defaultValue: false
-  },
-  hasObstacleRules: {
-    conclusion: "isObstacle",
-    defaultValue: true
-  },
-  hasOnewayRules: {
-    conclusion: "isOneway",
-    defaultValue: true
-  },
-  hasPriorityRules: {
-    conclusion: "isReversed",
-    defaultValue: 0
-  },
-  hasSpeedRules: {
-    conclusion: "hasSpeed",
-    defaultValue: 35
-  }
-};
-
 class LandingPage extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       showModal: true,
       content: "INDEX",
-      data: "",
-      ruleTypes: ruleTypes
+      fileData: {}
     };
 
     this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -87,13 +50,44 @@ class LandingPage extends React.Component {
   }
 
   handleChangeContent(content, data) {
-    this.setState({ content: content, data: data });
+    this.setState({ content: content, fileData: data });
   }
 
   handleConfirm(configFile) {
-    this.props.onConfirm(configFile);
     this.handleCloseModal();
+    this.props.onConfirm(configFile);
   }
+
+  content = () => {
+    switch (this.state.content) {
+      case "INDEX":
+        return (
+          <Index
+            ruleTypes={this.props.ruleTypes}
+            onChangeContent={this.handleChangeContent}
+          />
+        );
+      case "UPLOAD":
+        return (
+          <Upload
+            ruleTypes={this.props.ruleTypes}
+            onChangeContent={this.handleChangeContent}
+            onConfirm={this.handleConfirm}
+            data={this.state.fileData}
+          />
+        );
+      case "NEW":
+        return (
+          <NewConfigFileForm
+            ruleTypes={this.props.ruleTypes}
+            onChangeContent={this.handleChangeContent}
+            onConfirm={this.handleConfirm}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   render() {
     return (
@@ -102,7 +96,7 @@ class LandingPage extends React.Component {
         contentLabel="Landing Page"
         style={customModalStyle}
       >
-        <Content modal={this} />
+        <this.content />
       </Modal>
     );
   }
