@@ -298,8 +298,8 @@ class App extends React.Component {
             onRuleDelete={this.handleRuleDelete}
             className="Left-panel"
           />
-          <RightPanel c
-            onfigFile={this.state.configFile} 
+          <RightPanel
+            configFile={this.state.configFile} 
           />
         </div>
       </div>
