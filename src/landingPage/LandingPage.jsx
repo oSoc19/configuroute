@@ -30,23 +30,12 @@ class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showModal: true,
       content: "INDEX",
       fileData: {}
     };
 
-    this.handleOpenModal = this.handleOpenModal.bind(this);
-    this.handleCloseModal = this.handleCloseModal.bind(this);
     this.handleChangeContent = this.handleChangeContent.bind(this);
     this.handleConfirm = this.handleConfirm.bind(this);
-  }
-
-  handleOpenModal() {
-    this.setState({ showModal: true });
-  }
-
-  handleCloseModal() {
-    this.setState({ showModal: false });
   }
 
   handleChangeContent(content, data) {
@@ -54,7 +43,6 @@ class LandingPage extends React.Component {
   }
 
   handleConfirm(configFile) {
-    this.handleCloseModal();
     this.props.onConfirm(configFile);
   }
 
@@ -92,7 +80,7 @@ class LandingPage extends React.Component {
   render() {
     return (
       <Modal
-        isOpen={this.state.showModal}
+        isOpen={this.props.showModal}
         contentLabel="Landing Page"
         style={customModalStyle}
       >

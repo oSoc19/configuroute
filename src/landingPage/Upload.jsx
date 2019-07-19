@@ -1,5 +1,13 @@
 import React from "react";
-import { Button, Grid, Header, Segment, Label } from "semantic-ui-react";
+import {
+  Button,
+  Grid,
+  Header,
+  Segment,
+  Label,
+  Dimmer,
+  Loader
+} from "semantic-ui-react";
 import BackButton from "./BackButton";
 import ConfirmButton from "./ConfirmButton";
 
@@ -9,6 +17,9 @@ class Upload extends React.Component {
 
     this.validFileScreen = this.validFileScreen.bind(this);
     this.errorScreen = this.errorScreen.bind(this);
+    this.state = {
+      dimmerActive: false
+    };
   }
 
   computeNumberOfRules() {
@@ -62,6 +73,10 @@ class Upload extends React.Component {
   render() {
     return (
       <Grid centered>
+        <Dimmer active={this.state.dimmerActive}>
+          <Loader size="huge">Loading</Loader>
+        </Dimmer>
+
         <Grid.Row columns={1} stretched style={{ height: "80%", padding: "0" }}>
           <Grid.Column className="contentColumn">{this.content()}</Grid.Column>
         </Grid.Row>
@@ -75,6 +90,7 @@ class Upload extends React.Component {
             <Button.Or />
             <ConfirmButton
               onClick={() => {
+                this.setState({ dimmerActive: true });
                 this.props.onConfirm(this.props.data.configFile);
               }}
               disabled={!this.props.data.valid}

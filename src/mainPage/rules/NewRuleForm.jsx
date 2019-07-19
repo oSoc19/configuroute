@@ -6,7 +6,7 @@ import {
   Segment,
   Grid,
   Button,
-  Message
+  Divider
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
@@ -15,7 +15,7 @@ import "../../landingPage/landingPage.css";
 class NewRuleForm extends React.Component {
   constructor(props) {
     super(props);
-
+    console.log(this.props.selectOptions);
     this.state = {
       showModal: true,
       ruleType: "hasAccessRules",
@@ -50,17 +50,19 @@ class NewRuleForm extends React.Component {
       };
     });
 
-    const prop = this.props.selectOptions[this.state.key];
-    const valueOptions =
-      prop === undefined
-        ? []
-        : prop.map(val => {
-            return {
-              key: val,
-              value: val,
-              text: val
-            };
-          });
+    var prefix = "https://w3id.org/openstreetmap/terms#";
+    const valueOptions = Object.keys(this.props.selectOptions[this.state.key])
+      .map(entity => {
+        return entity.slice(prefix.length);
+      })
+      .map(entityName => {
+        var k = "osm:" + entityName;
+        return {
+          key: k,
+          value: k,
+          text: k
+        };
+      });
 
     let conclusionForm;
     if (this.props.ruleTypes[this.state.ruleType].type === "number") {
@@ -140,12 +142,20 @@ class NewRuleForm extends React.Component {
 
   content = () => {
     return (
-      <Grid centered style={{height: '100%', margin: 0}}>
-        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "12px" }}>
+      <Grid centered style={{ height: "100%", margin: 0 }}>
+        <Grid.Row
+          columns={1}
+          stretched
+          style={{ height: "50%", padding: "12px" }}
+        >
           <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "50px", padding: "0" }}>
-          <Button.Group style={{ width: "100%"}}>
+        <Grid.Row
+          columns={2}
+          stretched
+          style={{ height: "50px", padding: "0" }}
+        >
+          <Button.Group style={{ width: "100%" }}>
             <BackButton onClick={this.props.onClose} />
             <Button.Or />
             <ConfirmButton
@@ -173,7 +183,7 @@ class NewRuleForm extends React.Component {
   render() {
     // TODO: required not working ?
     return (
-      <Modal open={this.props.showModal} style={{'border-radius': '12px'}}>
+      <Modal open={this.props.showModal} style={{ "border-radius": "12px" }}>
         <this.content />
       </Modal>
     );

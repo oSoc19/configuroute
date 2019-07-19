@@ -2,182 +2,27 @@ import React from "react";
 import LandingPage from "./landingPage/LandingPage.jsx";
 import LeftPanel from "./mainPage/LeftPanel.jsx";
 import RightPanel from "./mainPage/RightPanel.jsx";
+import OntologyReader from "./lib/OntologyReader";
 import "./App.css";
 import logo from "./assets/logo.jpg";
-const rulesSelectOptions = {
-  "osm:access": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Discouraged",
-    "osm:Dismount",
-    "osm:Emergency",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:barrier": [
-    "osm:Block",
-    "osm:Bollard",
-    "osm:BorderControl",
-    "osm:BumpGate",
-    "osm:BusTrap",
-    "osm:CattleGrid",
-    "osm:Chain",
-    "osm:CycleBarrier",
-    "osm:Debris",
-    "osm:Entrance",
-    "osm:Gate",
-    "osm:LiftGate",
-    "osm:SallyPort",
-    "osm:SwingGate",
-    "osm:TollBooth",
-    "osm:Turnstile"
-  ],
-  "osm:bicycle": [
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Dismount",
-    "osm:NoAccess",
-    "osm:OfficialAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:construction": ["osm:UnderConstruction"],
-  "osm:crossing": ["osm:Uncontrolled", "osm:Unmarked"],
-  "osm:cycleway": [
-    "osm:Lane",
-    "osm:Opposite",
-    "osm:OpposciteLane",
-    "osm:OppositeTrack",
-    "osm:ShareBusway",
-    "osm:Shared",
-    "osm:SharedLane",
-    "osm:Track"
-  ],
-  "osm:footway": ["osm:Sidewalk"],
-  "osm:highway": [
-    "osm:Bridleway",
-    "osm:UnderConstruction",
-    "osm:HighwayCrossing",
-    "osm:CycleHighway",
-    "osm:FootHighway",
-    "osm:GiveWay",
-    "osm:LivingStreet",
-    "osm:Motorway",
-    "osm:MotorwayLink",
-    "osm:Path",
-    "osm:Primary",
-    "osm:PrimaryLink",
-    "osm:Proposed",
-    "osm:Residential",
-    "osm:Road",
-    "osm:Secondary",
-    "osm:SecondaryLink",
-    "osm:Service",
-    "osm:Steps",
-    "osm:Stop",
-    "osm:Tertiary",
-    "osm:TertiaryLink",
-    "osm:Track",
-    "osm:TrafficSignals",
-    "osm:Trunk",
-    "osm:TrunkLink",
-    "osm:Unclassified"
-  ],
-  "osm:motor_vehicle": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:motorcar": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:oneway_bicycle": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:Bidirectional",
-    "osm:InOrder"
-  ],
-  "osm:oneway": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:InOrder",
-    "osm:Bidirectional"
-  ],
-  "osm:smoothness": [
-    "osm:BadSmoothness",
-    "osm:ExcellentSmoothness",
-    "osm:GoodSmoothness",
-    "osm:HorribleSmoothness",
-    "osm:ImpassableSmoothness",
-    "osm:IntermediateSmoothness",
-    "osm:VeryBadSmoothness",
-    "osm:VeryHorribleSmoothness"
-  ],
-  "osm:surface": [
-    "osm:Asphalt",
-    "osm:Cobblestone",
-    "osm:Compacted",
-    "osm:Concrete",
-    "osm:Dirt",
-    "osm:Dirt",
-    "osm:FineGravel",
-    "osm:Grass",
-    "osm:Gravel",
-    "osm:Ground",
-    "osm:Mud",
-    "osm:Paved",
-    "osm:PavingStones",
-    "osm:Pebblestone",
-    "osm:Sand",
-    "osm:Sett",
-    "osm:UnhewnCobblestone",
-    "osm:Unpaved",
-    "osm:Wood"
-  ],
-  "osm:tracktype": [
-    "osm:Grade1",
-    "osm:Grade2",
-    "osm:Grade3",
-    "osm:Grade4",
-    "osm:Grade5"
-  ],
-  "osm:vehicle": [
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ]
+
+const properties = {
+  "osm:access": [],
+  "osm:barrier": [],
+  "osm:bicycle": [],
+  "osm:construction": [],
+  "osm:crossing": [],
+  "osm:cycleway": [],
+  "osm:footway": [],
+  "osm:highway": [],
+  "osm:motor_vehicle": [],
+  "osm:motorcar": [],
+  "osm:oneway_bicycle": [],
+  "osm:oneway": [],
+  "osm:smoothness": [],
+  "osm:surface": [],
+  "osm:tracktype": [],
+  "osm:vehicle": []
 };
 
 const ruleTypes = {
@@ -220,14 +65,40 @@ function Header() {
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       configFile: {},
-      leftLoaded: false
+      showLandingPage: true,
+      leftLoaded: false,
+      ontology: []
     };
   }
 
+  async queryOntologyForInformation(configFile) {
+    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
+    var ontology = { ...properties };
+    var keys = Object.keys(ontology);
+    for (var i in keys) {
+      var entitiesName = await engine.getNamedIndividualsForProperty(
+        "https://w3id.org/openstreetmap/terms#" + keys[i].slice(4)
+      );
+      for (var j in entitiesName) {
+        ontology[keys[i]][entitiesName[j]] = await engine.getEntityDescription(
+          entitiesName[j]
+        );
+      }
+    }
+    this.setState({
+      showLandingPage: false,
+      ontology: ontology,
+      configFile: configFile,
+      leftLoaded: true
+    });
+    console.log(ontology);
+  }
+
   handleFileConfirm = configFile => {
-    this.setState({ configFile: configFile, leftLoaded: true });
+    this.queryOntologyForInformation(configFile);
   };
 
   handleNewRuleSubmit = formValues => {
@@ -285,12 +156,16 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <LandingPage ruleTypes={ruleTypes} onConfirm={this.handleFileConfirm} />
+        <LandingPage
+          ruleTypes={ruleTypes}
+          onConfirm={this.handleFileConfirm}
+          showModal={this.state.showLandingPage}
+        />
         <Header />
         <div className="App-content">
           <LeftPanel
             ruleTypes={ruleTypes}
-            rulesSelectOptions={rulesSelectOptions}
+            rulesSelectOptions={this.state.ontology}
             loaded={this.state.leftLoaded}
             configFile={this.state.configFile}
             onNewRuleSubmit={this.handleNewRuleSubmit}
@@ -298,9 +173,7 @@ class App extends React.Component {
             onRuleDelete={this.handleRuleDelete}
             className="Left-panel"
           />
-          <RightPanel
-            configFile={this.state.configFile} 
-          />
+          <RightPanel configFile={this.state.configFile} />
         </div>
       </div>
     );

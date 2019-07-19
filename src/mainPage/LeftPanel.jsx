@@ -1,7 +1,7 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
 import { Button, Accordion, Icon, Menu, Segment } from "semantic-ui-react";
-import RuleCard from "./rules/ruleCard";
+import RuleCard from "./rules/RuleCard";
 import ConfigFileModal from "./ConfigFileModal";
 import OntologyReader from "../lib/OntologyReader";
 
@@ -103,7 +103,7 @@ export default class LeftPanel extends React.Component {
   render() {
     return (
       <div className="Left-panel">
-        <Menu style={{margin: '12px', width: '100%'}}>
+        <Menu style={{ margin: "12px", width: "100%" }}>
           {/*<Menu.Item>
             <img src="./assets/logo.jpg" />
           </Menu.Item>*/}
@@ -129,7 +129,7 @@ export default class LeftPanel extends React.Component {
           </Menu.Item>
         </Menu>
 
-        <Accordion fluid styled style={{margin: '12px',}}>
+        <Accordion fluid styled style={{ margin: "12px" }}>
           {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
