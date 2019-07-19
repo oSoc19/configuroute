@@ -6,24 +6,24 @@ import OntologyReader from "./lib/OntologyReader";
 import "./App.css";
 import logo from "./assets/logo.jpg";
 
-const properties = {
-  "osm:access": [],
-  "osm:barrier": [],
-  "osm:bicycle": [],
-  "osm:construction": [],
-  "osm:crossing": [],
-  "osm:cycleway": [],
-  "osm:footway": [],
-  "osm:highway": [],
-  "osm:motor_vehicle": [],
-  "osm:motorcar": [],
-  "osm:oneway_bicycle": [],
-  "osm:oneway": [],
-  "osm:smoothness": [],
-  "osm:surface": [],
-  "osm:tracktype": [],
-  "osm:vehicle": []
-};
+const properties = [
+  "osm:access",
+  "osm:barrier",
+  "osm:bicycle",
+  "osm:construction",
+  "osm:crossing",
+  "osm:cycleway",
+  "osm:footway",
+  "osm:highway",
+  "osm:motor_vehicle",
+  "osm:motorcar",
+  "osm:oneway_bicycle",
+  "osm:oneway",
+  "osm:smoothness",
+  "osm:surface",
+  "osm:tracktype",
+  "osm:vehicle"
+];
 
 const ruleTypes = {
   hasAccessRules: {
@@ -70,30 +70,49 @@ class App extends React.Component {
       configFile: {},
       showLandingPage: true,
       leftLoaded: false,
-      ontology: []
+      ontology: {}
     };
   }
 
   async queryOntologyForInformation(configFile) {
     var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
-    var ontology = { ...properties };
-    var keys = Object.keys(ontology);
-    for (var i in keys) {
-      var entitiesName = await engine.getNamedIndividualsForProperty(
-        "https://w3id.org/openstreetmap/terms#" + keys[i].slice(4)
+    const sourceURL = "https://w3id.org/openstreetmap/terms#";
+    var ontology = {
+      tags: {},
+      values: {}
+    };
+
+    properties.map(property => {
+      ontology.tags[property] = {
+        values: [],
+        description: {}
+      };
+    });
+
+    for (var tag of Object.keys(ontology.tags)) {
+      ontology.tags[tag].values = (await engine.getNamedIndividualsForProperty(
+        sourceURL + tag.slice(4)
+      )).map(value => {
+        return value.slice(sourceURL.length);
+      });
+      ontology.tags[tag].description = await engine.getEntityDescription(
+        sourceURL + tag.slice(4)
       );
-      for (var j in entitiesName) {
-        ontology[keys[i]][entitiesName[j]] = await engine.getEntityDescription(
-          entitiesName[j]
+
+      for (var value of ontology.tags[tag].values) {
+        ontology.values[value] = await engine.getEntityDescription(
+          sourceURL + value
         );
       }
     }
+
     this.setState({
       showLandingPage: false,
       ontology: ontology,
       configFile: configFile,
       leftLoaded: true
     });
+
     console.log(ontology);
   }
 

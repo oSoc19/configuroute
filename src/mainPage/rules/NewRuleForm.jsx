@@ -6,7 +6,9 @@ import {
   Segment,
   Grid,
   Button,
-  Divider
+  Divider,
+  Image,
+  Item
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
@@ -18,10 +20,10 @@ class NewRuleForm extends React.Component {
     console.log(this.props.selectOptions);
     this.state = {
       showModal: true,
-      ruleType: "hasAccessRules",
-      key: "osm:access",
-      value: "osm:Customers",
-      conclusion: true,
+      ruleType: "",
+      key: "",
+      value: "",
+      conclusion: false,
       order: 1
     };
   }
@@ -33,6 +35,54 @@ class NewRuleForm extends React.Component {
   handleChangeChecked = e =>
     this.setState({ conclusion: !this.state.conclusion });
 
+  getTagDescription = () => {
+    var description = this.props.selectOptions.tags[this.state.key].description;
+    var comment = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "comment") {
+        comment = description[key];
+      }
+    });
+    return comment;
+  };
+
+  getValueDescription = () => {
+    var description = this.props.selectOptions.values[
+      this.state.value.slice(4)
+    ];
+    var comment = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "comment") {
+        comment = description[key];
+      }
+    });
+    return comment;
+  };
+
+  getTagLink = () => {
+    var description = this.props.selectOptions.tags[this.state.key].description;
+    var link = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
+      }
+    });
+    return link;
+  };
+
+  getValueLink = () => {
+    var description = this.props.selectOptions.values[
+      this.state.value.slice(4)
+    ];
+    var link = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
+      }
+    });
+    return link;
+  };
+
   form() {
     const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
@@ -42,7 +92,8 @@ class NewRuleForm extends React.Component {
       };
     });
 
-    const keyOptions = Object.keys(this.props.selectOptions).map(k => {
+    var tags = this.props.selectOptions.tags;
+    const keyOptions = Object.keys(this.props.selectOptions.tags).map(k => {
       return {
         key: k,
         value: k,
@@ -51,21 +102,22 @@ class NewRuleForm extends React.Component {
     });
 
     var prefix = "https://w3id.org/openstreetmap/terms#";
-    const valueOptions = Object.keys(this.props.selectOptions[this.state.key])
-      .map(entity => {
-        return entity.slice(prefix.length);
-      })
-      .map(entityName => {
-        var k = "osm:" + entityName;
-        return {
-          key: k,
-          value: k,
-          text: k
-        };
-      });
+    const valueOptions = this.state.key
+      ? tags[this.state.key].values.map(valueName => {
+          var k = "osm:" + valueName;
+          return {
+            key: k,
+            value: k,
+            text: k
+          };
+        })
+      : [];
 
     let conclusionForm;
-    if (this.props.ruleTypes[this.state.ruleType].type === "number") {
+    if (
+      this.state.ruleType &&
+      this.props.ruleTypes[this.state.ruleType].type === "number"
+    ) {
       conclusionForm = (
         <Form.Input
           type="number"
@@ -76,7 +128,7 @@ class NewRuleForm extends React.Component {
           value={this.state.conclusion}
         />
       );
-    } else if (this.state.ruleType !== "") {
+    } else if (this.state.ruleType) {
       let label = this.props.ruleTypes[this.state.ruleType]["conclusion"];
       conclusionForm = (
         <Form.Checkbox
@@ -93,50 +145,79 @@ class NewRuleForm extends React.Component {
     }
 
     return (
-      <Form>
-        <Form.Select
-          name="ruleType"
-          placeholder="Type of rule"
-          label="Rule"
-          options={ruleTypeOptions} //TODO: change it
-          onChange={this.handleChange}
-          value={this.state.ruleType}
-        />
+      <React.Fragment>
+        <Form>
+          <Form.Select
+            name="ruleType"
+            placeholder="Type of rule"
+            label="Rule"
+            options={ruleTypeOptions} //TODO: change it
+            onChange={this.handleChange}
+            value={this.state.ruleType}
+          />
 
-        <Form.Group>
-          <Form.Select
-            name="key"
-            placeholder="Condition key"
-            label="key"
-            options={keyOptions}
+          <Form.Group>
+            <Form.Select
+              name="key"
+              placeholder="Condition key"
+              label="key"
+              options={keyOptions}
+              onChange={this.handleChange}
+              value={this.state.key}
+            />
+            <Form.Select
+              name="value"
+              placeholder="Condition value"
+              label="value"
+              options={valueOptions}
+              onChange={this.handleChange}
+              value={this.state.value}
+            />
+          </Form.Group>
+          <Form.Group />
+          {conclusionForm}
+          <Form.Input
+            name="order"
+            placeholder="Order of priority"
+            label="Order of priority"
             onChange={this.handleChange}
-            value={this.state.key}
+            value={this.state.order}
           />
-          <Form.Select
-            name="value"
-            placeholder="Condition value"
-            label="value"
-            options={valueOptions}
-            onChange={this.handleChange}
-            value={this.state.value}
-          />
-        </Form.Group>
-        <Form.Group />
-        {conclusionForm}
-        <Form.Input
-          name="order"
-          placeholder="Order of priority"
-          label="Order of priority"
-          onChange={this.handleChange}
-          value={this.state.order}
-        />
-        {this.state.showErrorMessage && (
-          <Segment>
-            {" "}
-            <Label> All field values must be completed </Label>
-          </Segment>
-        )}
-      </Form>
+          {this.state.showErrorMessage && (
+            <Segment>
+              {" "}
+              <Label> All field values must be completed </Label>
+            </Segment>
+          )}
+        </Form>
+        <Item.Group divided relaxed>
+          {this.state.key && (
+            <Item>
+              <Item.Content>
+                <Item.Header as="a" href={this.getTagLink()} target="_blank">
+                  {this.state.key}
+                </Item.Header>
+                <Item.Meta>Description</Item.Meta>
+                <Item.Description>{this.getTagDescription()}</Item.Description>
+              </Item.Content>
+            </Item>
+          )}
+
+          {this.state.value && (
+            <Item>
+              <Item.Content>
+                <Item.Header as="a" href={this.getValueLink()} target="_blank">
+                  {this.state.value}
+                </Item.Header>
+                <Item.Meta>Description</Item.Meta>
+                <Item.Description>
+                  {this.getValueDescription()}
+                </Item.Description>
+              </Item.Content>
+            </Item>
+          )}
+        </Item.Group>
+      </React.Fragment>
     );
   }
 
