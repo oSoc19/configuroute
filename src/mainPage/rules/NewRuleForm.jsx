@@ -18,7 +18,6 @@ import DescriptionItem from "./DescriptionItem";
 class NewRuleForm extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props.selectOptions);
     this.state = {
       showModal: true,
       ruleType: "",

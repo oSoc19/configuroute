@@ -90,6 +90,8 @@ class RuleItem extends React.Component {
     } else {
       header = "Default rule";
     }
+
+    if (!this.props.display) return null;
     return (
       <Item>
         <Item.Content>

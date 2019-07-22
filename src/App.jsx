@@ -176,6 +176,7 @@ class App extends React.Component {
   };
 
   handleRuleDelete = (type, index) => {
+    console.log(type, index);
     var configFile = { ...this.state.configFile };
     if (index !== configFile[type].length - 1) {
       configFile[type].splice(index, 1);
