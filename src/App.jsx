@@ -93,6 +93,7 @@ class App extends React.Component {
         values: [],
         description: {}
       };
+      return ontology;
     });
 
     for (var tag of Object.keys(ontology.tags)) {
@@ -176,12 +177,28 @@ class App extends React.Component {
   };
 
   handleRuleDelete = (type, index) => {
-    console.log(type, index);
     var configFile = { ...this.state.configFile };
     if (index !== configFile[type].length - 1) {
       configFile[type].splice(index, 1);
       this.setState({ configFile: configFile });
     }
+  };
+
+  handleChangeBasicProperties = newProperties => {
+    var label = this.state.configFile["rdfs:label"];
+    var speed = this.state.configFile["hasMaxSpeed"];
+    var transport = this.state.configFile["usePublicTransport"];
+
+    label = newProperties.label ? newProperties.label : label;
+    speed = newProperties.speed ? newProperties.speed : speed;
+    transport = newProperties.transport ? newProperties.transport : transport;
+
+    console.log(newProperties);
+    var configFile = { ...this.state.configFile };
+    configFile["rdfs:label"] = label;
+    configFile["hasMaxSpeed"] = speed;
+    configFile["usePublicTransport"] = transport;
+    this.setState({ configFile: configFile });
   };
 
   render() {
@@ -202,6 +219,7 @@ class App extends React.Component {
             onNewRuleSubmit={this.handleNewRuleSubmit}
             onRuleConclusionChange={this.handleRuleConclusionChange}
             onRuleDelete={this.handleRuleDelete}
+            onChangeBasicProperties={this.handleChangeBasicProperties}
             className="Left-panel"
           />
           <RightPanel configFile={this.state.configFile} />

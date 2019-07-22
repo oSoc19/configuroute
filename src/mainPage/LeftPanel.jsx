@@ -7,12 +7,11 @@ import {
   Menu,
   Segment,
   Item,
-  Dropdown,
-  Input,
-  Checkbox
+  Dropdown
 } from "semantic-ui-react";
 import RuleItem from "./rules/RuleItem";
 import ConfigFileModal from "./ConfigFileModal";
+import BasicPropertiesModal from "../basicPropertiesModal";
 
 export default class LeftPanel extends React.Component {
   constructor(props) {
@@ -22,7 +21,8 @@ export default class LeftPanel extends React.Component {
       showModal: false,
       showConfigFile: false,
       activeIndex: 0,
-      selectedKeywords: []
+      selectedKeywords: [],
+      showBasicPropertiesModal: false
     };
   }
 
@@ -79,13 +79,14 @@ export default class LeftPanel extends React.Component {
 
     upperCasesIndexes.map(index => {
       string = this.insertCharacterInString(string, index, " ");
+      return string;
     });
     return string;
   }
 
   displayContent() {
     if (this.props.loaded) {
-      var i = 0;
+      var i = -1;
       return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
@@ -128,7 +129,7 @@ export default class LeftPanel extends React.Component {
     var newActiveIndex = Object.keys(this.props.ruleTypes).indexOf(
       formValues.ruleType
     );
-    if (newActiveIndex != this.state.activeIndex)
+    if (newActiveIndex !== this.state.activeIndex)
       this.setState({ activeIndex: newActiveIndex });
     this.handleCloseModal();
     this.props.onNewRuleSubmit(formValues);
@@ -136,59 +137,33 @@ export default class LeftPanel extends React.Component {
 
   displayBasicProperties = () => {
     return (
-      <React.Fragment key={0}>
+      <React.Fragment key={10}>
         <Accordion.Title
-          active={this.state.activeIndex === 0}
-          index={0}
+          active={this.state.activeIndex === 10}
+          index={10}
           onClick={this.handleClick}
         >
           <Icon name="dropdown" />
           {"Basic properties"}
         </Accordion.Title>
-        <Accordion.Content active={this.state.activeIndex === 0}>
+        <Accordion.Content active={this.state.activeIndex === 10}>
           {Object.keys(this.props.configFile).map(key => {
             var value = this.props.configFile[key];
-            var option;
             if (!Array.isArray(value) && !(typeof value === "object")) {
-              switch (typeof value) {
-                case "string":
-                  option = (
-                    <Input
-                      value={this.props.configFile[key]}
-                      className="label"
-                    />
-                  );
-                  break;
-                case "number":
-                  option = (
-                    <Input
-                      type="number"
-                      value={this.props.configFile[key]}
-                      className="speed"
-                    />
-                  );
-                  break;
-                case "boolean":
-                  option = (
-                    <Checkbox
-                      toggle
-                      checked={this.props.configFile[key]}
-                      className="transport"
-                    />
-                  );
-                  break;
-                default:
-                  option = null;
-                  break;
-              }
-              return (
-                <Segment>
-                  {" "}
-                  {key} {option}
-                </Segment>
-              );
+              var text = key + " : " + value;
+              return <Segment key={text}> {text} </Segment>;
             }
+            return key;
           })}
+          <Button
+            secondary
+            onClick={() => {
+              this.setState({ showBasicPropertiesModal: true });
+            }}
+          >
+            {" "}
+            Modify{" "}
+          </Button>
         </Accordion.Content>
       </React.Fragment>
     );
@@ -314,6 +289,21 @@ export default class LeftPanel extends React.Component {
             configFile={this.props.configFile}
             onClose={() => {
               this.setState({ showConfigFile: false });
+            }}
+          />
+        )}
+        {this.state.showBasicPropertiesModal && (
+          <BasicPropertiesModal
+            isOpen={this.state.showBasicPropertiesModal}
+            onClose={() => {
+              this.setState({ showBasicPropertiesModal: false });
+            }}
+            label={this.props.configFile["rdfs:label"]}
+            speed={this.props.configFile["hasMaxSpeed"]}
+            transport={this.props.configFile["usePublicTransport"]}
+            onConfirm={newProperties => {
+              this.props.onChangeBasicProperties(newProperties);
+              this.setState({ showBasicPropertiesModal: false });
             }}
           />
         )}
