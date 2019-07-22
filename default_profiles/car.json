@@ -1,8 +1,4 @@
-{
-  "icon": "car",
-  "profile":
-  {
-    "@context": {
+ "@context": {
       "osm": "https://w3id.org/openstreetmap/terms#",
       "opp": "https://w3id.org/openplannerteam/profile#",
       "prov": "http://www.w3.org/ns/prov#",
@@ -1444,4 +1440,3 @@
       }
     ]
   }
-}
