@@ -3,11 +3,13 @@ import {
   Form,
   Grid,
   Button,
-  Segment,
+  Message,
   Dimmer,
   Loader,
   Icon,
-  Label
+  Label,
+  Menu,
+  Divider
 } from "semantic-ui-react";
 import BackButton from "./BackButton.jsx";
 import ConfirmButton from "./ConfirmButton.jsx";
@@ -147,7 +149,10 @@ class NewConfigFileForm extends React.Component {
           checked={usePublicTransport}
         />
         {this.state.showErrorMessage && (
-          <Segment> All field values must be completed</Segment>
+          <Message negative>
+            <Message.Header>All field values must be filled in</Message.Header>
+            <p>Enter a description and the maximum speed of the vehicle.</p>
+          </Message>
         )}
       </Form>
     );
@@ -177,43 +182,42 @@ class NewConfigFileForm extends React.Component {
         <Dimmer active={this.state.dimmerActive}>
           <Loader size="huge">Loading</Loader>
         </Dimmer>
-        <Grid.Row columns={1} style={{ height: "auto", padding: "0" }}>
+        <Grid.Row columns={1} stretched style={{ height: "40%" }}>
           <Grid.Column className="contentColumn">
-            <Label>Start from a default profile</Label>
-            <Segment>
-              <Button.Group>
-                <Button
+            <h2>Start from a default profile</h2>
+            <Menu>
+              <Menu.Item
+                  name='default profiles'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
                     this.getText(this);
                   }}
                   icon
                 >
-                  <Icon name="car" />
-                </Button>
-              </Button.Group>
-            </Segment>
+                  <Icon name="car" size="huge"/>
+                </Menu.Item>
+              </Menu>
           </Grid.Column>
+          <Divider horizontal>Or</Divider>
         </Grid.Row>
-
+        
         <Grid.Row
-          columns={1}
           stretched
-          style={{ height: "auto", padding: "0" }}
+          columns={1}
+          style={{ height: "40%" }}
         >
           <Grid.Column className="contentColumn">
-            {" "}
-            <Label> Start from scratch </Label>
-            {this.form()}{" "}
+            <h2> Start from scratch </h2>
+            {this.form()}
           </Grid.Column>
         </Grid.Row>
 
         <Grid.Row
           columns={2}
           stretched
-          style={{ height: "auto", padding: "0" }}
+          style={{ height: "20%", padding: 0, margin: 0 }}
         >
-          <Button.Group style={{ width: "100%" }}>
+          <Button.Group style={{ height: '100%', width: "100%" }}>
             <BackButton onClick={this.props.onBack} />
             <Button.Or />
             <ConfirmButton
