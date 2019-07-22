@@ -319,7 +319,7 @@ export default class LeftPanel extends React.Component {
           />
         }
 
-        <Accordion fluid styled style={{ margin: "12px" }}>
+        <Accordion fluid styled style={{ margin: "1vw" }}>
           {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>

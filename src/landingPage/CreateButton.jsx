@@ -9,7 +9,7 @@ function CreateButton(props) {
       className={"landing_page_button"}
       onClick={props.onClick}
     >
-      <Icon name={"left arrow"} style={{ width: "20%" }} size="large" />
+      <Icon name={"file outline"} style={{ width: "20%" }} size="large" />
       Create new file
     </Button>
   );
