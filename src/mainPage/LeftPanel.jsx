@@ -7,7 +7,9 @@ import {
   Menu,
   Segment,
   Item,
-  Dropdown
+  Dropdown,
+  Input,
+  Checkbox
 } from "semantic-ui-react";
 import RuleItem from "./rules/RuleItem";
 import ConfigFileModal from "./ConfigFileModal";
@@ -19,7 +21,7 @@ export default class LeftPanel extends React.Component {
     this.state = {
       showModal: false,
       showConfigFile: false,
-      activeIndex: -1,
+      activeIndex: 0,
       selectedKeywords: []
     };
   }
@@ -83,7 +85,7 @@ export default class LeftPanel extends React.Component {
 
   displayContent() {
     if (this.props.loaded) {
-      var i = -1;
+      var i = 0;
       return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
@@ -134,21 +136,57 @@ export default class LeftPanel extends React.Component {
 
   displayBasicProperties = () => {
     return (
-      <React.Fragment key={10}>
+      <React.Fragment key={0}>
         <Accordion.Title
-          active={this.state.activeIndex === 10}
-          index={10}
+          active={this.state.activeIndex === 0}
+          index={0}
           onClick={this.handleClick}
         >
           <Icon name="dropdown" />
           {"Basic properties"}
         </Accordion.Title>
-        <Accordion.Content active={this.state.activeIndex === 10}>
+        <Accordion.Content active={this.state.activeIndex === 0}>
           {Object.keys(this.props.configFile).map(key => {
             var value = this.props.configFile[key];
+            var option;
             if (!Array.isArray(value) && !(typeof value === "object")) {
-              var text = key + " : " + value;
-              return <Segment key={text}> {text} </Segment>;
+              switch (typeof value) {
+                case "string":
+                  option = (
+                    <Input
+                      value={this.props.configFile[key]}
+                      className="label"
+                    />
+                  );
+                  break;
+                case "number":
+                  option = (
+                    <Input
+                      type="number"
+                      value={this.props.configFile[key]}
+                      className="speed"
+                    />
+                  );
+                  break;
+                case "boolean":
+                  option = (
+                    <Checkbox
+                      toggle
+                      checked={this.props.configFile[key]}
+                      className="transport"
+                    />
+                  );
+                  break;
+                default:
+                  option = null;
+                  break;
+              }
+              return (
+                <Segment>
+                  {" "}
+                  {key} {option}
+                </Segment>
+              );
             }
           })}
         </Accordion.Content>
