@@ -494,7 +494,7 @@ class MapPannel extends React.Component{
     });
     return (
       <div style={{height: '100%', width: '100%'}}>
-        <MapToolbar style={{display: 'flex', flexGrow: 'column', height: '100%', width: '100%', flex: '0 1 auto'}}
+        <MapToolbar style={{height: '15%', width: '100%'}}
               calculating={this.state.calculating}
               from_marker={this.state.from_marker}
               to_marker={this.state.to_marker}
@@ -509,10 +509,10 @@ class MapPannel extends React.Component{
               active_route_label_input={this.state.active_route_label_input}
               updateActiveRouteText={this.updateActiveRouteText}
               active_route_label_error={this.state.active_route_label_error}/>
-      <Segment style={{display: 'flex', flexGrow: 'column', flex: '1 1 auto', height: '100%', width: '100%', borderRadius: 0, padding: 0, margin: 0, border: 'none'}}>
-      <Dimmer active={this.state.calculating}>
-          <Loader>Calculating Route</Loader>
-      </Dimmer>
+        <Segment style={{height: '85%', width: '100%', borderRadius: 0, padding: 0, margin: 0, border: 'none'}}>
+        <Dimmer active={this.state.calculating} inverted>
+            <Loader>Calculating Route</Loader>
+        </Dimmer>
         <Map
           style="mapbox://styles/gugul/cjy77yl1713rg1cn0wiwq2ong/draft"
           containerStyle={this.state.container_style}
