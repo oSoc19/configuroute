@@ -1,7 +1,9 @@
 import { Planner } from "plannerjs";
 import React from "react";
-import ReactMapboxGl, { Feature, Layer } from "react-mapbox-gl";
+import ReactMapboxGl, { Feature, Layer, Popup } from "react-mapbox-gl";
+import { Loader, Dimmer, Segment } from 'semantic-ui-react';
 import MapToolbar from './maptoolbar';
+import TooltipContent from './tooltipContent';
 
 const Map = ReactMapboxGl({
   accessToken:
@@ -50,7 +52,7 @@ const savedRouteLinePaint = {
 };
 
 const containerStyle = {
-  height: "80vh",
+  height: "100%",
   width: "100%",
   cursor: ''
 };
@@ -64,6 +66,8 @@ class MapPannel extends React.Component{
         center: [4.5118, 50.6282],  //should be props?
         zoom: [6.83],
         calculating: false,
+        map_features: undefined,
+        cursor_location: [4.5118, 50.6282],
         from_marker: {
           placed: false,
           enabled: false,
@@ -84,7 +88,9 @@ class MapPannel extends React.Component{
         saved_routes: [],
         selectable_routes: [],
         selected_routes: [],
-        container_style: containerStyle
+        container_style: containerStyle,
+        active_route_label_input: '',
+        active_route_label_error: undefined
       };
 
     this.createFromMarker = this.createFromMarker.bind(this);
@@ -97,6 +103,7 @@ class MapPannel extends React.Component{
     this.handleSelectedRouteAddition = this.handleSelectedRouteAddition.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.saveCurrentRoute = this.saveCurrentRoute.bind(this);
+    this.updateActiveRouteText = this.updateActiveRouteText.bind(this);
 
     this.planner = new Planner();
     this.planner.setProfileID("PEDESTRIAN");
@@ -152,19 +159,31 @@ class MapPannel extends React.Component{
     }
   }
 
-  saveCurrentRoute(label) {
+  saveCurrentRoute() {
     //set the label
     this.setState(prevState => ({
       active_route: {
         key: prevState.active_route.key,
-        text: label,
+        text: prevState.active_route_label_input,
         coordinates: prevState.active_route.coordinates
       }
     }));
     let key = this.state.active_route.key;
+    let text = this.state.active_route_label_input;
     let routeExists = false;
     this.state.saved_routes.forEach((route) => {
       if (route.key === key) {
+        this.setState({
+          active_route_label_error: "route already saved!"
+        });
+        routeExists = true;
+        return;
+      }
+      console.log(route.text + " - " + text);
+      if(route.text.localeCompare(text) === 0){
+        this.setState({
+          active_route_label_error: "already used that name!"
+        });
         routeExists = true;
         return;
       }
@@ -173,15 +192,23 @@ class MapPannel extends React.Component{
       this.setState(prevState => ({
         saved_routes: [prevState.active_route, ...prevState.saved_routes],
         selectable_routes: [{ key: prevState.active_route.key, text: prevState.active_route.text, value: prevState.active_route.key }, 
-                            ...prevState.selectable_routes]
+                            ...prevState.selectable_routes],
+        active_route_label_input: ''
       }));
     }
 
     console.log(this.state.saved_routes);
   }
 
-  onMouseUp(map, e) {
-    var coords = e.lngLat;
+  updateActiveRouteText(evt) {
+    this.setState({
+      active_route_label_input: evt.target.value,
+      active_route_label_error: undefined
+    });
+  }
+
+  onMouseUp(map, evt) {
+    var coords = evt.lngLat;
     if (this.state.from_marker.dragging) {
       this.setState(prevState => ({
         from_marker: {
@@ -202,6 +229,7 @@ class MapPannel extends React.Component{
           lngLat: coords
         }
       }));
+      this.updateTooltip(map, evt);
       this.calculateRoute();
     }
   }
@@ -303,7 +331,6 @@ class MapPannel extends React.Component{
           lngLat: coords
         }
       }));
-      console.log(this.state.from_marker);
     }
     if (this.state.to_marker.enabled && !this.state.to_marker.placed && !this.state.to_marker.dragging) {
       console.log("placed to-marker at " + this.state.to_marker.lngLat);
@@ -315,7 +342,7 @@ class MapPannel extends React.Component{
           lngLat: coords
         }
       }));
-      console.log(this.state.to_marker);
+      this.updateTooltip(map, evt);
     }
     
     if(this.state.from_marker.enabled && this.state.to_marker.enabled
@@ -327,7 +354,24 @@ class MapPannel extends React.Component{
     }
   }
 
+  updateTooltip(map, evt){
+    if(  !(this.state.from_marker.dragging || this.state.to_marker.dragging)
+       && (this.state.from_marker.placed || !this.state.from_marker.enabled) 
+       && (this.state.to_marker.placed || !this.state.to_marker.enabled))
+       {
+          let features = map.queryRenderedFeatures(evt.point);
+          this.setState({cursor_location: evt.lngLat,
+                        map_features: features});
+          map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+       }
+    else{
+      this.setState({cursor_location: evt.lngLat,
+        map_features: undefined});
+    }
+  }
+
   onMouseMove(map, evt) {
+    this.updateTooltip(map, evt);
     if (this.state.from_marker.enabled && !this.state.from_marker.placed && !this.state.from_marker.dragging) {
       markerFromGeojson.features[0].geometry.coordinates = [evt.lngLat.lng, evt.lngLat.lat];
       map.getSource('from_marker').setData(markerFromGeojson);
@@ -393,7 +437,10 @@ class MapPannel extends React.Component{
         i++;
       }
       return (
-        <Layer type="line" layout={lineLayout} paint={savedRouteLinePaint}>
+        <Layer key={this.state.saved_routes[i].key} 
+               style={{"name":"COOOOL NAME"}}
+               type="line" layout={lineLayout} 
+               paint={savedRouteLinePaint}>
           <Feature coordinates={this.state.saved_routes[i].coordinates} />
         </Layer>
       );
@@ -402,7 +449,7 @@ class MapPannel extends React.Component{
     );
     return (
       <div style={{height: '100%', width: '100%'}}>
-        <MapToolbar style={{height: '20vh', width: '100vh'}}
+        <MapToolbar style={{height: '20%', width: '100%'}}
               calculating={this.state.calculating}
               from_marker={this.state.from_marker}
               to_marker={this.state.to_marker}
@@ -413,7 +460,14 @@ class MapPannel extends React.Component{
               handleSelectedRouteAddition={this.handleSelectedRouteAddition}
               handleSelectedRoutesChange={this.handleSelectedRoutesChange}
               calculateRoute={this.calculateRoute}
-              saveCurrentRoute={this.saveCurrentRoute}/>
+              saveCurrentRoute={this.saveCurrentRoute}
+              active_route_label_input={this.state.active_route_label_input}
+              updateActiveRouteText={this.updateActiveRouteText}
+              active_route_label_error={this.state.active_route_label_error}/>
+      <Segment style={{height: '80%', width: '100%', borderRadius: 0, padding: 0, margin: 0, border: 'none'}}>
+      <Dimmer active={this.state.calculating}>
+          <Loader>Calculating Route</Loader>
+      </Dimmer>
         <Map
           style="mapbox://styles/gugul/cjy77yl1713rg1cn0wiwq2ong/draft"
           containerStyle={ this.state.container_style } 
@@ -424,10 +478,20 @@ class MapPannel extends React.Component{
           onMouseUp={this.onMouseUp}
           onClick={this.onMouseClick}>
             <Layer type="line" layout={lineLayout} paint={linePaint}>
-                <Feature coordinates={ this.state.active_route.coordinates } />
+                <Feature coordinates={ this.state.active_route.coordinates }/>
             </Layer>
             {routesToDraw}
+            {this.state.map_features && this.state.map_features.length &&
+              <Popup
+                coordinates={this.state.cursor_location}
+                offset={{
+                  'bottom-left': [12, -10],  'bottom': [0, -10], 'bottom-right': [-12, -10]
+                }}>
+                <TooltipContent features={this.state.map_features}/>
+              </Popup>
+            }
         </Map>
+       </Segment>
       </div>
         );
       }

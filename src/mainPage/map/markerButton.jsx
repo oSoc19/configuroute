@@ -4,9 +4,10 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 export default function MarkerButton(props){
     return(
         <Button disabled={props.disabled} as='div'  labelPosition='right'
-                onClick={props.onClick}>
+                onClick={props.onClick}
+                style={props.style}>
             <Button icon>
-                <Icon name='pin icon' />
+                <Icon name='map pin' />
                 {props.children}
             </Button>
             <Label as='a' basic pointing='left'>{props.marker.placed
