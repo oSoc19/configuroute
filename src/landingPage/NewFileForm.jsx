@@ -190,7 +190,7 @@ class NewConfigFileForm extends React.Component {
                   name='car'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this, "http://hdelva.be/profile/car");
+                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json");
                   }}
                   icon
                 >
