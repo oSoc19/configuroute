@@ -158,10 +158,10 @@ class NewConfigFileForm extends React.Component {
     );
   }
 
-  getText(reactComponent) {
+  getText(reactComponent, profile_url) {
     // read text from URL location
     var request = new XMLHttpRequest();
-    request.open("GET", "http://hdelva.be/profile/car", true);
+    request.open("GET", profile_url, true);
     request.send(null);
     request.onreadystatechange = function() {
       if (request.readyState === 4 && request.status === 200) {
@@ -187,14 +187,34 @@ class NewConfigFileForm extends React.Component {
             <h2>Start from a default profile</h2>
             <Menu>
               <Menu.Item
-                  name='default profiles'
+                  name='car'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this);
+                    this.getText(this, "http://hdelva.be/profile/car");
                   }}
                   icon
                 >
                   <Icon name="car" size="huge"/>
+                </Menu.Item>
+                <Menu.Item
+                  name='bike'
+                  onClick={() => {
+                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json");
+                  }}
+                  icon
+                >
+                  <Icon name="bicycle" size="huge"/>
+                </Menu.Item>
+                <Menu.Item
+                  name='default profiles'
+                  onClick={() => {
+                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json");
+                  }}
+                  icon
+                >
+                  <Icon name="blind" size="huge"/>
                 </Menu.Item>
               </Menu>
           </Grid.Column>
