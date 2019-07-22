@@ -1,9 +1,9 @@
 import { Planner } from "plannerjs";
 import React from "react";
 import ReactMapboxGl, { Feature, Layer, Popup } from "react-mapbox-gl";
-import { Loader, Dimmer, Segment } from 'semantic-ui-react';
-import MapToolbar from './maptoolbar';
-import TooltipContent from './tooltipContent';
+import { Loader, Dimmer, Segment } from "semantic-ui-react";
+import MapToolbar from "./maptoolbar";
+import TooltipContent from "./tooltipContent";
 
 const Map = ReactMapboxGl({
   accessToken:
@@ -115,8 +115,6 @@ class MapPannel extends React.Component{
   componentDidUpdate(pervProps) {
     if (pervProps.configFile !== this.props.configFile) {
       this.planner.setDevelopmentProfile(this.props.configFile);
-      console.log("config file loaded:");
-      console.log(this.props.configFile);
     }
   }
 
@@ -138,9 +136,6 @@ class MapPannel extends React.Component{
           longitude: this.state.to_marker.lngLat.lng
         }
       };
-      console.log(query);
-      console.log("waiting...");
-      console.log("querying planner.js...");
       this.planner
         .query(query)
         .take(1)
@@ -200,7 +195,7 @@ class MapPannel extends React.Component{
         return;
       }
       console.log(route.text + " - " + text);
-      if(route.text.localeCompare(text) === 0){
+      if (route.text.localeCompare(text) === 0) {
         this.setState({
           active_route_label_error: "already used that name!"
         });
@@ -211,9 +206,15 @@ class MapPannel extends React.Component{
     if (!routeExists) {
       this.setState(prevState => ({
         saved_routes: [prevState.active_route, ...prevState.saved_routes],
-        selectable_routes: [{ key: prevState.active_route.key, text: prevState.active_route.text, value: prevState.active_route.key }, 
-                            ...prevState.selectable_routes],
-        active_route_label_input: ''
+        selectable_routes: [
+          {
+            key: prevState.active_route.key,
+            text: prevState.active_route.text,
+            value: prevState.active_route.key
+          },
+          ...prevState.selectable_routes
+        ],
+        active_route_label_input: ""
       }));
     }
 
@@ -414,19 +415,17 @@ class MapPannel extends React.Component{
     }
   }
 
-  updateTooltip(map, evt){
-    if(  !(this.state.from_marker.dragging || this.state.to_marker.dragging)
-       && (this.state.from_marker.placed || !this.state.from_marker.enabled) 
-       && (this.state.to_marker.placed || !this.state.to_marker.enabled))
-       {
-          let features = map.queryRenderedFeatures(evt.point);
-          this.setState({cursor_location: evt.lngLat,
-                        map_features: features});
-          map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-       }
-    else{
-      this.setState({cursor_location: evt.lngLat,
-        map_features: undefined});
+  updateTooltip(map, evt) {
+    if (
+      !(this.state.from_marker.dragging || this.state.to_marker.dragging) &&
+      (this.state.from_marker.placed || !this.state.from_marker.enabled) &&
+      (this.state.to_marker.placed || !this.state.to_marker.enabled)
+    ) {
+      let features = map.queryRenderedFeatures(evt.point);
+      this.setState({ cursor_location: evt.lngLat, map_features: features });
+      map.getCanvas().style.cursor = features.length ? "pointer" : "";
+    } else {
+      this.setState({ cursor_location: evt.lngLat, map_features: undefined });
     }
   }
 
@@ -452,13 +451,26 @@ class MapPannel extends React.Component{
       map.setLayoutProperty('from_marker', 'visibility', 'visible');
     }
     this.updateTooltip(map, evt);
-    if (this.state.from_marker.enabled && !this.state.from_marker.placed && !this.state.from_marker.dragging) {
-      markerFromGeojson.features[0].geometry.coordinates = [evt.lngLat.lng, evt.lngLat.lat];
-      map.getSource('from_marker').setData(markerFromGeojson);
-    }
-    else if (this.state.to_marker.enabled && !this.state.to_marker.placed && !this.state.to_marker.dragging) {
-      markerToGeojson.features[0].geometry.coordinates = [evt.lngLat.lng, evt.lngLat.lat];
-      map.getSource('to_marker').setData(markerToGeojson);
+    if (
+      this.state.from_marker.enabled &&
+      !this.state.from_marker.placed &&
+      !this.state.from_marker.dragging
+    ) {
+      markerFromGeojson.features[0].geometry.coordinates = [
+        evt.lngLat.lng,
+        evt.lngLat.lat
+      ];
+      map.getSource("from_marker").setData(markerFromGeojson);
+    } else if (
+      this.state.to_marker.enabled &&
+      !this.state.to_marker.placed &&
+      !this.state.to_marker.dragging
+    ) {
+      markerToGeojson.features[0].geometry.coordinates = [
+        evt.lngLat.lng,
+        evt.lngLat.lat
+      ];
+      map.getSource("to_marker").setData(markerToGeojson);
     }
     if (this.state.from_marker.dragging) {
       markerFromGeojson.features[0].geometry.coordinates = [
@@ -528,10 +540,13 @@ class MapPannel extends React.Component{
         i++;
       }
       return (
-        <Layer key={this.state.saved_routes[i].key} 
-               style={{"name":"COOOOL NAME"}}
-               type="line" layout={lineLayout} 
-               paint={savedRouteLinePaint}>
+        <Layer
+          key={this.state.saved_routes[i].key}
+          style={{ name: "COOOOL NAME" }}
+          type="line"
+          layout={lineLayout}
+          paint={savedRouteLinePaint}
+        >
           <Feature coordinates={this.state.saved_routes[i].coordinates} />
         </Layer>
       );
@@ -568,20 +583,23 @@ class MapPannel extends React.Component{
           onClick={this.onMouseClick}
           onMouseOut={this.onMouseLeave}>
             <Layer type="line" layout={lineLayout} paint={linePaint}>
-                <Feature coordinates={ this.state.active_route.coordinates }/>
+              <Feature coordinates={this.state.active_route.coordinates} />
             </Layer>
             {routesToDraw}
             {this.state.show_tooltip && this.state.map_features && this.state.map_features.length &&
               <Popup
                 coordinates={this.state.cursor_location}
                 offset={{
-                  'bottom-left': [12, -10],  'bottom': [0, -10], 'bottom-right': [-12, -10]
-                }}>
-                <TooltipContent features={this.state.map_features}/>
+                  "bottom-left": [12, -10],
+                  bottom: [0, -10],
+                  "bottom-right": [-12, -10]
+                }}
+              >
+                <TooltipContent features={this.state.map_features} />
               </Popup>
             }
-        </Map>
-       </Segment>
+          </Map>
+        </Segment>
       </div>
     );
   }

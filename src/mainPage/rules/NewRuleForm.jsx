@@ -6,8 +6,6 @@ import {
   Segment,
   Grid,
   Button,
-  Divider,
-  Image,
   Item
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
@@ -43,6 +41,7 @@ class NewRuleForm extends React.Component {
       if (key.slice(key.indexOf("#") + 1) === "comment") {
         comment = description[key];
       }
+      return key;
     });
     return comment;
   };
@@ -63,6 +62,7 @@ class NewRuleForm extends React.Component {
       if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
         link = description[key];
       }
+      return key;
     });
     return link;
   };
@@ -96,6 +96,7 @@ class NewRuleForm extends React.Component {
 
     upperCasesIndexes.map(index => {
       string = this.insertCharacterInString(string, index, " ");
+      return string;
     });
     return string;
   }

@@ -158,7 +158,7 @@ class NewConfigFileForm extends React.Component {
     );
   }
 
-  getText(reactComponent, profile_url) {
+  startFromProfile(reactComponent, profile_url) {
     // read text from URL location
     var request = new XMLHttpRequest();
     request.open("GET", profile_url, true);
@@ -190,7 +190,7 @@ class NewConfigFileForm extends React.Component {
                   name='car'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json");
+                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json");
                   }}
                   icon
                 >
@@ -200,7 +200,7 @@ class NewConfigFileForm extends React.Component {
                   name='bike'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json");
+                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json");
                   }}
                   icon
                 >
@@ -210,7 +210,7 @@ class NewConfigFileForm extends React.Component {
                   name='default profiles'
                   onClick={() => {
                     //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json");
+                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json");
                   }}
                   icon
                 >
