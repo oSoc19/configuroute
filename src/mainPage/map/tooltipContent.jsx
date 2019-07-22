@@ -13,7 +13,7 @@ class TooltipContent extends React.Component {
 
     const renderFeature = (feature, i) => {
       let id = feature.layer.id;
-      if(id.startsWith("Layer-")){
+      if(id.startsWith("layer-")){
         return;    
       }else if(id.startsWith("from_marker")){
         return (
