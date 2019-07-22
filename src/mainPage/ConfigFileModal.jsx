@@ -8,16 +8,16 @@ import ConfirmButton from "../landingPage/ConfirmButton";
 export default function ConfigFileModal(props) {
   var width = "60vw";
   return (
-    <Modal open={props.open} style={{ width: width }}>
+    <Modal open={props.open} style={{ width: width, height: '70vh' }}>
       <JSONInput
         id="configFile_editor"
         placeholder={props.configFile}
         locale={locale}
-        height="70vh"
+        height="100%"
         width={width}
         viewOnly={true}
       />
-      <Button.Group style={{ width: width }}>
+      <Button.Group style={{ width: width, height: '8%' }}>
         <BackButton onClick={props.onClose} />
       </Button.Group>
     </Modal>
