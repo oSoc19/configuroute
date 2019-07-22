@@ -1,9 +1,16 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import { Button, Accordion, Icon, Menu, Segment } from "semantic-ui-react";
-import RuleCard from "./rules/ruleCard";
+import {
+  Button,
+  Accordion,
+  Icon,
+  Menu,
+  Segment,
+  Item,
+  Dropdown
+} from "semantic-ui-react";
+import RuleItem from "./rules/RuleItem";
 import ConfigFileModal from "./ConfigFileModal";
-import OntologyReader from "../lib/OntologyReader";
 
 export default class LeftPanel extends React.Component {
   constructor(props) {
@@ -12,7 +19,8 @@ export default class LeftPanel extends React.Component {
     this.state = {
       showModal: false,
       showConfigFile: false,
-      activeIndex: 0
+      activeIndex: -1,
+      selectedKeywords: []
     };
   }
 
@@ -28,6 +36,51 @@ export default class LeftPanel extends React.Component {
     this.setState({ activeIndex: newIndex });
   };
 
+  rulesMatchesKeyword(rule) {
+    if (this.state.selectedKeywords.length > 0) {
+      if (rule.match) {
+        var tags = [rule.match.hasPredicate.slice(4)];
+        if (rule.match.hasObject) {
+          tags.push(rule.match.hasObject.slice(4));
+        }
+
+        return tags
+          .map(tag => {
+            if (this.state.selectedKeywords.includes(tag)) {
+              return true;
+            }
+            return false;
+          })
+          .includes(true);
+      }
+      return false;
+    }
+    return true;
+  }
+
+  insertCharacterInString(string, index, char) {
+    if (string.length > index) {
+      return string.slice(0, index) + char + string.slice(index);
+    }
+  }
+
+  beautifyString(stringToChange) {
+    var upperCasesIndexes = [];
+    var string = stringToChange.slice(0);
+
+    for (var i = 1; i < string.length; i++) {
+      var l = upperCasesIndexes.length + i;
+      if (i && string[i] === string[i].toUpperCase()) {
+        upperCasesIndexes.push(l);
+      }
+    }
+
+    upperCasesIndexes.map(index => {
+      string = this.insertCharacterInString(string, index, " ");
+    });
+    return string;
+  }
+
   displayContent() {
     if (this.props.loaded) {
       var i = -1;
@@ -42,21 +95,25 @@ export default class LeftPanel extends React.Component {
               onClick={this.handleClick}
             >
               <Icon name="dropdown" />
-              {ruleType}
+              {this.beautifyString(ruleType.slice(3))}
             </Accordion.Title>
             <Accordion.Content active={this.state.activeIndex === i}>
-              {this.props.configFile[ruleType].map(rule => {
-                return (
-                  <RuleCard
-                    type={ruleType}
-                    index={j++}
-                    key={JSON.stringify(rule)}
-                    rule={rule}
-                    onChange={this.props.onRuleConclusionChange}
-                    onDelete={this.props.onRuleDelete}
-                  />
-                );
-              })}
+              <Item.Group divided>
+                {this.props.configFile[ruleType].map(rule => {
+                  if (this.rulesMatchesKeyword(rule)) {
+                    return (
+                      <RuleItem
+                        type={ruleType}
+                        index={j++}
+                        key={JSON.stringify(rule)}
+                        rule={rule}
+                        onChange={this.props.onRuleConclusionChange}
+                        onDelete={this.props.onRuleDelete}
+                      />
+                    );
+                  }
+                })}
+              </Item.Group>
             </Accordion.Content>
           </React.Fragment>
         );
@@ -100,13 +157,58 @@ export default class LeftPanel extends React.Component {
     );
   };
 
+  generateDropdownOptions = () => {
+    if (!this.props.loaded) return [];
+
+    var tags = this.props.rulesSelectOptions.tags;
+    const keyOptions = Object.keys(tags).map(k => {
+      return {
+        key: k,
+        value: k,
+        text: k,
+        label: { color: "red", empty: true, circular: true }
+      };
+    });
+
+    const values = this.props.rulesSelectOptions.values;
+    const valueOptions = Object.keys(values).map(k => {
+      return {
+        key: k,
+        value: k,
+        text: k,
+        label: { color: "green", empty: true, circular: true }
+      };
+    });
+
+    return [...keyOptions, ...valueOptions];
+  };
+
+  handleSelectedKeywordsChange = (e, { value }) => {
+    this.setState({ selectedKeywords: value });
+    console.log(value);
+  };
+
+  download = () => {
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(this.props.configFile, null, 2))
+    );
+    element.setAttribute("download", "config.json");
+
+    element.style.display = "none";
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  };
+
   render() {
     return (
       <div className="Left-panel">
-        <Menu style={{margin: '12px', width: '100%'}}>
-          {/*<Menu.Item>
-            <img src="./assets/logo.jpg" />
-          </Menu.Item>*/}
+        <Menu fluid style={{ margin: "1vw" }}>
           <Menu.Item>
             <Button
               primary
@@ -117,19 +219,59 @@ export default class LeftPanel extends React.Component {
               Add a rule
             </Button>
           </Menu.Item>
-          <Menu.Item>
+
+          <Dropdown
+            text="Configuration file options"
+            pointing
+            className="link item"
+          >
+            <Dropdown.Menu>
+              <Dropdown.Item
+                onClick={() => {
+                  this.setState({ showConfigFile: true });
+                }}
+              >
+                Show file
+              </Dropdown.Item>
+              <Dropdown.Item onClick={this.download}>
+                Download file
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+        </Menu>
+
+        {
+          /**       <Menu.Item>
             <Button
-              onClick={() => {
-                this.setState({ showConfigFile: true });
-              }}
+             
               secondary
             >
               Display config file
             </Button>
           </Menu.Item>
-        </Menu>
+          <Menu.Item>
+            <Button secondary >
+              Save config file
+            </Button>
+          </Menu.Item> */
+          <Dropdown
+            inline
+            style={{ margin: "1vw" }}
+            search
+            selection
+            fluid
+            multiple
+            allowAdditions
+            clearable
+            button
+            icon="filter"
+            options={this.generateDropdownOptions()}
+            value={this.state.selectedKeywords}
+            onChange={this.handleSelectedKeywordsChange}
+          />
+        }
 
-        <Accordion fluid styled style={{margin: '12px',}}>
+        <Accordion fluid styled style={{ margin: "12px" }}>
           {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
@@ -140,6 +282,7 @@ export default class LeftPanel extends React.Component {
             selectOptions={this.props.rulesSelectOptions}
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
+            beautifyString={this.beautifyString}
           />
         )}
         {this.state.showConfigFile && (

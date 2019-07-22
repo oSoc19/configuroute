@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Grid, Button, Segment } from "semantic-ui-react";
+import { Form, Grid, Button, Segment, Dimmer, Loader } from "semantic-ui-react";
 import BackButton from "./BackButton.jsx";
 import ConfirmButton from "./ConfirmButton.jsx";
 
@@ -78,7 +78,8 @@ class NewConfigFileForm extends React.Component {
       description: "",
       maxSpeed: "",
       usePublicTransport: false,
-      showErrorMessage: false
+      showErrorMessage: false,
+      dimmerActive: false
     };
   }
 
@@ -146,16 +147,15 @@ class NewConfigFileForm extends React.Component {
   render() {
     return (
       <Grid centered>
+        <Dimmer active={this.state.dimmerActive}>
+          <Loader size="huge">Loading</Loader>
+        </Dimmer>
         <Grid.Row columns={1} stretched style={{ height: "80%", padding: "0" }}>
           <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
         </Grid.Row>
         <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
           <Button.Group style={{ width: "100%" }}>
-            <BackButton
-              onClick={() => {
-                this.props.onChangeContent("INDEX");
-              }}
-            />
+            <BackButton onClick={this.props.onBack} />
             <Button.Or />
             <ConfirmButton
               disabled={false}
@@ -170,6 +170,7 @@ class NewConfigFileForm extends React.Component {
                 if (showErrorMessage) {
                   this.setState({ showErrorMessage: true });
                 } else {
+                  this.setState({ dimmerActive: true });
                   this.props.onConfirm(
                     this.onNewConfigFileCreation(this.state)
                   );

@@ -1,6 +1,6 @@
 import React from "react";
 import {
-  Card,
+  Item,
   Button,
   Icon,
   Input,
@@ -10,7 +10,7 @@ import {
 } from "semantic-ui-react";
 import ConfigFileModal from "../ConfigFileModal";
 
-class RuleCard extends React.Component {
+class RuleItem extends React.Component {
   constructor(props) {
     super(props);
 
@@ -34,6 +34,12 @@ class RuleCard extends React.Component {
     var conclusion = Object.keys(this.props.rule.concludes)[0];
     switch (typeof this.props.rule.concludes[conclusion]) {
       case "string":
+        option = (
+          <Input
+            value={this.props.rule.concludes[conclusion]}
+            onChange={this.handleChange}
+          />
+        );
       case "number":
         option = (
           <Input
@@ -80,38 +86,40 @@ class RuleCard extends React.Component {
         this.props.rule.match.hasPredicate +
         " - " +
         this.props.rule.match.hasObject;
+      header = header.replace(/osm:/g, "");
     } else {
       header = "Default rule";
     }
     return (
-      <Card fluid>
-        <Card.Content>
+      <Item>
+        <Item.Content>
           {" "}
-          <Card.Header> {header} </Card.Header>
-        </Card.Content>
-        <Card.Content>{this.content()}</Card.Content>
-        <Card.Content>
-          {" "}
-          <Button.Group style={{ width: "100%" }}>
-            <Button
-              onClick={() => {
-                this.props.onDelete(this.props.type, this.props.index);
-              }}
-              icon
-              disabled={header === "Default rule"}
-            >
-              <Icon name="trash alternate outline" />
-            </Button>
-            <Button.Or />
-            <Button
-              onClick={() => {
-                this.handleOpenModal();
-              }}
-              icon
-            >
-              <Icon name="code" />
-            </Button>
-          </Button.Group>{" "}
+          <Item.Header> {header} </Item.Header>
+          <Item.Description />
+          <Item.Meta>
+            {" "}
+            {this.content()}
+            <Button.Group style={{ width: "100%" }}>
+              <Button
+                onClick={() => {
+                  this.props.onDelete(this.props.type, this.props.index);
+                }}
+                icon
+                disabled={header === "Default rule"}
+              >
+                <Icon name="trash alternate outline" />
+              </Button>
+              <Button.Or />
+              <Button
+                onClick={() => {
+                  this.handleOpenModal();
+                }}
+                icon
+              >
+                <Icon name="code" />
+              </Button>
+            </Button.Group>{" "}
+          </Item.Meta>
           {this.state.showModal && (
             <ConfigFileModal
               open={this.state.showModal}
@@ -121,10 +129,10 @@ class RuleCard extends React.Component {
               configFile={this.props.rule}
             />
           )}
-        </Card.Content>
-      </Card>
+        </Item.Content>
+      </Item>
     );
   }
 }
 
-export default RuleCard;
+export default RuleItem;
