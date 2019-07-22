@@ -1,5 +1,14 @@
 import React from "react";
-import { Form, Grid, Button, Segment, Dimmer, Loader } from "semantic-ui-react";
+import {
+  Form,
+  Grid,
+  Button,
+  Segment,
+  Dimmer,
+  Loader,
+  Icon,
+  Label
+} from "semantic-ui-react";
 import BackButton from "./BackButton.jsx";
 import ConfirmButton from "./ConfirmButton.jsx";
 
@@ -144,16 +153,66 @@ class NewConfigFileForm extends React.Component {
     );
   }
 
+  getText(reactComponent) {
+    // read text from URL location
+    var request = new XMLHttpRequest();
+    request.open("GET", "http://hdelva.be/profile/car", true);
+    request.send(null);
+    request.onreadystatechange = function() {
+      if (request.readyState === 4 && request.status === 200) {
+        var type = request.getResponseHeader("Content-Type");
+        if (type.indexOf("text") !== 1) {
+          reactComponent.props.onConfirm(JSON.parse(request.responseText));
+        } else {
+          alert("Error happened: link to file modified or removed!");
+        }
+      }
+    };
+    this.setState({ dimmerActive: true });
+  }
+
   render() {
     return (
-      <Grid centered>
+      <Grid>
         <Dimmer active={this.state.dimmerActive}>
           <Loader size="huge">Loading</Loader>
         </Dimmer>
-        <Grid.Row columns={1} stretched style={{ height: "80%", padding: "0" }}>
-          <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
+        <Grid.Row columns={1} style={{ height: "auto", padding: "0" }}>
+          <Grid.Column className="contentColumn">
+            <Label>Start from a default profile</Label>
+            <Segment>
+              <Button.Group>
+                <Button
+                  onClick={() => {
+                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                    this.getText(this);
+                  }}
+                  icon
+                >
+                  <Icon name="car" />
+                </Button>
+              </Button.Group>
+            </Segment>
+          </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
+
+        <Grid.Row
+          columns={1}
+          stretched
+          style={{ height: "auto", padding: "0" }}
+        >
+          <Grid.Column className="contentColumn">
+            {" "}
+            <Label> Start from scratch </Label>
+            {this.form()}{" "}
+          </Grid.Column>
+        </Grid.Row>
+
+        <Grid.Row
+          columns={2}
+          stretched
+          style={{ height: "auto", padding: "0" }}
+        >
           <Button.Group style={{ width: "100%" }}>
             <BackButton onClick={this.props.onBack} />
             <Button.Or />

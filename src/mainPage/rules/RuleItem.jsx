@@ -40,6 +40,7 @@ class RuleItem extends React.Component {
             onChange={this.handleChange}
           />
         );
+        break;
       case "number":
         option = (
           <Input

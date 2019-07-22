@@ -128,6 +128,16 @@ class Index extends React.Component {
                 your transport profiles.
               </p>
             </div>
+            <p>
+              Transport profiles are defined using linked open data and
+              OpenStreetMap terminologies. Complete information at:{" "}
+              <a
+                href="http://hdelva.be/profile/ns/profile.html"
+                target="_blank"
+              >
+                Profile definition
+              </a>
+            </p>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
