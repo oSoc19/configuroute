@@ -100,18 +100,17 @@ export default class LeftPanel extends React.Component {
             <Accordion.Content active={this.state.activeIndex === i}>
               <Item.Group divided>
                 {this.props.configFile[ruleType].map(rule => {
-                  if (this.rulesMatchesKeyword(rule)) {
-                    return (
-                      <RuleItem
-                        type={ruleType}
-                        index={j++}
-                        key={JSON.stringify(rule)}
-                        rule={rule}
-                        onChange={this.props.onRuleConclusionChange}
-                        onDelete={this.props.onRuleDelete}
-                      />
-                    );
-                  }
+                  return (
+                    <RuleItem
+                      display={this.rulesMatchesKeyword(rule)}
+                      type={ruleType}
+                      index={j++}
+                      key={JSON.stringify(rule)}
+                      rule={rule}
+                      onChange={this.props.onRuleConclusionChange}
+                      onDelete={this.props.onRuleDelete}
+                    />
+                  );
                 })}
               </Item.Group>
             </Accordion.Content>
@@ -185,7 +184,6 @@ export default class LeftPanel extends React.Component {
 
   handleSelectedKeywordsChange = (e, { value }) => {
     this.setState({ selectedKeywords: value });
-    console.log(value);
   };
 
   download = () => {
@@ -241,19 +239,6 @@ export default class LeftPanel extends React.Component {
         </Menu>
 
         {
-          /**       <Menu.Item>
-            <Button
-             
-              secondary
-            >
-              Display config file
-            </Button>
-          </Menu.Item>
-          <Menu.Item>
-            <Button secondary >
-              Save config file
-            </Button>
-          </Menu.Item> */
           <Dropdown
             inline
             style={{ margin: "1vw" }}
