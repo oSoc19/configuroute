@@ -153,7 +153,6 @@ export default class LeftPanel extends React.Component {
               var text = key + " : " + value;
               return <Segment key={text}> {text} </Segment>;
             }
-            return key;
           })}
           <Button
             secondary

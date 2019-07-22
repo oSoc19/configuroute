@@ -196,7 +196,7 @@ class App extends React.Component {
     console.log(newProperties);
     var configFile = { ...this.state.configFile };
     configFile["rdfs:label"] = label;
-    configFile["hasMaxSpeed"] = speed;
+    configFile["hasMaxSpeed"] = parseInt(speed);
     configFile["usePublicTransport"] = transport;
     this.setState({ configFile: configFile });
   };
