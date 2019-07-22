@@ -155,11 +155,7 @@ class NewConfigFileForm extends React.Component {
         </Grid.Row>
         <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
           <Button.Group style={{ width: "100%" }}>
-            <BackButton
-              onClick={() => {
-                this.props.onChangeContent("INDEX");
-              }}
-            />
+            <BackButton onClick={this.props.onBack} />
             <Button.Or />
             <ConfirmButton
               disabled={false}

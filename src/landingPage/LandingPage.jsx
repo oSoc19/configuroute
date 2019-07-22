@@ -59,17 +59,23 @@ class LandingPage extends React.Component {
         return (
           <Upload
             ruleTypes={this.props.ruleTypes}
-            onChangeContent={this.handleChangeContent}
             onConfirm={this.handleConfirm}
+            onBack={() => {
+              this.handleChangeContent("INDEX");
+            }}
             data={this.state.fileData}
+            onChangeContent={this.handleChangeContent}
           />
         );
       case "NEW":
         return (
           <NewConfigFileForm
             ruleTypes={this.props.ruleTypes}
-            onChangeContent={this.handleChangeContent}
             onConfirm={this.handleConfirm}
+            onBack={() => {
+              this.handleChangeContent("INDEX");
+            }}
+            onChangeContent={this.handleChangeContent}
           />
         );
       default:

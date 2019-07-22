@@ -13,6 +13,7 @@ import {
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
 import "../../landingPage/landingPage.css";
+import DescriptionItem from "./DescriptionItem";
 
 class NewRuleForm extends React.Component {
   constructor(props) {
@@ -23,8 +24,10 @@ class NewRuleForm extends React.Component {
       ruleType: "",
       key: "",
       value: "",
-      conclusion: false,
-      order: 1
+      conclusion: "",
+      order: 1,
+      prefix: "https://w3id.org/openstreetmap/terms#",
+      rulesLink: "http://hdelva.be/profile/ns/profile.html#"
     };
   }
 
@@ -35,8 +38,7 @@ class NewRuleForm extends React.Component {
   handleChangeChecked = e =>
     this.setState({ conclusion: !this.state.conclusion });
 
-  getTagDescription = () => {
-    var description = this.props.selectOptions.tags[this.state.key].description;
+  getComment = description => {
     var comment = "";
     Object.keys(description).map(key => {
       if (key.slice(key.indexOf("#") + 1) === "comment") {
@@ -46,54 +48,69 @@ class NewRuleForm extends React.Component {
     return comment;
   };
 
+  getTagDescription = () => {
+    var description = this.props.selectOptions.tags[this.state.key].description;
+    return this.getComment(description);
+  };
+
   getValueDescription = () => {
-    var description = this.props.selectOptions.values[
-      this.state.value.slice(4)
-    ];
-    var comment = "";
+    var description = this.props.selectOptions.values[this.state.value];
+    return this.getComment(description);
+  };
+
+  getLink = description => {
+    var link = "";
     Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "comment") {
-        comment = description[key];
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
       }
     });
-    return comment;
+    return link;
   };
 
   getTagLink = () => {
     var description = this.props.selectOptions.tags[this.state.key].description;
-    var link = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
-        link = description[key];
-      }
-    });
-    return link;
+    return this.getLink(description);
   };
 
   getValueLink = () => {
-    var description = this.props.selectOptions.values[
-      this.state.value.slice(4)
-    ];
-    var link = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
-        link = description[key];
-      }
-    });
-    return link;
+    var description = this.props.selectOptions.values[this.state.value];
+    return this.getLink(description);
   };
 
+  insertCharacterInString(string, index, char) {
+    if (string.length > index) {
+      return string.slice(0, index) + char + string.slice(index);
+    }
+  }
+
+  beautifyString(stringToChange) {
+    var upperCasesIndexes = [];
+    var string = stringToChange.slice(0);
+
+    for (var i = 1; i < string.length; i++) {
+      var l = upperCasesIndexes.length + i;
+      if (i && string[i] === string[i].toUpperCase()) {
+        upperCasesIndexes.push(l);
+      }
+    }
+
+    upperCasesIndexes.map(index => {
+      string = this.insertCharacterInString(string, index, " ");
+    });
+    return string;
+  }
   form() {
     const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
         key: k,
         value: k,
-        text: k
+        text: this.beautifyString(k.slice(3))
       };
     });
 
     var tags = this.props.selectOptions.tags;
-    const keyOptions = Object.keys(this.props.selectOptions.tags).map(k => {
+    const keyOptions = Object.keys(tags).map(k => {
       return {
         key: k,
         value: k,
@@ -101,10 +118,9 @@ class NewRuleForm extends React.Component {
       };
     });
 
-    var prefix = "https://w3id.org/openstreetmap/terms#";
     const valueOptions = this.state.key
       ? tags[this.state.key].values.map(valueName => {
-          var k = "osm:" + valueName;
+          var k = valueName;
           return {
             key: k,
             value: k,
@@ -126,6 +142,7 @@ class NewRuleForm extends React.Component {
           label="conclusion"
           onChange={this.handleChange}
           value={this.state.conclusion}
+          required
         />
       );
     } else if (this.state.ruleType) {
@@ -137,6 +154,7 @@ class NewRuleForm extends React.Component {
           label={label}
           onChange={this.handleChangeChecked}
           checked={this.state.conclusion}
+          defaultChecked={false}
           slider
         />
       );
@@ -167,7 +185,7 @@ class NewRuleForm extends React.Component {
             />
             <Form.Select
               name="value"
-              placeholder="Condition value"
+              placeholder={"Condition value"}
               label="value"
               options={valueOptions}
               onChange={this.handleChange}
@@ -190,31 +208,30 @@ class NewRuleForm extends React.Component {
             </Segment>
           )}
         </Form>
-        <Item.Group divided relaxed>
+        <Item.Group divided>
+          {this.state.ruleType && (
+            <DescriptionItem
+              href={this.state.rulesLink + this.state.ruleType}
+              header={this.state.ruleType.slice(3)}
+              description={
+                this.props.ruleTypes[this.state.ruleType].description
+              }
+            />
+          )}
           {this.state.key && (
-            <Item>
-              <Item.Content>
-                <Item.Header as="a" href={this.getTagLink()} target="_blank">
-                  {this.state.key}
-                </Item.Header>
-                <Item.Meta>Description</Item.Meta>
-                <Item.Description>{this.getTagDescription()}</Item.Description>
-              </Item.Content>
-            </Item>
+            <DescriptionItem
+              href={this.getTagLink()}
+              header={this.state.key}
+              description={this.getTagDescription()}
+            />
           )}
 
           {this.state.value && (
-            <Item>
-              <Item.Content>
-                <Item.Header as="a" href={this.getValueLink()} target="_blank">
-                  {this.state.value}
-                </Item.Header>
-                <Item.Meta>Description</Item.Meta>
-                <Item.Description>
-                  {this.getValueDescription()}
-                </Item.Description>
-              </Item.Content>
-            </Item>
+            <DescriptionItem
+              href={this.getValueLink()}
+              header={this.state.value.toLowerCase()}
+              description={this.getValueDescription()}
+            />
           )}
         </Item.Group>
       </React.Fragment>

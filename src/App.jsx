@@ -7,49 +7,55 @@ import "./App.css";
 import logo from "./assets/logo.jpg";
 
 const properties = [
-  "osm:access",
-  "osm:barrier",
-  "osm:bicycle",
-  "osm:construction",
-  "osm:crossing",
-  "osm:cycleway",
-  "osm:footway",
-  "osm:highway",
-  "osm:motor_vehicle",
-  "osm:motorcar",
-  "osm:oneway_bicycle",
-  "osm:oneway",
-  "osm:smoothness",
-  "osm:surface",
-  "osm:tracktype",
-  "osm:vehicle"
+  "access",
+  "barrier",
+  "bicycle",
+  "construction",
+  "crossing",
+  "cycleway",
+  "footway",
+  "highway",
+  "motor_vehicle",
+  "motorcar",
+  "oneway_bicycle",
+  "oneway",
+  "smoothness",
+  "surface",
+  "tracktype",
+  "vehicle"
 ];
 
 const ruleTypes = {
   hasAccessRules: {
     conclusion: "hasAccess",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
+    description: "Determines whether or not a way is accessible"
   },
   hasObstacleRules: {
     conclusion: "isObstacle",
     type: "boolean",
-    defaultValue: true
+    defaultValue: true,
+    description: "determines whether or not a node can be traversed"
   },
   hasOnewayRules: {
     conclusion: "isOneway",
     type: "boolean",
-    defaultValue: true
+    defaultValue: true,
+    description: "determines whether or not something is a oneway street"
   },
   hasPriorityRules: {
     conclusion: "hasPriority",
     type: "number",
-    defaultValue: 0
+    defaultValue: 0,
+    description:
+      "determines an additional multiplier that will be used to demote/promote certain road"
   },
   hasSpeedRules: {
     conclusion: "hasSpeed",
     type: "number",
-    defaultValue: 35
+    defaultValue: 35,
+    description: "determines the maximum speed on a street"
   }
 };
 
@@ -91,12 +97,12 @@ class App extends React.Component {
 
     for (var tag of Object.keys(ontology.tags)) {
       ontology.tags[tag].values = (await engine.getNamedIndividualsForProperty(
-        sourceURL + tag.slice(4)
+        sourceURL + tag
       )).map(value => {
         return value.slice(sourceURL.length);
       });
       ontology.tags[tag].description = await engine.getEntityDescription(
-        sourceURL + tag.slice(4)
+        sourceURL + tag
       );
 
       for (var value of ontology.tags[tag].values) {
@@ -112,8 +118,6 @@ class App extends React.Component {
       configFile: configFile,
       leftLoaded: true
     });
-
-    console.log(ontology);
   }
 
   handleFileConfirm = configFile => {
@@ -121,6 +125,9 @@ class App extends React.Component {
   };
 
   handleNewRuleSubmit = formValues => {
+    formValues.value = "osm:" + formValues.value;
+    formValues.key = "osm:" + formValues.key;
+
     var isANewRule = true;
     this.state.configFile[formValues.ruleType].map(rule => {
       if (
@@ -135,6 +142,9 @@ class App extends React.Component {
     });
 
     if (isANewRule) {
+      if (ruleTypes[formValues.ruleType].type === "number") {
+        formValues.conclusion = parseInt(formValues.conclusion);
+      }
       var configFile = { ...this.state.configFile };
       var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
 
@@ -157,6 +167,7 @@ class App extends React.Component {
   };
 
   handleRuleConclusionChange = (type, index, value) => {
+    if (ruleTypes[type].type === "number") value = parseInt(value);
     var configFile = { ...this.state.configFile };
     configFile[type][index]["concludes"][
       [ruleTypes[type]["conclusion"]]
