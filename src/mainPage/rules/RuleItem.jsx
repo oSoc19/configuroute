@@ -5,9 +5,10 @@ import {
   Icon,
   Input,
   Checkbox,
-  Segment
+  Segment,
+  Popup
 } from "semantic-ui-react";
-import ConfigFileModal from "../ConfigFileModal";
+import DescriptionItem from "./DescriptionItem";
 
 class RuleItem extends React.Component {
   constructor(props) {
@@ -77,6 +78,35 @@ class RuleItem extends React.Component {
     this.setState({ showModal: true });
   };
 
+  popupContent = () => {
+    if (this.props.rule.match) {
+      var tag = this.props.rule.match.hasPredicate;
+      tag = tag ? tag.slice(4) : tag;
+      var value = this.props.rule.match.hasObject;
+      value = value ? value.slice(4) : value;
+      return (
+        <Item.Group>
+          {tag && (
+            <DescriptionItem
+              href={this.props.getTagLink(tag)}
+              header={tag}
+              description={this.props.getTagComment(tag)}
+            />
+          )}
+          {value && (
+            <DescriptionItem
+              href={this.props.getValueLink(value)}
+              header={value}
+              description={this.props.getValueComment(value)}
+            />
+          )}
+          )
+        </Item.Group>
+      );
+    }
+    return null;
+  };
+
   render() {
     var header;
     if (this.props.rule.match) {
@@ -110,25 +140,27 @@ class RuleItem extends React.Component {
                 <Icon name="trash alternate outline" />
               </Button>
               <Button.Or />
-              <Button
-                onClick={() => {
-                  this.handleOpenModal();
-                }}
-                icon
-              >
-                <Icon name="code" />
-              </Button>
+              <Popup
+                hideOnScroll
+                trigger={
+                  <Button
+                    onClick={() => {
+                      this.handleOpenModal();
+                    }}
+                    icon
+                  >
+                    <Icon name="info" />
+                  </Button>
+                }
+                content={this.popupContent()}
+                on="click"
+                open={this.state.showModal}
+                onClose={this.handleCloseModal}
+                onOpen={this.handleOpenModal}
+                position="top right"
+              />
             </Button.Group>{" "}
           </Item.Meta>
-          {this.state.showModal && (
-            <ConfigFileModal
-              open={this.state.showModal}
-              onClose={() => {
-                this.setState({ showModal: false });
-              }}
-              configFile={this.props.rule}
-            />
-          )}
         </Item.Content>
       </Item>
     );

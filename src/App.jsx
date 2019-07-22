@@ -30,32 +30,32 @@ const ruleTypes = {
     conclusion: "hasAccess",
     type: "boolean",
     defaultValue: false,
-    description: "Determines whether or not a way is accessible"
+    description: "Determines whether or not a way is accessible."
   },
   hasObstacleRules: {
     conclusion: "isObstacle",
     type: "boolean",
     defaultValue: true,
-    description: "determines whether or not a node can be traversed"
+    description: "Determines whether or not a node can be traversed."
   },
   hasOnewayRules: {
     conclusion: "isOneway",
     type: "boolean",
     defaultValue: true,
-    description: "determines whether or not something is a oneway street"
+    description: "Determines whether or not something is a oneway street."
   },
   hasPriorityRules: {
     conclusion: "hasPriority",
     type: "number",
     defaultValue: 0,
     description:
-      "determines an additional multiplier that will be used to demote/promote certain road"
+      "Determines an additional multiplier that will be used to demote/promote certain road."
   },
   hasSpeedRules: {
     conclusion: "hasSpeed",
     type: "number",
     defaultValue: 35,
-    description: "determines the maximum speed on a street"
+    description: "Determines the maximum speed on a street."
   }
 };
 

@@ -112,6 +112,10 @@ export default class LeftPanel extends React.Component {
                       rule={rule}
                       onChange={this.props.onRuleConclusionChange}
                       onDelete={this.props.onRuleDelete}
+                      getValueLink={this.getValueLink}
+                      getValueComment={this.getValueComment}
+                      getTagLink={this.getTagLink}
+                      getTagComment={this.getTagComment}
                     />
                   );
                 })}
@@ -215,6 +219,53 @@ export default class LeftPanel extends React.Component {
     document.body.removeChild(element);
   };
 
+  getLink = description => {
+    var link = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
+      }
+      return key;
+    });
+    return link;
+  };
+
+  getComment = description => {
+    var comment = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "comment") {
+        comment = description[key];
+      }
+      return key;
+    });
+    return comment;
+  };
+
+  getTagComment = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getComment(description);
+  };
+
+  getValueComment = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getComment(description);
+  };
+
+  getTagLink = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getLink(description);
+  };
+
+  getValueLink = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getLink(description);
+  };
+
   render() {
     return (
       <div className="Left-panel">
@@ -280,10 +331,15 @@ export default class LeftPanel extends React.Component {
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
             beautifyString={this.beautifyString}
+            getValueLink={this.getValueLink}
+            getValueComment={this.getValueComment}
+            getTagLink={this.getTagLink}
+            getTagComment={this.getTagComment}
           />
         )}
         {this.state.showConfigFile && (
           <ConfigFileModal
+            ruleTypes={this.props.ruleTypes}
             open={this.state.showConfigFile}
             configFile={this.props.configFile}
             onClose={() => {
