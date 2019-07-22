@@ -5,8 +5,7 @@ import {
   Icon,
   Input,
   Checkbox,
-  Segment,
-  Modal
+  Segment
 } from "semantic-ui-react";
 import ConfigFileModal from "../ConfigFileModal";
 
@@ -28,7 +27,6 @@ class RuleItem extends React.Component {
   };
 
   content() {
-    var key = 0;
     var option;
     // for now only take the first key
     var conclusion = Object.keys(this.props.rule.concludes)[0];
@@ -63,7 +61,6 @@ class RuleItem extends React.Component {
         option = null;
         break;
     }
-    key++;
     return (
       <Segment>
         {" "}

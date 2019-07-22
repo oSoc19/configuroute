@@ -153,7 +153,7 @@ class NewConfigFileForm extends React.Component {
     );
   }
 
-  getText(reactComponent) {
+  startFromCarProfile(reactComponent) {
     // read text from URL location
     var request = new XMLHttpRequest();
     request.open("GET", "http://hdelva.be/profile/car", true);
@@ -184,12 +184,12 @@ class NewConfigFileForm extends React.Component {
               <Button.Group>
                 <Button
                   onClick={() => {
-                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.getText(this);
+                    this.startFromCarProfile(this);
                   }}
                   icon
                 >
                   <Icon name="car" />
+                  {" Car"}
                 </Button>
               </Button.Group>
             </Segment>

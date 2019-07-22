@@ -3,7 +3,6 @@ import { Modal, Button } from "semantic-ui-react";
 import JSONInput from "react-json-editor-ajrm";
 import locale from "react-json-editor-ajrm/locale/en";
 import BackButton from "../landingPage/BackButton";
-import ConfirmButton from "../landingPage/ConfirmButton";
 
 export default function ConfigFileModal(props) {
   var width = "60vw";
