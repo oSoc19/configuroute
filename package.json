@@ -2,7 +2,7 @@
   "name": "configuroute",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://osoc19.github.io/configuroute/",
+  "homepage": "http://configuroute.be/",
   "dependencies": {
     "@comunica/actor-init-sparql": "^1.8.0",
     "create-react-app": "^3.0.1",

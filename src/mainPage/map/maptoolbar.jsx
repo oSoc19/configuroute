@@ -13,9 +13,8 @@ class MapToolbar extends React.Component{
                 handleSelectedRouteAddition, handleSelectedRoutesChange, calculateRoute,
                 saveCurrentRoute, createToMarker, createFromMarker, updateActiveRouteText, active_route_label_error } = this.props;
         return(
-            <Container className="mapToolbar" style={{width: '100%', marginRight: 0, marginLeft: 0}}>
-                <div>
-    <Menu attached='top' style={{borderRadius: 0}}>
+            <Container className="mapToolbar" style={this.props.style}>
+    <Menu attached='top' style={{borderRadius: 0, height:'50%'}}>
             <Menu.Item>
                         <MarkerButton disabled={calculating}
                                     onClick={() => {createFromMarker()}}
@@ -55,7 +54,7 @@ class MapToolbar extends React.Component{
                             }
                         </Menu.Item>
                         </Menu>
-                        <Segment attached='bottom' style={{borderRadius: 0}}>
+                        <Segment attached='bottom' style={{borderRadius: 0, height:'50%'}}>
                         <Dropdown
                             options={selectable_routes}
                             placeholder='Choose routes to display'
@@ -70,7 +69,6 @@ class MapToolbar extends React.Component{
                             className="routeSelectDropdown"
                         />
                         </Segment>
-                        </div>
             </Container>
         );
     }

@@ -30,32 +30,32 @@ const ruleTypes = {
     conclusion: "hasAccess",
     type: "boolean",
     defaultValue: false,
-    description: "Determines whether or not a way is accessible"
+    description: "Determines whether or not a way is accessible."
   },
   hasObstacleRules: {
     conclusion: "isObstacle",
     type: "boolean",
     defaultValue: true,
-    description: "determines whether or not a node can be traversed"
+    description: "Determines whether or not a node can be traversed."
   },
   hasOnewayRules: {
     conclusion: "isOneway",
     type: "boolean",
     defaultValue: true,
-    description: "determines whether or not something is a oneway street"
+    description: "Determines whether or not something is a oneway street."
   },
   hasPriorityRules: {
     conclusion: "hasPriority",
     type: "number",
-    defaultValue: 0,
+    defaultValue: 1,
     description:
-      "determines an additional multiplier that will be used to demote/promote certain road"
+      "Determines an additional multiplier that will be used to demote/promote certain road."
   },
   hasSpeedRules: {
     conclusion: "hasSpeed",
     type: "number",
-    defaultValue: 35,
-    description: "determines the maximum speed on a street"
+    defaultValue: 10,
+    description: "Determines the maximum speed on a street."
   }
 };
 
@@ -128,14 +128,19 @@ class App extends React.Component {
   handleNewRuleSubmit = formValues => {
     formValues.value = "osm:" + formValues.value;
     formValues.key = "osm:" + formValues.key;
-
+    var configFile = { ...this.state.configFile };
     var isANewRule = true;
+    var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
+
     this.state.configFile[formValues.ruleType].map(rule => {
       if (
         rule["match"] &&
         rule["match"]["hasPredicate"] === formValues.key &&
         rule["match"]["hasObject"] === formValues.value
       ) {
+        var index = configFile[formValues.ruleType].indexOf(rule);
+        configFile[formValues.ruleType][index].concludes[conclusionLabel] =
+          formValues.conclusion;
         isANewRule = false;
         return false;
       }
@@ -146,8 +151,6 @@ class App extends React.Component {
       if (ruleTypes[formValues.ruleType].type === "number") {
         formValues.conclusion = parseInt(formValues.conclusion);
       }
-      var configFile = { ...this.state.configFile };
-      var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
 
       let newRule = {
         match: {
@@ -161,10 +164,8 @@ class App extends React.Component {
       };
 
       configFile[formValues.ruleType].unshift(newRule);
-      this.setState({ configFile: configFile, showModal: false });
-    } else {
-      this.setState({ triggerMessage: true });
     }
+    this.setState({ configFile: configFile, showModal: false });
   };
 
   handleRuleConclusionChange = (type, index, value) => {
@@ -193,7 +194,6 @@ class App extends React.Component {
     speed = newProperties.speed ? newProperties.speed : speed;
     transport = newProperties.transport ? newProperties.transport : transport;
 
-    console.log(newProperties);
     var configFile = { ...this.state.configFile };
     configFile["rdfs:label"] = label;
     configFile["hasMaxSpeed"] = parseInt(speed);

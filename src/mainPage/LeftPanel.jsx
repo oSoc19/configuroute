@@ -86,7 +86,7 @@ export default class LeftPanel extends React.Component {
 
   displayContent() {
     if (this.props.loaded) {
-      var i = -1;
+      var i = 0;
       return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
@@ -112,6 +112,10 @@ export default class LeftPanel extends React.Component {
                       rule={rule}
                       onChange={this.props.onRuleConclusionChange}
                       onDelete={this.props.onRuleDelete}
+                      getValueLink={this.getValueLink}
+                      getValueComment={this.getValueComment}
+                      getTagLink={this.getTagLink}
+                      getTagComment={this.getTagComment}
                     />
                   );
                 })}
@@ -126,9 +130,8 @@ export default class LeftPanel extends React.Component {
   }
 
   handleSubmit = formValues => {
-    var newActiveIndex = Object.keys(this.props.ruleTypes).indexOf(
-      formValues.ruleType
-    );
+    var newActiveIndex =
+      Object.keys(this.props.ruleTypes).indexOf(formValues.ruleType) + 1;
     if (newActiveIndex !== this.state.activeIndex)
       this.setState({ activeIndex: newActiveIndex });
     this.handleCloseModal();
@@ -137,16 +140,16 @@ export default class LeftPanel extends React.Component {
 
   displayBasicProperties = () => {
     return (
-      <React.Fragment key={10}>
+      <React.Fragment key={0}>
         <Accordion.Title
-          active={this.state.activeIndex === 10}
-          index={10}
+          active={this.state.activeIndex === 0}
+          index={0}
           onClick={this.handleClick}
         >
           <Icon name="dropdown" />
           {"Basic properties"}
         </Accordion.Title>
-        <Accordion.Content active={this.state.activeIndex === 10}>
+        <Accordion.Content active={this.state.activeIndex === 0}>
           {Object.keys(this.props.configFile).map(key => {
             var value = this.props.configFile[key];
             if (!Array.isArray(value) && !(typeof value === "object")) {
@@ -176,8 +179,8 @@ export default class LeftPanel extends React.Component {
       return {
         key: k,
         value: k,
-        text: k,
-        label: { color: "red", empty: true, circular: true }
+        text: k
+        //label: { color: "red", empty: true, circular: true }
       };
     });
 
@@ -186,8 +189,8 @@ export default class LeftPanel extends React.Component {
       return {
         key: k,
         value: k,
-        text: k,
-        label: { color: "green", empty: true, circular: true }
+        text: k
+        //label: { color: "green", empty: true, circular: true }
       };
     });
 
@@ -213,6 +216,53 @@ export default class LeftPanel extends React.Component {
     element.click();
 
     document.body.removeChild(element);
+  };
+
+  getLink = description => {
+    var link = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
+      }
+      return key;
+    });
+    return link;
+  };
+
+  getComment = description => {
+    var comment = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "comment") {
+        comment = description[key];
+      }
+      return key;
+    });
+    return comment;
+  };
+
+  getTagComment = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getComment(description);
+  };
+
+  getValueComment = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getComment(description);
+  };
+
+  getTagLink = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getLink(description);
+  };
+
+  getValueLink = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getLink(description);
   };
 
   render() {
@@ -268,7 +318,7 @@ export default class LeftPanel extends React.Component {
           />
         }
 
-        <Accordion fluid styled style={{ margin: "12px" }}>
+        <Accordion fluid styled style={{ margin: "1vw" }}>
           {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
@@ -280,10 +330,15 @@ export default class LeftPanel extends React.Component {
             onSubmit={this.handleSubmit}
             onClose={this.handleCloseModal}
             beautifyString={this.beautifyString}
+            getValueLink={this.getValueLink}
+            getValueComment={this.getValueComment}
+            getTagLink={this.getTagLink}
+            getTagComment={this.getTagComment}
           />
         )}
         {this.state.showConfigFile && (
           <ConfigFileModal
+            ruleTypes={this.props.ruleTypes}
             open={this.state.showConfigFile}
             configFile={this.props.configFile}
             onClose={() => {

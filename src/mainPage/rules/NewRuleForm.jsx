@@ -35,48 +35,6 @@ class NewRuleForm extends React.Component {
   handleChangeChecked = e =>
     this.setState({ conclusion: !this.state.conclusion });
 
-  getComment = description => {
-    var comment = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "comment") {
-        comment = description[key];
-      }
-      return key;
-    });
-    return comment;
-  };
-
-  getTagDescription = () => {
-    var description = this.props.selectOptions.tags[this.state.key].description;
-    return this.getComment(description);
-  };
-
-  getValueDescription = () => {
-    var description = this.props.selectOptions.values[this.state.value];
-    return this.getComment(description);
-  };
-
-  getLink = description => {
-    var link = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
-        link = description[key];
-      }
-      return key;
-    });
-    return link;
-  };
-
-  getTagLink = () => {
-    var description = this.props.selectOptions.tags[this.state.key].description;
-    return this.getLink(description);
-  };
-
-  getValueLink = () => {
-    var description = this.props.selectOptions.values[this.state.value];
-    return this.getLink(description);
-  };
-
   insertCharacterInString(string, index, char) {
     if (string.length > index) {
       return string.slice(0, index) + char + string.slice(index);
@@ -100,6 +58,7 @@ class NewRuleForm extends React.Component {
     });
     return string;
   }
+
   form() {
     const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
@@ -220,17 +179,17 @@ class NewRuleForm extends React.Component {
           )}
           {this.state.key && (
             <DescriptionItem
-              href={this.getTagLink()}
+              href={this.props.getTagLink(this.state.key)}
               header={this.state.key}
-              description={this.getTagDescription()}
+              description={this.props.getTagComment(this.state.key)}
             />
           )}
 
           {this.state.value && (
             <DescriptionItem
-              href={this.getValueLink()}
+              href={this.props.getValueLink(this.state.value)}
               header={this.state.value.toLowerCase()}
-              description={this.getValueDescription()}
+              description={this.props.getValueComment(this.state.value)}
             />
           )}
         </Item.Group>
@@ -279,7 +238,6 @@ class NewRuleForm extends React.Component {
   };
 
   render() {
-    // TODO: required not working ?
     return (
       <Modal open={this.props.showModal} style={{ "border-radius": "12px" }}>
         <this.content />
