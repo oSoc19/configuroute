@@ -183,7 +183,7 @@ class NewConfigFileForm extends React.Component {
         <Dimmer active={this.state.dimmerActive}>
           <Loader size="huge">Loading</Loader>
         </Dimmer>
-        <Grid.Row columns={1} stretched style={{ height: "40%" }}>
+        <Grid.Row columns={1} stretched>
           <Grid.Column className="contentColumn">
             <h2>Start from a default profile</h2>
             <Menu>
@@ -228,10 +228,9 @@ class NewConfigFileForm extends React.Component {
               </Menu.Item>
             </Menu>
           </Grid.Column>
-          <Divider horizontal>Or</Divider>
         </Grid.Row>
-
-        <Grid.Row stretched columns={1} style={{ height: "40%" }}>
+        <Divider horizontal>Or</Divider>
+        <Grid.Row stretched stretched columns={1} style={{ }}>
           <Grid.Column className="contentColumn">
             <h2> Start from scratch </h2>
             {this.form()}
@@ -239,11 +238,12 @@ class NewConfigFileForm extends React.Component {
         </Grid.Row>
 
         <Grid.Row
+          computer={2}
           columns={2}
           stretched
-          style={{ height: "20%", padding: 0, margin: 0 }}
+          style={{ padding: 0, margin: 0 }}
         >
-          <Button.Group style={{ height: "100%", width: "100%" }}>
+          <Button.Group style={{ minHeight: "120px", height: "100%", width: "100%" }}>
             <BackButton onClick={this.props.onBack} />
             <Button.Or />
             <ConfirmButton
