@@ -1,0 +1,120 @@
+{
+  "@context": {
+    "osm": "https://w3id.org/openstreetmap/terms#",
+    "opp": "https://w3id.org/openplannerteam/profile#",
+    "prov": "http://www.w3.org/ns/prov#",
+    "hasMaxSpeed": {
+      "@id": "opp:hasMaxSpeed"
+    },
+    "usePublicTransport": {
+      "@id": "opp:usePublicTransport"
+    },
+    "hasAccessRules": {
+      "@id": "opp:hasAccessRules"
+    },
+    "hasOnewayRules": {
+      "@id": "opp:hasOnewayRules"
+    },
+    "hasSpeedRules": {
+      "@id": "opp:hasSpeedRules"
+    },
+    "hasPriorityRules": {
+      "@id": "opp:hasPriorityRules"
+    },
+    "hasObstacleRules": {
+      "@id": "opp:hasObstacleRules"
+    },
+    "hasAccess": {
+      "@id": "opp:hasAccess"
+    },
+    "isOneway": {
+      "@id": "opp:isOneway"
+    },
+    "isReversed": {
+      "@id": "opp:isReversed"
+    },
+    "hasSpeed": {
+      "@id": "opp:hasSpeed"
+    },
+    "isObstacle": {
+      "@id": "opp:isObstacle"
+    },
+    "hasPriority": {
+      "@id": "opp:hasPriority"
+    },
+    "concludes": {
+      "@id": "opp:concludes"
+    },
+    "hasOrder": {
+      "@id": "opp:hasOrder"
+    },
+    "match": {
+      "@id": "opp:match"
+    },
+    "fromProperty": {
+      "@id": "opp:fromProperty",
+      "@type": "@id"
+    },
+    "hasPredicate": {
+      "@id": "opp:hasPredicate",
+      "@type": "@id"
+    },
+    "hasObject": {
+      "@id": "opp:hasObject",
+      "@type": "@id"
+    }
+  },
+  "rdfs:label": "Pedestrian",
+  "hasMaxSpeed": 25,
+  "usePublicTransport": false,
+  "hasAccessRules": [
+    {
+      "concludes": {
+        "hasAccess": true
+      },
+      "hasOrder": 100
+    }
+  ],
+  "hasObstacleRules": [
+    {
+      "concludes": {
+        "isObstacle": false
+      },
+      "hasOrder": 100
+    }
+  ],
+  "hasOnewayRules": [
+    {
+      "concludes": {
+        "isOneway": false
+      },
+      "hasOrder": 100
+    }
+  ],
+  "hasPriorityRules": [
+    {
+      "concludes": {
+        "hasPriority": 1
+      },
+      "hasOrder": 100
+    }
+  ],
+  "hasSpeedRules": [
+    {
+      "match": {
+        "hasPredicate": "osm:highway",
+        "hasObject": "osm:FootHighway"
+      },
+      "concludes": {
+        "hasSpeed": 6
+      },
+      "hasOrder": 1
+    },
+    {
+      "concludes": {
+        "hasSpeed": 6
+      },
+      "hasOrder": 100
+    }
+  ]
+}

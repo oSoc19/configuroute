@@ -109,6 +109,7 @@ class NewConfigFileForm extends React.Component {
       defaultRule["concludes"] = {};
       defaultRule["concludes"][ruleTypes[k]["conclusion"]] =
         ruleTypes[k]["defaultValue"];
+      defaultRule["hasOrder"] = 100;
 
       configFile[k].push(defaultRule);
 
@@ -187,45 +188,50 @@ class NewConfigFileForm extends React.Component {
             <h2>Start from a default profile</h2>
             <Menu>
               <Menu.Item
-                  name='car'
-                  onClick={() => {
-                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json");
-                  }}
-                  icon
-                >
-                  <Icon name="car" size="huge"/>
-                </Menu.Item>
-                <Menu.Item
-                  name='bike'
-                  onClick={() => {
-                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json");
-                  }}
-                  icon
-                >
-                  <Icon name="bicycle" size="huge"/>
-                </Menu.Item>
-                <Menu.Item
-                  name='default profiles'
-                  onClick={() => {
-                    //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                    this.startFromProfile(this, "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json");
-                  }}
-                  icon
-                >
-                  <Icon name="blind" size="huge"/>
-                </Menu.Item>
-              </Menu>
+                name="car"
+                onClick={() => {
+                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                  this.startFromProfile(
+                    this,
+                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json"
+                  );
+                }}
+                icon
+              >
+                <Icon name="car" size="huge" />
+              </Menu.Item>
+              <Menu.Item
+                name="bike"
+                onClick={() => {
+                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                  this.startFromProfile(
+                    this,
+                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json"
+                  );
+                }}
+                icon
+              >
+                <Icon name="bicycle" size="huge" />
+              </Menu.Item>
+              <Menu.Item
+                name="default profiles"
+                onClick={() => {
+                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
+                  this.startFromProfile(
+                    this,
+                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json"
+                  );
+                }}
+                icon
+              >
+                <Icon name="blind" size="huge" />
+              </Menu.Item>
+            </Menu>
           </Grid.Column>
           <Divider horizontal>Or</Divider>
         </Grid.Row>
-        
-        <Grid.Row
-          stretched
-          columns={1}
-          style={{ height: "40%" }}
-        >
+
+        <Grid.Row stretched columns={1} style={{ height: "40%" }}>
           <Grid.Column className="contentColumn">
             <h2> Start from scratch </h2>
             {this.form()}
@@ -237,7 +243,7 @@ class NewConfigFileForm extends React.Component {
           stretched
           style={{ height: "20%", padding: 0, margin: 0 }}
         >
-          <Button.Group style={{ height: '100%', width: "100%" }}>
+          <Button.Group style={{ height: "100%", width: "100%" }}>
             <BackButton onClick={this.props.onBack} />
             <Button.Or />
             <ConfirmButton
