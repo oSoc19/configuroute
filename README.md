@@ -11,9 +11,14 @@ ConfiguRoute is a web application designed for people interested in setting up t
   ** http://hdelva.be/tiles/ns/terms.html
 * Take a look at Planner.js https://planner.js.org/
 
-### Then 
+### Prerequisites
+
+* You should have [npm](https://www.npmjs.com/get-npm) installed on your machine. 
+
+### Installing
+
 * Clone the repository
-* Install dependancies (you should have npm installed):
+* Install dependancies
 ```
 npm install
 ```
