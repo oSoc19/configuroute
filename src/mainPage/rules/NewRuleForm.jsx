@@ -58,6 +58,7 @@ class NewRuleForm extends React.Component {
     });
     return string;
   }
+
   form() {
     const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
@@ -237,7 +238,6 @@ class NewRuleForm extends React.Component {
   };
 
   render() {
-    // TODO: required not working ?
     return (
       <Modal open={this.props.showModal} style={{ "border-radius": "12px" }}>
         <this.content />

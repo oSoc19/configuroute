@@ -86,7 +86,7 @@ export default class LeftPanel extends React.Component {
 
   displayContent() {
     if (this.props.loaded) {
-      var i = -1;
+      var i = 0;
       return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
@@ -130,9 +130,8 @@ export default class LeftPanel extends React.Component {
   }
 
   handleSubmit = formValues => {
-    var newActiveIndex = Object.keys(this.props.ruleTypes).indexOf(
-      formValues.ruleType
-    );
+    var newActiveIndex =
+      Object.keys(this.props.ruleTypes).indexOf(formValues.ruleType) + 1;
     if (newActiveIndex !== this.state.activeIndex)
       this.setState({ activeIndex: newActiveIndex });
     this.handleCloseModal();
@@ -141,16 +140,16 @@ export default class LeftPanel extends React.Component {
 
   displayBasicProperties = () => {
     return (
-      <React.Fragment key={10}>
+      <React.Fragment key={0}>
         <Accordion.Title
-          active={this.state.activeIndex === 10}
-          index={10}
+          active={this.state.activeIndex === 0}
+          index={0}
           onClick={this.handleClick}
         >
           <Icon name="dropdown" />
           {"Basic properties"}
         </Accordion.Title>
-        <Accordion.Content active={this.state.activeIndex === 10}>
+        <Accordion.Content active={this.state.activeIndex === 0}>
           {Object.keys(this.props.configFile).map(key => {
             var value = this.props.configFile[key];
             if (!Array.isArray(value) && !(typeof value === "object")) {
@@ -180,8 +179,8 @@ export default class LeftPanel extends React.Component {
       return {
         key: k,
         value: k,
-        text: k,
-        label: { color: "red", empty: true, circular: true }
+        text: k
+        //label: { color: "red", empty: true, circular: true }
       };
     });
 
@@ -190,8 +189,8 @@ export default class LeftPanel extends React.Component {
       return {
         key: k,
         value: k,
-        text: k,
-        label: { color: "green", empty: true, circular: true }
+        text: k
+        //label: { color: "green", empty: true, circular: true }
       };
     });
 
