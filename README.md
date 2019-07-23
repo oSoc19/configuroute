@@ -5,10 +5,10 @@ ConfiguRoute is a web application designed for people interested in setting up t
 ## Getting Started
 
 ### Beforehand
-* Checkout the website at [ConfiguRoute](http://configuroute.be/).
-* Get to understand the specifications of ontology: 
-  ** http://hdelva.be/profile/ns/profile.html
-  ** http://hdelva.be/tiles/ns/terms.html
+* Checkout the[website](http://configuroute.be/).
+* Get to understand the specifications of the  ontologies: 
+  * http://hdelva.be/profile/ns/profile.html
+  * http://hdelva.be/tiles/ns/terms.html
 * Take a look at Planner.js https://planner.js.org/
 
 ### Prerequisites
@@ -17,8 +17,12 @@ ConfiguRoute is a web application designed for people interested in setting up t
 
 ### Installing
 
-* Clone the repository
-* Install dependancies
+* Clone the repository:
+```
+git clone https://github.com/oSoc19/configuroute master
+```
+
+* Install dependancies:
 ```
 npm install
 ```
@@ -26,7 +30,7 @@ npm install
 ```
 npm start
 ```
-Open [http://localhost:3000](http://localhost:3000) to view the page in your browser.
+* Open [http://localhost:3000](http://localhost:3000) to view the page in your browser.
 
 ## Authors
 
