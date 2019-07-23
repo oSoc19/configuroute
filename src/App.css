@@ -30,6 +30,10 @@
   background-color: #FFFFFF;
 }
 
+.background_darkblue {
+  background-color: #0b132b;
+}
+
 .App-header {
   grid-area: header;
   background-color: #0b132a;
@@ -117,4 +121,9 @@
 
 .new_file_from{
   padding: 50px;
+}
+
+.border_right {
+  border-right: 1px solid white;
+  padding-right: 30px;
 }

@@ -267,61 +267,36 @@ export default class LeftPanel extends React.Component {
 
   render() {
     return (
-      <div className="Left-panel">
-        <Menu fluid style={{ margin: "1vw" }}>
-          <Menu.Item>
-            <Button
-              primary
+      <div className="Left-panel background_darkblue">
+        <img
+          src="assets/logo.jpg"
+          alt="configuroute logo"
+          width="150px"
+          height="150px"
+        />
+
+        <Dropdown
+          icon="ellipsis vertical"
+          pointing
+          className="link item color_white"
+        >
+          <Dropdown.Menu>
+            <Dropdown.Item
               onClick={() => {
-                this.setState({ showModal: true });
+                this.setState({ showConfigFile: true });
               }}
             >
-              Add a rule
-            </Button>
-          </Menu.Item>
-
-          <Dropdown
-            text="Configuration file options"
-            pointing
-            className="link item"
-          >
-            <Dropdown.Menu>
-              <Dropdown.Item
-                onClick={() => {
-                  this.setState({ showConfigFile: true });
-                }}
-              >
-                Show file
-              </Dropdown.Item>
-              <Dropdown.Item onClick={this.download}>
-                Download file
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
-        </Menu>
-
-        {
-          <Dropdown
-            inline
-            style={{ margin: "1vw" }}
-            search
-            selection
-            fluid
-            multiple
-            allowAdditions
-            clearable
-            button
-            icon="filter"
-            options={this.generateDropdownOptions()}
-            value={this.state.selectedKeywords}
-            onChange={this.handleSelectedKeywordsChange}
-          />
-        }
+              Show file
+            </Dropdown.Item>
+            <Dropdown.Item onClick={this.download}>Download file</Dropdown.Item>
+          </Dropdown.Menu>
+        </Dropdown>
 
         <Accordion fluid styled style={{ margin: "1vw" }}>
           {this.displayBasicProperties()}
           {this.displayContent()}
         </Accordion>
+
         {this.state.showModal && (
           <NewRuleForm
             showModal={this.state.showModal}
@@ -336,6 +311,7 @@ export default class LeftPanel extends React.Component {
             getTagComment={this.getTagComment}
           />
         )}
+
         {this.state.showConfigFile && (
           <ConfigFileModal
             ruleTypes={this.props.ruleTypes}
@@ -346,6 +322,7 @@ export default class LeftPanel extends React.Component {
             }}
           />
         )}
+
         {this.state.showBasicPropertiesModal && (
           <BasicPropertiesModal
             isOpen={this.state.showBasicPropertiesModal}
@@ -361,6 +338,42 @@ export default class LeftPanel extends React.Component {
             }}
           />
         )}
+
+        <button
+          className="button color_white background_green"
+          onClick={() => {
+            this.setState({ showModal: true });
+          }}
+        >
+          <Icon name={"plus"} style={{ width: "20%" }} />
+          <span className="border_right">Add a rule</span>
+        </button>
+
+        {
+          <Dropdown
+            inline
+            style={{
+              margin: "1vw",
+              width: "120px"
+            }}
+            text="Filter"
+            search
+            closeOnChange
+            selection
+            multiple
+            // floating
+            labeled
+            // inline
+            compact
+            allowAdditions
+            clearable
+            // button
+            icon="filter"
+            options={this.generateDropdownOptions()}
+            value={this.state.selectedKeywords}
+            onChange={this.handleSelectedKeywordsChange}
+          />
+        }
       </div>
     );
   }
