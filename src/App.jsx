@@ -209,7 +209,6 @@ class App extends React.Component {
           onConfirm={this.handleFileConfirm}
           showModal={this.state.showLandingPage}
         />
-        <Header />
         <div className="App-content">
           <LeftPanel
             ruleTypes={ruleTypes}

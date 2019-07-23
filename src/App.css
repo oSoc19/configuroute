@@ -1,8 +1,7 @@
 .App {
   display: grid;
-  grid-template-rows: 6vh 94vh;
+  grid-template-rows: 100vh;
   grid-template-areas:
-    "header"
     "main";
   font-family: Karla;
   font-style: normal;
@@ -53,7 +52,7 @@
 .Left-panel {
   grid-area: leftpanel;
   overflow: auto;
-  height: 94vh;
+  height: 100vh;
   padding: 0 30px 0 0;
 }
 
