@@ -3,29 +3,6 @@ import { Button, Grid, Icon, Image, Transition } from "semantic-ui-react";
 import CreateButton from "./CreateButton";
 import ImportButton from "./ImportButton";
 
-const ruleTypes = {
-  hasAccessRules: {
-    conclusion: "hasAccess",
-    defaultValue: false
-  },
-  hasObstacleRules: {
-    conclusion: "isObstacle",
-    defaultValue: true
-  },
-  hasOnewayRules: {
-    conclusion: "isOneway",
-    defaultValue: true
-  },
-  hasPriorityRules: {
-    conclusion: "isReversed",
-    defaultValue: 0
-  },
-  hasSpeedRules: {
-    conclusion: "hasSpeed",
-    defaultValue: 35
-  }
-};
-
 class Index extends React.Component {
   constructor(props) {
     super(props);

@@ -2,209 +2,60 @@ import React from "react";
 import LandingPage from "./landingPage/LandingPage.jsx";
 import LeftPanel from "./mainPage/LeftPanel.jsx";
 import RightPanel from "./mainPage/RightPanel.jsx";
+import OntologyReader from "./lib/OntologyReader";
 import "./App.css";
 import logo from "./assets/logo.jpg";
-const rulesSelectOptions = {
-  "osm:access": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Discouraged",
-    "osm:Dismount",
-    "osm:Emergency",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:barrier": [
-    "osm:Block",
-    "osm:Bollard",
-    "osm:BorderControl",
-    "osm:BumpGate",
-    "osm:BusTrap",
-    "osm:CattleGrid",
-    "osm:Chain",
-    "osm:CycleBarrier",
-    "osm:Debris",
-    "osm:Entrance",
-    "osm:Gate",
-    "osm:LiftGate",
-    "osm:SallyPort",
-    "osm:SwingGate",
-    "osm:TollBooth",
-    "osm:Turnstile"
-  ],
-  "osm:bicycle": [
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Dismount",
-    "osm:NoAccess",
-    "osm:OfficialAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:UseSidepath",
-    "osm:FreeAccess"
-  ],
-  "osm:construction": ["osm:UnderConstruction"],
-  "osm:crossing": ["osm:Uncontrolled", "osm:Unmarked"],
-  "osm:cycleway": [
-    "osm:Lane",
-    "osm:Opposite",
-    "osm:OpposciteLane",
-    "osm:OppositeTrack",
-    "osm:ShareBusway",
-    "osm:Shared",
-    "osm:SharedLane",
-    "osm:Track"
-  ],
-  "osm:footway": ["osm:Sidewalk"],
-  "osm:highway": [
-    "osm:Bridleway",
-    "osm:UnderConstruction",
-    "osm:HighwayCrossing",
-    "osm:CycleHighway",
-    "osm:FootHighway",
-    "osm:GiveWay",
-    "osm:LivingStreet",
-    "osm:Motorway",
-    "osm:MotorwayLink",
-    "osm:Path",
-    "osm:Primary",
-    "osm:PrimaryLink",
-    "osm:Proposed",
-    "osm:Residential",
-    "osm:Road",
-    "osm:Secondary",
-    "osm:SecondaryLink",
-    "osm:Service",
-    "osm:Steps",
-    "osm:Stop",
-    "osm:Tertiary",
-    "osm:TertiaryLink",
-    "osm:Track",
-    "osm:TrafficSignals",
-    "osm:Trunk",
-    "osm:TrunkLink",
-    "osm:Unclassified"
-  ],
-  "osm:motor_vehicle": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:motorcar": [
-    "osm:Agricultural",
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Official",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ],
-  "osm:oneway_bicycle": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:Bidirectional",
-    "osm:InOrder"
-  ],
-  "osm:oneway": [
-    "osm:InReverseOrder",
-    "osm:InOrder",
-    "osm:InOrder",
-    "osm:Bidirectional"
-  ],
-  "osm:smoothness": [
-    "osm:BadSmoothness",
-    "osm:ExcellentSmoothness",
-    "osm:GoodSmoothness",
-    "osm:HorribleSmoothness",
-    "osm:ImpassableSmoothness",
-    "osm:IntermediateSmoothness",
-    "osm:VeryBadSmoothness",
-    "osm:VeryHorribleSmoothness"
-  ],
-  "osm:surface": [
-    "osm:Asphalt",
-    "osm:Cobblestone",
-    "osm:Compacted",
-    "osm:Concrete",
-    "osm:Dirt",
-    "osm:Dirt",
-    "osm:FineGravel",
-    "osm:Grass",
-    "osm:Gravel",
-    "osm:Ground",
-    "osm:Mud",
-    "osm:Paved",
-    "osm:PavingStones",
-    "osm:Pebblestone",
-    "osm:Sand",
-    "osm:Sett",
-    "osm:UnhewnCobblestone",
-    "osm:Unpaved",
-    "osm:Wood"
-  ],
-  "osm:tracktype": [
-    "osm:Grade1",
-    "osm:Grade2",
-    "osm:Grade3",
-    "osm:Grade4",
-    "osm:Grade5"
-  ],
-  "osm:vehicle": [
-    "osm:Customers",
-    "osm:Delivery",
-    "osm:Designated",
-    "osm:Destination",
-    "osm:Forestry",
-    "osm:NoAccess",
-    "osm:Permissive",
-    "osm:Private",
-    "osm:FreeAccess"
-  ]
-};
+
+const properties = [
+  "access",
+  "barrier",
+  "bicycle",
+  "construction",
+  "crossing",
+  "cycleway",
+  "footway",
+  "highway",
+  "motor_vehicle",
+  "motorcar",
+  "oneway_bicycle",
+  "oneway",
+  "smoothness",
+  "surface",
+  "tracktype",
+  "vehicle"
+];
 
 const ruleTypes = {
   hasAccessRules: {
     conclusion: "hasAccess",
     type: "boolean",
-    defaultValue: false
+    defaultValue: false,
+    description: "Determines whether or not a way is accessible."
   },
   hasObstacleRules: {
     conclusion: "isObstacle",
     type: "boolean",
-    defaultValue: true
+    defaultValue: true,
+    description: "Determines whether or not a node can be traversed."
   },
   hasOnewayRules: {
     conclusion: "isOneway",
     type: "boolean",
-    defaultValue: true
+    defaultValue: true,
+    description: "Determines whether or not something is a oneway street."
   },
   hasPriorityRules: {
     conclusion: "hasPriority",
     type: "number",
-    defaultValue: 0
+    defaultValue: 1,
+    description:
+      "Determines an additional multiplier that will be used to demote/promote certain road."
   },
   hasSpeedRules: {
     conclusion: "hasSpeed",
     type: "number",
-    defaultValue: 35
+    defaultValue: 10,
+    description: "Determines the maximum speed on a street."
   }
 };
 
@@ -220,24 +71,76 @@ function Header() {
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       configFile: {},
-      leftLoaded: false
+      showLandingPage: true,
+      leftLoaded: false,
+      ontology: {}
     };
   }
 
+  async queryOntologyForInformation(configFile) {
+    var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
+    const sourceURL = "https://w3id.org/openstreetmap/terms#";
+    var ontology = {
+      tags: {},
+      values: {}
+    };
+
+    properties.map(property => {
+      ontology.tags[property] = {
+        values: [],
+        description: {}
+      };
+      return ontology;
+    });
+
+    for (var tag of Object.keys(ontology.tags)) {
+      ontology.tags[tag].values = (await engine.getNamedIndividualsForProperty(
+        sourceURL + tag
+      )).map(value => {
+        return value.slice(sourceURL.length);
+      });
+      ontology.tags[tag].description = await engine.getEntityDescription(
+        sourceURL + tag
+      );
+
+      for (var value of ontology.tags[tag].values) {
+        ontology.values[value] = await engine.getEntityDescription(
+          sourceURL + value
+        );
+      }
+    }
+
+    this.setState({
+      showLandingPage: false,
+      ontology: ontology,
+      configFile: configFile,
+      leftLoaded: true
+    });
+  }
+
   handleFileConfirm = configFile => {
-    this.setState({ configFile: configFile, leftLoaded: true });
+    this.queryOntologyForInformation(configFile);
   };
 
   handleNewRuleSubmit = formValues => {
+    formValues.value = "osm:" + formValues.value;
+    formValues.key = "osm:" + formValues.key;
+    var configFile = { ...this.state.configFile };
     var isANewRule = true;
+    var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
+
     this.state.configFile[formValues.ruleType].map(rule => {
       if (
         rule["match"] &&
         rule["match"]["hasPredicate"] === formValues.key &&
         rule["match"]["hasObject"] === formValues.value
       ) {
+        var index = configFile[formValues.ruleType].indexOf(rule);
+        configFile[formValues.ruleType][index].concludes[conclusionLabel] =
+          formValues.conclusion;
         isANewRule = false;
         return false;
       }
@@ -245,8 +148,9 @@ class App extends React.Component {
     });
 
     if (isANewRule) {
-      var configFile = { ...this.state.configFile };
-      var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
+      if (ruleTypes[formValues.ruleType].type === "number") {
+        formValues.conclusion = parseInt(formValues.conclusion);
+      }
 
       let newRule = {
         match: {
@@ -260,13 +164,12 @@ class App extends React.Component {
       };
 
       configFile[formValues.ruleType].unshift(newRule);
-      this.setState({ configFile: configFile, showModal: false });
-    } else {
-      this.setState({ triggerMessage: true });
     }
+    this.setState({ configFile: configFile, showModal: false });
   };
 
   handleRuleConclusionChange = (type, index, value) => {
+    if (ruleTypes[type].type === "number") value = parseInt(value);
     var configFile = { ...this.state.configFile };
     configFile[type][index]["concludes"][
       [ruleTypes[type]["conclusion"]]
@@ -282,25 +185,44 @@ class App extends React.Component {
     }
   };
 
+  handleChangeBasicProperties = newProperties => {
+    var label = this.state.configFile["rdfs:label"];
+    var speed = this.state.configFile["hasMaxSpeed"];
+    var transport = this.state.configFile["usePublicTransport"];
+
+    label = newProperties.label ? newProperties.label : label;
+    speed = newProperties.speed ? newProperties.speed : speed;
+    transport = newProperties.transport ? newProperties.transport : transport;
+
+    var configFile = { ...this.state.configFile };
+    configFile["rdfs:label"] = label;
+    configFile["hasMaxSpeed"] = parseInt(speed);
+    configFile["usePublicTransport"] = transport;
+    this.setState({ configFile: configFile });
+  };
+
   render() {
     return (
       <div className="App">
-        <LandingPage ruleTypes={ruleTypes} onConfirm={this.handleFileConfirm} />
+        <LandingPage
+          ruleTypes={ruleTypes}
+          onConfirm={this.handleFileConfirm}
+          showModal={this.state.showLandingPage}
+        />
         <Header />
         <div className="App-content">
           <LeftPanel
             ruleTypes={ruleTypes}
-            rulesSelectOptions={rulesSelectOptions}
+            rulesSelectOptions={this.state.ontology}
             loaded={this.state.leftLoaded}
             configFile={this.state.configFile}
             onNewRuleSubmit={this.handleNewRuleSubmit}
             onRuleConclusionChange={this.handleRuleConclusionChange}
             onRuleDelete={this.handleRuleDelete}
+            onChangeBasicProperties={this.handleChangeBasicProperties}
             className="Left-panel"
           />
-          <RightPanel c
-            onfigFile={this.state.configFile} 
-          />
+          <RightPanel configFile={this.state.configFile} />
         </div>
       </div>
     );

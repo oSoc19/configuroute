@@ -6,23 +6,25 @@ import {
   Segment,
   Grid,
   Button,
-  Message
+  Item
 } from "semantic-ui-react";
 import BackButton from "../../landingPage/BackButton";
 import ConfirmButton from "../../landingPage/ConfirmButton";
 import "../../landingPage/landingPage.css";
+import DescriptionItem from "./DescriptionItem";
 
 class NewRuleForm extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {
       showModal: true,
-      ruleType: "hasAccessRules",
-      key: "osm:access",
-      value: "osm:Customers",
-      conclusion: true,
-      order: 1
+      ruleType: "",
+      key: "",
+      value: "",
+      conclusion: "",
+      order: 1,
+      prefix: "https://w3id.org/openstreetmap/terms#",
+      rulesLink: "http://hdelva.be/profile/ns/profile.html#"
     };
   }
 
@@ -33,16 +35,41 @@ class NewRuleForm extends React.Component {
   handleChangeChecked = e =>
     this.setState({ conclusion: !this.state.conclusion });
 
+  insertCharacterInString(string, index, char) {
+    if (string.length > index) {
+      return string.slice(0, index) + char + string.slice(index);
+    }
+  }
+
+  beautifyString(stringToChange) {
+    var upperCasesIndexes = [];
+    var string = stringToChange.slice(0);
+
+    for (var i = 1; i < string.length; i++) {
+      var l = upperCasesIndexes.length + i;
+      if (i && string[i] === string[i].toUpperCase()) {
+        upperCasesIndexes.push(l);
+      }
+    }
+
+    upperCasesIndexes.map(index => {
+      string = this.insertCharacterInString(string, index, " ");
+      return string;
+    });
+    return string;
+  }
+
   form() {
     const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
       return {
         key: k,
         value: k,
-        text: k
+        text: this.beautifyString(k.slice(3))
       };
     });
 
-    const keyOptions = Object.keys(this.props.selectOptions).map(k => {
+    var tags = this.props.selectOptions.tags;
+    const keyOptions = Object.keys(tags).map(k => {
       return {
         key: k,
         value: k,
@@ -50,20 +77,22 @@ class NewRuleForm extends React.Component {
       };
     });
 
-    const prop = this.props.selectOptions[this.state.key];
-    const valueOptions =
-      prop === undefined
-        ? []
-        : prop.map(val => {
-            return {
-              key: val,
-              value: val,
-              text: val
-            };
-          });
+    const valueOptions = this.state.key
+      ? tags[this.state.key].values.map(valueName => {
+          var k = valueName;
+          return {
+            key: k,
+            value: k,
+            text: k
+          };
+        })
+      : [];
 
     let conclusionForm;
-    if (this.props.ruleTypes[this.state.ruleType].type === "number") {
+    if (
+      this.state.ruleType &&
+      this.props.ruleTypes[this.state.ruleType].type === "number"
+    ) {
       conclusionForm = (
         <Form.Input
           type="number"
@@ -72,9 +101,10 @@ class NewRuleForm extends React.Component {
           label="conclusion"
           onChange={this.handleChange}
           value={this.state.conclusion}
+          required
         />
       );
-    } else if (this.state.ruleType !== "") {
+    } else if (this.state.ruleType) {
       let label = this.props.ruleTypes[this.state.ruleType]["conclusion"];
       conclusionForm = (
         <Form.Checkbox
@@ -83,6 +113,7 @@ class NewRuleForm extends React.Component {
           label={label}
           onChange={this.handleChangeChecked}
           checked={this.state.conclusion}
+          defaultChecked={false}
           slider
         />
       );
@@ -91,61 +122,97 @@ class NewRuleForm extends React.Component {
     }
 
     return (
-      <Form>
-        <Form.Select
-          name="ruleType"
-          placeholder="Type of rule"
-          label="Rule"
-          options={ruleTypeOptions} //TODO: change it
-          onChange={this.handleChange}
-          value={this.state.ruleType}
-        />
+      <React.Fragment>
+        <Form>
+          <Form.Select
+            name="ruleType"
+            placeholder="Type of rule"
+            label="Rule"
+            options={ruleTypeOptions} //TODO: change it
+            onChange={this.handleChange}
+            value={this.state.ruleType}
+          />
 
-        <Form.Group>
-          <Form.Select
-            name="key"
-            placeholder="Condition key"
-            label="key"
-            options={keyOptions}
+          <Form.Group>
+            <Form.Select
+              name="key"
+              placeholder="Condition key"
+              label="key"
+              options={keyOptions}
+              onChange={this.handleChange}
+              value={this.state.key}
+            />
+            <Form.Select
+              name="value"
+              placeholder={"Condition value"}
+              label="value"
+              options={valueOptions}
+              onChange={this.handleChange}
+              value={this.state.value}
+            />
+          </Form.Group>
+          <Form.Group />
+          {conclusionForm}
+          <Form.Input
+            name="order"
+            placeholder="Order of priority"
+            label="Order of priority"
             onChange={this.handleChange}
-            value={this.state.key}
+            value={this.state.order}
           />
-          <Form.Select
-            name="value"
-            placeholder="Condition value"
-            label="value"
-            options={valueOptions}
-            onChange={this.handleChange}
-            value={this.state.value}
-          />
-        </Form.Group>
-        <Form.Group />
-        {conclusionForm}
-        <Form.Input
-          name="order"
-          placeholder="Order of priority"
-          label="Order of priority"
-          onChange={this.handleChange}
-          value={this.state.order}
-        />
-        {this.state.showErrorMessage && (
-          <Segment>
-            {" "}
-            <Label> All field values must be completed </Label>
-          </Segment>
-        )}
-      </Form>
+          {this.state.showErrorMessage && (
+            <Segment>
+              {" "}
+              <Label> All field values must be completed </Label>
+            </Segment>
+          )}
+        </Form>
+        <Item.Group divided>
+          {this.state.ruleType && (
+            <DescriptionItem
+              href={this.state.rulesLink + this.state.ruleType}
+              header={this.state.ruleType.slice(3)}
+              description={
+                this.props.ruleTypes[this.state.ruleType].description
+              }
+            />
+          )}
+          {this.state.key && (
+            <DescriptionItem
+              href={this.props.getTagLink(this.state.key)}
+              header={this.state.key}
+              description={this.props.getTagComment(this.state.key)}
+            />
+          )}
+
+          {this.state.value && (
+            <DescriptionItem
+              href={this.props.getValueLink(this.state.value)}
+              header={this.state.value.toLowerCase()}
+              description={this.props.getValueComment(this.state.value)}
+            />
+          )}
+        </Item.Group>
+      </React.Fragment>
     );
   }
 
   content = () => {
     return (
-      <Grid centered style={{height: '100%', margin: 0}}>
-        <Grid.Row columns={1} stretched style={{ height: "50%", padding: "12px" }}>
+      <Grid centered style={{ height: "100%", margin: 0 }}>
+        <Grid.Row
+          columns={1}
+          stretched
+          style={{ height: "50%", padding: "12px" }}
+        >
           <Grid.Column className="contentColumn">{this.form()} </Grid.Column>
         </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "50px", padding: "0" }}>
-          <Button.Group style={{ width: "100%"}}>
+        <Grid.Row
+          columns={2}
+          stretched
+          style={{ height: "50px", padding: "0" }}
+        >
+          <Button.Group style={{ width: "100%" }}>
             <BackButton onClick={this.props.onClose} />
             <Button.Or />
             <ConfirmButton
@@ -171,9 +238,8 @@ class NewRuleForm extends React.Component {
   };
 
   render() {
-    // TODO: required not working ?
     return (
-      <Modal open={this.props.showModal} style={{'border-radius': '12px'}}>
+      <Modal open={this.props.showModal} style={{ "border-radius": "12px" }}>
         <this.content />
       </Modal>
     );
