@@ -2,7 +2,7 @@ import React from "react";
 import {
   Button,
   Grid,
-  Header,
+  Icon,
   Segment,
   Label,
   Dimmer,
@@ -38,16 +38,14 @@ class Upload extends React.Component {
   validFileScreen() {
     return (
       <div>
-        <Header> {this.props.data.file.name} </Header>
+        <h2 className="color_white"> {this.props.data.file.name} </h2>
         <Segment>
           <Label> Size: </Label> {this.props.data.file.size + " bytes"}
         </Segment>
         <Segment>
-          {" "}
           <Label> Label: </Label> {this.props.data.configFile["rdfs:label"]}{" "}
         </Segment>
         <Segment>
-          {" "}
           <Label> Number of rules: </Label> {this.computeNumberOfRules()}
         </Segment>
       </div>
@@ -56,10 +54,7 @@ class Upload extends React.Component {
 
   errorScreen() {
     return (
-      <Header>
-        {" "}
-        <Header.Content> Format unsupported </Header.Content>
-      </Header>
+        <h2 className="color_white"> Format unsupported </h2>
     );
   }
 
@@ -72,28 +67,26 @@ class Upload extends React.Component {
   }
   render() {
     return (
-      <Grid centered>
+      <div>
         <Dimmer active={this.state.dimmerActive}>
           <Loader size="huge">Loading</Loader>
         </Dimmer>
-
-        <Grid.Row columns={1} stretched style={{ height: "80%", padding: "0" }}>
-          <Grid.Column className="contentColumn">{this.content()}</Grid.Column>
-        </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
-          <Button.Group style={{ width: "100%" }}>
-            <BackButton onClick={this.props.onBack} />
-            <Button.Or />
-            <ConfirmButton
-              onClick={() => {
-                this.setState({ dimmerActive: true });
-                this.props.onConfirm(this.props.data.configFile);
-              }}
-              disabled={!this.props.data.valid}
-            />
-          </Button.Group>
-        </Grid.Row>
-      </Grid>
+          {this.content()}
+          <div className="horizontalContainer">
+          <button className="button_secondary color_dark_blue background_white" onClick={this.props.onBack}>
+              <Icon name={"arrow left"} />
+              <span>Go back</span>                  
+          </button>
+          <button className="button color_white background_green" 
+            onClick={() => {
+              this.setState({ dimmerActive: true });
+              this.props.onConfirm(this.props.data.configFile);
+            }}>
+            <Icon name={"checkmark"} style={{ width: "20%" }} size="large" />
+            <span>Confirm selection</span>
+          </button>
+        </div>
+      </div>
     );
   }
 }

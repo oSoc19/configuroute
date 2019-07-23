@@ -123,7 +123,7 @@ class NewConfigFileForm extends React.Component {
   form() {
     const { description, maxSpeed, usePublicTransport } = this.state;
     return (
-      <Form>
+      <Form inverted>
         <Form.Input
           label="Description"
           placeholder="Vehicle profile for..."
@@ -179,15 +179,14 @@ class NewConfigFileForm extends React.Component {
 
   render() {
     return (
-      <Grid>
+      <div>
         <Dimmer active={this.state.dimmerActive}>
           <Loader size="huge">Loading</Loader>
         </Dimmer>
-        <Grid.Row columns={1} stretched>
-          <Grid.Column className="contentColumn">
-            <h2>Start from a default profile</h2>
-            <Menu>
-              <Menu.Item
+        <div className="new_file_from">
+          <h2 className="color_white">Start from a default profile</h2>
+          <div className="profiles_container">
+            <button className="background_white button_profile"
                 name="car"
                 onClick={() => {
                   //this.onNewConfigFileCreation(JSON.parse(this.getText()));
@@ -199,8 +198,8 @@ class NewConfigFileForm extends React.Component {
                 icon
               >
                 <Icon name="car" size="huge" />
-              </Menu.Item>
-              <Menu.Item
+              </button>
+              <button className="background_white button_profile"
                 name="bike"
                 onClick={() => {
                   //this.onNewConfigFileCreation(JSON.parse(this.getText()));
@@ -212,8 +211,8 @@ class NewConfigFileForm extends React.Component {
                 icon
               >
                 <Icon name="bicycle" size="huge" />
-              </Menu.Item>
-              <Menu.Item
+              </button>
+              <button className="background_white button_profile"
                 name="default profiles"
                 onClick={() => {
                   //this.onNewConfigFileCreation(JSON.parse(this.getText()));
@@ -225,50 +224,40 @@ class NewConfigFileForm extends React.Component {
                 icon
               >
                 <Icon name="blind" size="huge" />
-              </Menu.Item>
-            </Menu>
-          </Grid.Column>
-        </Grid.Row>
-        <Divider horizontal>Or</Divider>
-        <Grid.Row stretched stretched columns={1} style={{ }}>
-          <Grid.Column className="contentColumn">
-            <h2> Start from scratch </h2>
+              </button>
+              </div>
+            <Divider inverted horizontal>or</Divider>
+            <h2 className="color_white"> Start from scratch </h2>
             {this.form()}
-          </Grid.Column>
-        </Grid.Row>
-
-        <Grid.Row
-          computer={2}
-          columns={2}
-          stretched
-          style={{ padding: 0, margin: 0 }}
-        >
-          <Button.Group style={{ minHeight: "120px", height: "100%", width: "100%" }}>
-            <BackButton onClick={this.props.onBack} />
-            <Button.Or />
-            <ConfirmButton
-              disabled={false}
-              onClick={() => {
-                var showErrorMessage = false;
-                Object.keys(this.state).map(k => {
-                  if (this.state[k] === "" || this.state[k] === null) {
-                    showErrorMessage = true;
-                  }
-                  return k;
-                });
-                if (showErrorMessage) {
-                  this.setState({ showErrorMessage: true });
-                } else {
-                  this.setState({ dimmerActive: true });
-                  this.props.onConfirm(
-                    this.onNewConfigFileCreation(this.state)
-                  );
-                }
-              }}
-            />
-          </Button.Group>
-        </Grid.Row>
-      </Grid>
+        </div>
+        <div className="horizontalContainer">
+          <button className="button_secondary color_dark_blue background_white" onClick={this.props.onBack}>
+              <Icon name={"arrow left"} />
+              <span>Go back</span>                  
+          </button>
+          <button className="button color_white background_green" 
+            onClick={() => {
+            var showErrorMessage = false;
+            Object.keys(this.state).map(k => {
+              if (this.state[k] === "" || this.state[k] === null) {
+                showErrorMessage = true;
+              }
+              return k;
+            });
+            if (showErrorMessage) {
+              this.setState({ showErrorMessage: true });
+            } else {
+              this.setState({ dimmerActive: true });
+              this.props.onConfirm(
+                this.onNewConfigFileCreation(this.state)
+              );
+            }
+            }}>
+            <Icon name={"checkmark"} style={{ width: "20%" }} size="large" />
+            <span>Confirm selection</span>
+          </button>
+        </div>
+      </div>
     );
   }
 }

@@ -53,6 +53,7 @@
 .modalContent a {
   color:rgb(146, 255, 226);
   transition: 0.3s;
+  cursor: pointer;
 }
 
 .explanation {

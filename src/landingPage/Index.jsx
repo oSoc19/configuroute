@@ -122,18 +122,17 @@ class Index extends React.Component {
               }
             </Transition.Group>
             
-            <Button content={explanation_visible ? 'show less' : 'show more'} 
-                    icon={explanation_visible ? 'angle up' : 'angle down'} 
-                    labelPosition='right'
-                    animated='fade'
-                    onClick={() => {this.toggleTextVisibility()}} />
+            <a className="color_white " onClick={() => {this.toggleTextVisibility()}} >
+                 {explanation_visible ? 'Read less' : 'Read more'} 
+                 <Icon name={explanation_visible ? 'angle up' : 'angle down'} size="large" />
+            </a>
             </div>
             <div className="horizontalContainer">
               <button className="button color_white background_green" onClick={() => {this.props.onChangeContent("NEW");}}>
                   <Icon name={"file outline"} style={{ width: "20%" }} size="large" />
                   <span>Create new file</span>
               </button>
-              <span className="textUppercase">or</span>
+              <span className="textUppercase color_white buttonDevider">or</span>
               <button className="button color_white background_green" onClick={() => {this.triggerImportFile(this);}}>
                 <Icon name={"download"} style={{ width: "20%" }} size="large" />
                 <input
@@ -152,17 +151,3 @@ class Index extends React.Component {
 }
 
 export default Index;
-
-/*
-
-<CreateButton className="greenButton"
-              onClick={() => {
-                this.props.onChangeContent("NEW");
-              }}
-            />
-            <ImportButton className="greenButton"
-              onClick={() => {
-                this.triggerImportFile(this);
-              }}
-            />
-            */

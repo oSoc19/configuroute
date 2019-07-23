@@ -13,9 +13,7 @@ class TooltipContent extends React.Component {
 
     const renderFeature = (feature, i) => {
       let id = feature.layer.id;
-      if(id.startsWith("layer-")){
-        return;    
-      }else if(id.startsWith("from_marker")){
+      if(id.startsWith("from_marker")){
         return (
         <div key={i}>
           <strong style={unselectable}>From Marker</strong>
@@ -30,12 +28,17 @@ class TooltipContent extends React.Component {
         </div>
         )
       }
-      return (
-        <div key={i}>
-          <strong style={unselectable}>{feature.layer['source-layer']}:</strong>
-        <span style={unselectable}>{feature.layer.id}</span>
-        </div>
-      )
+      else if(id.startsWith("road")){
+        return (
+          <div key={i}>
+            <strong style={unselectable}>{feature.layer['source-layer']}:</strong>
+          <span style={unselectable}>{feature.layer.id}</span>
+          </div>
+        )
+      }
+      else{
+        return;
+      }
     };
     return (
       <div>

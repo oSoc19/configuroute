@@ -7,10 +7,10 @@ import NewConfigFileForm from "./NewFileForm";
 
 const customModalStyle = {
   content: {
-    width: "80%",
-    height: "80%",
+    width: "60%",
+    height: "60%",
     padding: 0,
-    borderRadius: 0,
+    borderRadius: '5px',
     outline: "none",
     border: "none",
     top: "50%",

@@ -64,8 +64,7 @@ class RuleItem extends React.Component {
     }
     return (
       <Segment>
-        {" "}
-        {conclusion} {option}{" "}
+        {conclusion} {option}
       </Segment>
     );
   }
@@ -123,11 +122,9 @@ class RuleItem extends React.Component {
     return (
       <Item>
         <Item.Content>
-          {" "}
           <Item.Header> {header} </Item.Header>
           <Item.Description />
           <Item.Meta>
-            {" "}
             {this.content()}
             <Button.Group style={{ width: "100%" }}>
               <Button

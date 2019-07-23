@@ -26,6 +26,10 @@
   background-color: #28A987;
 }
 
+.background_white {
+  background-color: #FFFFFF;
+}
+
 .App-header {
   grid-area: header;
   background-color: #0b132a;
@@ -70,14 +74,47 @@
   flex-flow: row-reverse nowrap;
   justify-content: space-between;
   padding-left: 22px;
+  margin: 12px;
+}
+
+.button_secondary {
+  width: 127px;
+  height: 45px;
+  border-radius: 5px;
+  border: 2px solid #0b132b;
+  margin: 12px;
+}
+
+.button_profile {
+  width: 80px;
+  height: 80px;
+  border-radius: 5px;
+  border: none;
+  margin: 6px;
 }
 
 .horizontalContainer{
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
   display: flex;
   justify-content: center;
+}
+
+.profiles_container{
+  display: flex;
+  justify-content: left;
 }
 
 .textUppercase{
   text-align: center;
   text-transform: uppercase;
+}
+
+.buttonDevider{
+  padding-top: 24px;
+}
+
+.new_file_from{
+  padding: 50px;
 }
