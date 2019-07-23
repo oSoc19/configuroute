@@ -4,6 +4,7 @@ import ReactMapboxGl, { Feature, Layer, Popup } from "react-mapbox-gl";
 import { Loader, Dimmer, Segment } from "semantic-ui-react";
 import MapToolbar from "./maptoolbar";
 import TooltipContent from "./tooltipContent";
+import { isAbsolute } from "path";
 
 const Map = ReactMapboxGl({
   accessToken:
@@ -438,12 +439,12 @@ class MapPannel extends React.Component{
     if(!this.state.to_marker.placed){
       map.setLayoutProperty('to_marker', 'visibility', 'none');
     }
-    console.log("mouse left");
+    //console.log("mouse left");
   }
 
   onMouseMove(map, evt) {
     if(!this.state.show_tooltip){
-      console.log("mouse entered")
+      //console.log("mouse entered")
       this.setState({
         show_tooltip: true
       });
@@ -496,6 +497,13 @@ class MapPannel extends React.Component{
         visible: prevState.from_marker.visible,
         dragging: prevState.from_marker.dragging,
         lngLat: prevState.from_marker.lngLat
+      },
+      to_marker: {
+        placed: false,
+        enabled: false,
+        visible: false,
+        dragging: false,
+        lngLat: [0, 0]
       }
     }));
   }
@@ -553,7 +561,7 @@ class MapPannel extends React.Component{
     });
     return (
       <div style={{height: '100%', width: '100%'}}>
-        <MapToolbar style={{height: '15%', width: '100%'}}
+        <MapToolbar style={{height: '117px', width: '100%'}}
               calculating={this.state.calculating}
               from_marker={this.state.from_marker}
               to_marker={this.state.to_marker}
@@ -568,7 +576,7 @@ class MapPannel extends React.Component{
               active_route_label_input={this.state.active_route_label_input}
               updateActiveRouteText={this.updateActiveRouteText}
               active_route_label_error={this.state.active_route_label_error}/>
-        <Segment style={{height: '85%', width: '100%', borderRadius: 0, padding: 0, margin: 0, border: 'none'}}>
+        <Segment style={{position: 'absolute', top: '117px', bottom: 0, width: '67vw', borderRadius: 0, padding: 0, margin: 0, border: 'none', overflowY: 'Hidden'}}>
         <Dimmer active={this.state.calculating} inverted>
             <Loader>Calculating Route</Loader>
         </Dimmer>
