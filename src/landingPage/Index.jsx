@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Grid, Header, Image } from "semantic-ui-react";
+import { Button, Grid, Icon, Image, Transition } from "semantic-ui-react";
 import CreateButton from "./CreateButton";
 import ImportButton from "./ImportButton";
 
@@ -33,9 +33,11 @@ class Index extends React.Component {
       screen: "welcoming",
       errorMessage: "",
       configFile: "",
-      file: ""
+      file: "",
+      explanation_visible:false
     };
     this.triggerImportFile = this.triggerImportFile.bind(this);
+    this.toggleTextVisibility = this.toggleTextVisibility.bind(this);
   }
 
   parseConfigurationFile = () => {};
@@ -98,56 +100,92 @@ class Index extends React.Component {
     });
   }
 
+  toggleTextVisibility(){
+    this.setState(prevState => ({
+      explanation_visible: !prevState.explanation_visible
+    }));
+  }
+
   render() {
+    const { explanation_visible } = this.state;
     return (
-      <Grid centered>
-        <Grid.Row columns={1} stretched style={{ height: "80%", padding: "0" }}>
-          <Grid.Column className="contentColumn">
-            <div>
-              <Header as="h2" icon textAlign="center">
+        <div>
+            <div style={{textAlign:"center"}}>
                 <Image
                   centered
-                  rounded
                   src="assets/logo.jpg"
                   className="centerLogo"
                 />
-                <Header.Content>
-                  Your go-to for creating robust route configurations
-                </Header.Content>
-              </Header>
-              <Header as="h3" dividing textAlign="center">
-                Purpose
-              </Header>
-              <p>
-                Ever traveled with unconventional means of transport such as a
-                scooter ? You want to reach specific locations but your route
-                planner takes you through uncomfortable routes? We believe your
-                journey should always be adapted to your very specific mobility
-                needs. For this reason, we created *ConfiguRoute* : a tool to
-                quickly and easily create finely tuned configuration files for
-                your transport profiles.
-              </p>
+                <p className="modalTitle">
+                    Your go-to for creating robust route configurations
+                </p>
+              <Transition.Group animation='fade down' duration={500}>
+              {explanation_visible && 
+              <div className="explanation modalContent">
+                <p>
+                  Ever traveled with unconventional means of transport such as a
+                  scooter? You want to reach specific locations but your route
+                  planner takes you through uncomfortable routes? We believe your
+                  journey should always be adapted to your very specific mobility
+                  needs. For this reason, we created ConfiguRoute: a tool to
+                  quickly and easily create finely tuned configuration files for
+                  your transport profiles.
+                </p>
+                <p>
+                  Transport profiles are defined using linked open data and
+                  OpenStreetMap terminologies. More information can be found at &nbsp;
+                  <a className="modalContent"
+                    href="http://hdelva.be/profile/ns/profile.html"
+                    target="_blank"
+                    rel=" noopener noreferrer"> 
+                  the profile defenition ontology
+                  </a>.
+                </p>
+              </div>
+              }
+            </Transition.Group>
+            
+            <Button content={explanation_visible ? 'show less' : 'show more'} 
+                    icon={explanation_visible ? 'angle up' : 'angle down'} 
+                    labelPosition='right'
+                    animated='fade'
+                    onClick={() => {this.toggleTextVisibility()}} />
             </div>
-          </Grid.Column>
-        </Grid.Row>
-        <Grid.Row columns={2} stretched style={{ height: "20%", padding: "0" }}>
-          <Button.Group style={{ width: "100%" }}>
-            <CreateButton
-              onClick={() => {
-                this.props.onChangeContent("NEW");
-              }}
-            />
-            <Button.Or />
-            <ImportButton
-              onClick={() => {
-                this.triggerImportFile(this);
-              }}
-            />
-          </Button.Group>
-        </Grid.Row>
-      </Grid>
+            <div className="horizontalContainer">
+              <button className="button color_white background_green" onClick={() => {this.props.onChangeContent("NEW");}}>
+                  <Icon name={"file outline"} style={{ width: "20%" }} size="large" />
+                  <span>Create new file</span>
+              </button>
+              <span className="textUppercase">or</span>
+              <button className="button color_white background_green" onClick={() => {this.triggerImportFile(this);}}>
+                <Icon name={"download"} style={{ width: "20%" }} size="large" />
+                <input
+                  type="file"
+                  className="import_file_button"
+                  multiple=""
+                  style={{ display: "none" }}
+                  accept=".json"
+                />
+                <span>Import file</span>
+              </button>
+            </div>
+        </div>
     );
   }
 }
 
 export default Index;
+
+/*
+
+<CreateButton className="greenButton"
+              onClick={() => {
+                this.props.onChangeContent("NEW");
+              }}
+            />
+            <ImportButton className="greenButton"
+              onClick={() => {
+                this.triggerImportFile(this);
+              }}
+            />
+            */

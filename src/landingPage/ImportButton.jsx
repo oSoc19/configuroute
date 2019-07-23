@@ -11,7 +11,7 @@ function ImportButton(props) {
         multiple=""
         style={{ display: "none" }}
         accept=".json"
-      />{" "}
+      />
       Import file
     </Button>
   );

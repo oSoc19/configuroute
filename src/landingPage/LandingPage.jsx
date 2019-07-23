@@ -9,15 +9,16 @@ const customModalStyle = {
   content: {
     width: "80%",
     height: "80%",
-    padding: "0",
-    borderRadius: "12px",
+    padding: 0,
+    borderRadius: 0,
     outline: "none",
     border: "none",
     top: "50%",
     left: "50%",
     position: "absolute",
     marginRight: "-50%",
-    transform: "translate(-50%, -50%)"
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "#0B132B"
   },
   overlay: {
     backgroundColor: "rgba(0, 0, 0, 0.7)"

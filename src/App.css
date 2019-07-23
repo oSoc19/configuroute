@@ -4,6 +4,27 @@
   grid-template-areas:
     "header"
     "main";
+  font-family: Karla;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 19px;
+}
+
+.color_white {
+  color: white;
+}
+
+.color_darkblue {
+  color: #0b132b;
+}
+
+.color_green {
+  color: #28A987;
+}
+
+.background_green {
+  background-color: #28A987;
 }
 
 .App-header {
@@ -38,5 +59,26 @@
 
 .Right-panel {
   grid-area: rightpanel;
-  height: 94vh;
+  height: 100vh;
+}
+
+.button {
+  width: 175px;
+  height: 45px;
+  border-radius: 5px;
+  border: none;
+  display: flex;
+  flex-flow: row-reverse nowrap;
+  justify-content: space-between;
+  padding-left: 22px;
+}
+
+.horizontalContainer{
+  display: flex;
+  justify-content: center;
+}
+
+.textUppercase{
+  text-align: center;
+  text-transform: uppercase;
 }

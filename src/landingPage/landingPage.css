@@ -16,25 +16,51 @@
   overflow: hidden;
 }
 
-.ReactModal__Content.ReactModal__Content--after-open > .ui.grid {
+.ReactModal__Content.ReactModal__Content {
   height: 100%;
   margin: 0 !important;
 }
 
-.ReactModal__Content.ReactModal__Content--after-open
-  > .ui.grid
-  > .row
-  > .column {
-  margin-bottom: 0 !important;
+.ReactModal__Content.ReactModal__Content--after-open {
+  height: 100%;
 }
 
 .contentColumn {
   padding: 20px 50px 20px 50px !important;
 }
 
-.centerLogo {
-  height: 120px !important;
-  width: 120px !important;
+.modalContent {
+  color: white;
+}
+
+.modalTitle{
+  font-family: Karla;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 22px;
+  line-height: 26px;
+  text-align: center;
+  letter-spacing: -0.03em;
+  color: white;
+}
+
+.centerLogo{
+  width: 190px;
+  height: 190px;
+}
+
+
+.modalContent a {
+  color:rgb(146, 255, 226);
+  transition: 0.3s;
+}
+
+.explanation {
+  margin: 12px;
+}
+
+.modalContent a:hover {
+  color:#28A987;
 }
 
 .files input {
