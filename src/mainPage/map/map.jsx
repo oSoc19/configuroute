@@ -603,7 +603,8 @@ class MapPannel extends React.Component{
                   "bottom-right": [-12, -10]
                 }}
               >
-                <TooltipContent features={this.state.map_features} />
+                <TooltipContent features={this.state.map_features} 
+                show_tooltip={(val) => {if(val !== this.state.show_tooltip){this.setState({show_tooltip: val});}}}/>
               </Popup>
             }
           </Map>

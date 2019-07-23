@@ -74,7 +74,7 @@ class App extends React.Component {
 
     this.state = {
       configFile: {},
-      showLandingPage: false,
+      showLandingPage: true,
       leftLoaded: false,
       ontology: {}
     };

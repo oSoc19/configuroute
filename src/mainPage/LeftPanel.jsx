@@ -30,14 +30,6 @@ export default class LeftPanel extends React.Component {
     this.setState({ showModal: false });
   };
 
-  handleClick = (e, titleProps) => {
-    const { index } = titleProps;
-    const { activeIndex } = this.state;
-    const newIndex = activeIndex === index ? -1 : index;
-
-    this.setState({ activeIndex: newIndex });
-  };
-
   rulesMatchesKeyword(rule) {
     if (this.state.selectedKeywords.length > 0) {
       if (rule.match) {
@@ -81,8 +73,23 @@ export default class LeftPanel extends React.Component {
       string = this.insertCharacterInString(string, index, " ");
       return string;
     });
+    switch (string) {
+      case "rdfs :label":
+        return "Profile";
+      case "has Max Speed":
+        return "Max-speed";
+      case "use Public Transport":
+        return "Public transportation";
+    }
     return string;
   }
+
+  handleClick = e => {
+    const index = parseInt(e.target.id);
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+    this.setState({ activeIndex: newIndex });
+  };
 
   displayContent() {
     if (this.props.loaded) {
@@ -90,19 +97,46 @@ export default class LeftPanel extends React.Component {
       return Object.keys(this.props.ruleTypes).map(ruleType => {
         i++;
         var j = 0;
+        var count = 0;
         return (
-          <React.Fragment key={i}>
-            <Accordion.Title
-              active={this.state.activeIndex === i}
-              index={i}
-              onClick={this.handleClick}
+          <div key={i}>
+            <button
+              className={
+                this.state.activeIndex === i ? "accordion active" : "accordion"
+              }
+              id={i}
+              onClick={e => {
+                this.handleClick(e);
+              }}
             >
-              <Icon name="dropdown" />
-              {this.beautifyString(ruleType.slice(3))}
-            </Accordion.Title>
-            <Accordion.Content active={this.state.activeIndex === i}>
+              <span
+                id={i}
+                onClick={e => {
+                  this.handleClick(e);
+                }}
+              >
+                {this.beautifyString(ruleType.slice(3))}
+              </span>
+              <Icon
+                name="chevron down"
+                size="small"
+                id={i}
+                style={{ paddingTop: "4px" }}
+              />
+            </button>
+            <div
+              className="accordion_panel"
+              style={
+                this.state.activeIndex === i
+                  ? { display: "block" }
+                  : { display: "none" }
+              }
+            >
               <Item.Group divided>
                 {this.props.configFile[ruleType].map(rule => {
+                  if (this.rulesMatchesKeyword(rule)) {
+                    count++;
+                  }
                   return (
                     <RuleItem
                       display={this.rulesMatchesKeyword(rule)}
@@ -120,8 +154,13 @@ export default class LeftPanel extends React.Component {
                   );
                 })}
               </Item.Group>
-            </Accordion.Content>
-          </React.Fragment>
+              {count === 0 && (
+                <div className="color_white">
+                  <p>Nothing to see here, try adding some rules!</p>
+                </div>
+              )}
+            </div>
+          </div>
         );
       });
     } else {
@@ -141,32 +180,29 @@ export default class LeftPanel extends React.Component {
   displayBasicProperties = () => {
     return (
       <React.Fragment key={0}>
-        <Accordion.Title
-          active={this.state.activeIndex === 0}
-          index={0}
-          onClick={this.handleClick}
+        {Object.keys(this.props.configFile).map(key => {
+          var value = this.props.configFile[key];
+          if (!Array.isArray(value) && !(typeof value === "object")) {
+            var k = this.beautifyString(key) + ": ";
+            return (
+              <div className="color_white basic_properties" key={k}>
+                <span>{k}</span>
+                <span>
+                  <b>{String(value)}</b>
+                </span>
+              </div>
+            );
+          }
+        })}
+        <button
+          className="button background_green color_white"
+          onClick={() => {
+            this.setState({ showBasicPropertiesModal: true });
+          }}
         >
-          <Icon name="dropdown" />
-          {"Basic properties"}
-        </Accordion.Title>
-        <Accordion.Content active={this.state.activeIndex === 0}>
-          {Object.keys(this.props.configFile).map(key => {
-            var value = this.props.configFile[key];
-            if (!Array.isArray(value) && !(typeof value === "object")) {
-              var text = key + " : " + value;
-              return <Segment key={text}> {text} </Segment>;
-            }
-          })}
-          <Button
-            secondary
-            onClick={() => {
-              this.setState({ showBasicPropertiesModal: true });
-            }}
-          >
-            {" "}
-            Modify{" "}
-          </Button>
-        </Accordion.Content>
+          <Icon name="pencil" />
+          <span>Edit</span>
+        </button>
       </React.Fragment>
     );
   };
@@ -271,109 +307,114 @@ export default class LeftPanel extends React.Component {
         <img
           src="assets/logo.jpg"
           alt="configuroute logo"
-          width="150px"
-          height="150px"
+          width="113px"
+          height="113px"
         />
 
-        <Dropdown
-          icon="ellipsis vertical"
-          pointing
-          className="link item color_white"
-        >
-          <Dropdown.Menu>
-            <Dropdown.Item
+        <div className="left_pannel_container">
+          <div>
+            {this.displayBasicProperties()}
+            <Dropdown
+              icon="ellipsis vertical"
+              pointing
+              className="link item color_white"
+            >
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  onClick={() => {
+                    this.setState({ showConfigFile: true });
+                  }}
+                >
+                  Show file
+                </Dropdown.Item>
+                <Dropdown.Item onClick={this.download}>
+                  Download file
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          {this.state.showModal && (
+            <NewRuleForm
+              showModal={this.state.showModal}
+              ruleTypes={this.props.ruleTypes}
+              selectOptions={this.props.rulesSelectOptions}
+              onSubmit={this.handleSubmit}
+              onClose={this.handleCloseModal}
+              beautifyString={this.beautifyString}
+              getValueLink={this.getValueLink}
+              getValueComment={this.getValueComment}
+              getTagLink={this.getTagLink}
+              getTagComment={this.getTagComment}
+            />
+          )}
+
+          {this.state.showConfigFile && (
+            <ConfigFileModal
+              ruleTypes={this.props.ruleTypes}
+              open={this.state.showConfigFile}
+              configFile={this.props.configFile}
+              onClose={() => {
+                this.setState({ showConfigFile: false });
+              }}
+            />
+          )}
+
+          {this.state.showBasicPropertiesModal && (
+            <BasicPropertiesModal
+              isOpen={this.state.showBasicPropertiesModal}
+              onClose={() => {
+                this.setState({ showBasicPropertiesModal: false });
+              }}
+              label={this.props.configFile["rdfs:label"]}
+              speed={this.props.configFile["hasMaxSpeed"]}
+              transport={this.props.configFile["usePublicTransport"]}
+              onConfirm={newProperties => {
+                this.props.onChangeBasicProperties(newProperties);
+                this.setState({ showBasicPropertiesModal: false });
+              }}
+            />
+          )}
+
+          <div className="rules_edit_container">
+            {
+              <Dropdown
+                inline
+                style={{
+                  width: "120px",
+                  margin: "12px",
+                  height: "45px",
+                  padding: "7px"
+                }}
+                text="Filter"
+                search
+                closeOnChange
+                selection
+                multiple
+                // floating
+                labeled
+                // inline
+                compact
+                allowAdditions
+                clearable
+                // button
+                icon="filter"
+                options={this.generateDropdownOptions()}
+                value={this.state.selectedKeywords}
+                onChange={this.handleSelectedKeywordsChange}
+              />
+            }
+            <button
+              className="button color_white background_green"
               onClick={() => {
-                this.setState({ showConfigFile: true });
+                this.setState({ showModal: true });
               }}
             >
-              Show file
-            </Dropdown.Item>
-            <Dropdown.Item onClick={this.download}>Download file</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-
-        <Accordion fluid styled style={{ margin: "1vw" }}>
-          {this.displayBasicProperties()}
+              <Icon name={"plus"} style={{ width: "20%" }} />
+              <span className="border_right">Add a rule</span>
+            </button>
+          </div>
           {this.displayContent()}
-        </Accordion>
-
-        {this.state.showModal && (
-          <NewRuleForm
-            showModal={this.state.showModal}
-            ruleTypes={this.props.ruleTypes}
-            selectOptions={this.props.rulesSelectOptions}
-            onSubmit={this.handleSubmit}
-            onClose={this.handleCloseModal}
-            beautifyString={this.beautifyString}
-            getValueLink={this.getValueLink}
-            getValueComment={this.getValueComment}
-            getTagLink={this.getTagLink}
-            getTagComment={this.getTagComment}
-          />
-        )}
-
-        {this.state.showConfigFile && (
-          <ConfigFileModal
-            ruleTypes={this.props.ruleTypes}
-            open={this.state.showConfigFile}
-            configFile={this.props.configFile}
-            onClose={() => {
-              this.setState({ showConfigFile: false });
-            }}
-          />
-        )}
-
-        {this.state.showBasicPropertiesModal && (
-          <BasicPropertiesModal
-            isOpen={this.state.showBasicPropertiesModal}
-            onClose={() => {
-              this.setState({ showBasicPropertiesModal: false });
-            }}
-            label={this.props.configFile["rdfs:label"]}
-            speed={this.props.configFile["hasMaxSpeed"]}
-            transport={this.props.configFile["usePublicTransport"]}
-            onConfirm={newProperties => {
-              this.props.onChangeBasicProperties(newProperties);
-              this.setState({ showBasicPropertiesModal: false });
-            }}
-          />
-        )}
-
-        <button
-          className="button color_white background_green"
-          onClick={() => {
-            this.setState({ showModal: true });
-          }}
-        >
-          <Icon name={"plus"} style={{ width: "20%" }} />
-          <span className="border_right">Add a rule</span>
-        </button>
-
-        {
-          <Dropdown
-            inline
-            style={{
-              margin: "1vw",
-              width: "120px"
-            }}
-            text="Filter"
-            search
-            closeOnChange
-            selection
-            multiple
-            // floating
-            labeled
-            // inline
-            compact
-            allowAdditions
-            clearable
-            // button
-            icon="filter"
-            options={this.generateDropdownOptions()}
-            value={this.state.selectedKeywords}
-            onChange={this.handleSelectedKeywordsChange}
-          />
-        }
+        </div>
       </div>
     );
   }

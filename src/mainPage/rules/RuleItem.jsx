@@ -122,7 +122,7 @@ class RuleItem extends React.Component {
     return (
       <Item>
         <Item.Content>
-          <Item.Header> {header} </Item.Header>
+          <h3 className="color_white"> {header} </h3>
           <Item.Description />
           <Item.Meta>
             {this.content()}

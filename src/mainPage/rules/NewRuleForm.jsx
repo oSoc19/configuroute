@@ -212,7 +212,7 @@ class NewRuleForm extends React.Component {
           stretched
           style={{ height: "50px", padding: "0" }}
         >
-          <Button.Group style={{ width: "100%" }}>
+          <Button.Group style={{ width: "100%", padding: 0 }}>
             <BackButton onClick={this.props.onClose} />
             <Button.Or />
             <ConfirmButton

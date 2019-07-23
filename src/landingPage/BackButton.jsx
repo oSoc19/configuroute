@@ -8,7 +8,7 @@ function BackButton(props) {
       labelPosition="left"
       className={"landing_page_button"}
       onClick={props.onClick}
-      style={{/*'padding': 0, 'margin': 0, 'borderRadius': '0 0 0 12px'*/}}
+      style={{'padding': 0, 'margin': 0, height: '100%', 'borderRadius': '0 0 0 12px'}}
     >
       <Icon name={"left arrow"} style={{ width: "20%" }} size="large" />
       Go back

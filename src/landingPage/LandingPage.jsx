@@ -21,7 +21,7 @@ const customModalStyle = {
     backgroundColor: "#0B132B"
   },
   overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.7)"
+    backgroundColor: "rgba(255, 255, 255, 0.7)"
   }
 };
 
