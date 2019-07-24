@@ -5,7 +5,7 @@ import {
   Accordion,
   Icon,
   Menu,
-  Segment,
+  Input,
   Item,
   Dropdown
 } from "semantic-ui-react";
@@ -194,15 +194,6 @@ export default class LeftPanel extends React.Component {
             );
           }
         })}
-        <button
-          className="button background_green color_white"
-          onClick={() => {
-            this.setState({ showBasicPropertiesModal: true });
-          }}
-        >
-          <Icon name="pencil" />
-          <span>Edit</span>
-        </button>
       </React.Fragment>
     );
   };
@@ -314,24 +305,34 @@ export default class LeftPanel extends React.Component {
         <div className="left_pannel_container">
           <div>
             {this.displayBasicProperties()}
-            <Dropdown
-              icon="ellipsis vertical"
-              pointing
-              className="link item color_white"
-            >
-              <Dropdown.Menu>
-                <Dropdown.Item
-                  onClick={() => {
-                    this.setState({ showConfigFile: true });
-                  }}
-                >
-                  Show file
-                </Dropdown.Item>
-                <Dropdown.Item onClick={this.download}>
-                  Download file
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <div className="basic_properties_options">
+              <Dropdown
+                icon="ellipsis vertical"
+                pointing
+                className="link item color_white"
+              >
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    onClick={() => {
+                      this.setState({ showConfigFile: true });
+                    }}
+                  >
+                    Show file
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={this.download}>
+                    Download file
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              <button
+                className="edit_properties_button"
+                onClick={() => {
+                  this.setState({ showBasicPropertiesModal: true });
+                }}
+              >
+                <Icon inverted name="pencil" />
+              </button>
+            </div>
           </div>
           {this.state.showModal && (
             <NewRuleForm
@@ -376,33 +377,26 @@ export default class LeftPanel extends React.Component {
           )}
 
           <div className="rules_edit_container">
-            {
+            <div className="filter_container">
               <Dropdown
-                inline
-                style={{
-                  width: "120px",
-                  margin: "12px",
-                  height: "45px",
-                  padding: "7px"
-                }}
-                text="Filter"
+                style={{ width: "200px" }}
+                placeholder="Filter"
                 search
-                closeOnChange
                 selection
-                multiple
-                // floating
-                labeled
-                // inline
-                compact
-                allowAdditions
-                clearable
-                // button
                 icon="filter"
                 options={this.generateDropdownOptions()}
                 value={this.state.selectedKeywords}
                 onChange={this.handleSelectedKeywordsChange}
               />
-            }
+              <button
+                className="filter_clear"
+                onClick={() => {
+                  this.setState({ selectedKeywords: [] });
+                }}
+              >
+                <Icon name="close" />
+              </button>
+            </div>
             <button
               className="button color_white background_green"
               onClick={() => {

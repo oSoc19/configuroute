@@ -99,7 +99,6 @@ class RuleItem extends React.Component {
               description={this.props.getValueComment(value)}
             />
           )}
-          )
         </Item.Group>
       );
     }

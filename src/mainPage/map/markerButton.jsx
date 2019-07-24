@@ -6,7 +6,7 @@ export default function MarkerButton(props){
         <Button disabled={props.disabled} as='div'  labelPosition='right'
                 onClick={props.onClick}
                 style={props.style}>
-            <Button icon>
+            <Button className="marker_button" icon>
                 <Icon name='map pin' />
                 {props.children}
             </Button>

@@ -34,26 +34,7 @@ class MapToolbar extends React.Component {
     } = this.props;
     return (
       <Container className="mapToolbar" style={this.props.style}>
-        <Segment
-          attached="bottom"
-          style={{ borderRadius: 0, height: "50%", width: "270px" }}
-        >
-          <Dropdown
-            options={selectable_routes}
-            placeholder="Choose routes to display"
-            search
-            selection
-            fluid
-            multiple
-            allowAdditions
-            value={selected_routes}
-            onAddItem={handleSelectedRouteAddition}
-            onChange={handleSelectedRoutesChange}
-            className="routeSelectDropdown"
-          />
-        </Segment>
-
-        <Menu attached="top" style={{ borderRadius: 0, height: "50%" }}>
+        <Menu attached="top" style={{ margin: 0, border: 'none', borderRadius: 0, height: "50%" }}>
           <Menu.Item>
             <MarkerButton
               disabled={calculating}
@@ -61,7 +42,7 @@ class MapToolbar extends React.Component {
                 createFromMarker();
               }}
               marker={from_marker}
-              style={{ marginRight: "10px" }}
+              style={{ marginRight: "10px"}}
             >
               From
             </MarkerButton>
@@ -76,7 +57,7 @@ class MapToolbar extends React.Component {
             </MarkerButton>
           </Menu.Item>
           <Menu.Item>
-            <Button
+            <button className="button background_green color_white"
               disabled={
                 !(from_marker.lngLat && to_marker.lngLat) || calculating
               }
@@ -85,11 +66,10 @@ class MapToolbar extends React.Component {
                 calculateRoute();
               }}
             >
-              <Icon name={"sync"} style={{ width: "20%" }} />
+              <Icon name="sync alternate" inverted style={{ width: "20%" }}/>
               <span className="border_right">Calculate</span>
-            </Button>
+            </button>
           </Menu.Item>
-
           <Menu.Item position="right">
             <Input
               type="text"
@@ -104,20 +84,19 @@ class MapToolbar extends React.Component {
               }
             >
               <input className="prompt" />
+              <Button
+                className="marker_button"
+                type="submit"
+                onClick={() => {
+                  saveCurrentRoute();
+                }}
+                disabled={
+                  !(from_marker.lngLat && to_marker.lngLat) || calculating
+                }
+              >
+                Save route
+              </Button>
             </Input>
-
-            <Button
-              type="submit"
-              onClick={() => {
-                saveCurrentRoute();
-              }}
-              disabled={
-                !(from_marker.lngLat && to_marker.lngLat) || calculating
-              }
-            >
-              Save route
-            </Button>
-
             {active_route_label_error && (
               <Label basic color="red" pointing="left">
                 {active_route_label_error}
@@ -125,6 +104,21 @@ class MapToolbar extends React.Component {
             )}
           </Menu.Item>
         </Menu>
+        <Segment attached="bottom" style={{ margin: 0, border: 'none', borderRadius: 0, height: "50%" }}>
+          <Dropdown
+            options={selectable_routes}
+            placeholder="Choose routes to display"
+            search
+            selection
+            fluid
+            multiple
+            allowAdditions
+            value={selected_routes}
+            onAddItem={handleSelectedRouteAddition}
+            onChange={handleSelectedRoutesChange}
+            className="routeSelectDropdown"
+          />
+        </Segment>
       </Container>
     );
   }

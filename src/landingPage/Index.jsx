@@ -143,7 +143,7 @@ class Index extends React.Component {
             }}
           >
             <Icon name={"plus"} style={{ width: "20%" }} />
-            <span className="border_right">Create new file</span>
+            <span className="border_right">Create new</span>
           </button>
           <span className="textUppercase color_white buttonDevider">or</span>
           <button
@@ -152,7 +152,7 @@ class Index extends React.Component {
               this.triggerImportFile(this);
             }}
           >
-            <Icon name={"download"} style={{ width: "20%" }} size="large" />
+            <Icon name={"download"} style={{ width: "20%" }}/>
             <input
               type="file"
               className="import_file_button"
@@ -160,7 +160,7 @@ class Index extends React.Component {
               style={{ display: "none" }}
               accept=".json"
             />
-            <span className="border_right">Import file</span>
+            <span className="border_right" style={{paddingTop: '3px'}}>Import file</span>
           </button>
         </div>
       </div>

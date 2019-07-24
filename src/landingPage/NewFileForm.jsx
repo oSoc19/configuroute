@@ -251,7 +251,7 @@ class NewConfigFileForm extends React.Component {
             }
             }}>
             <Icon name="checkmark" style={{ width: "20%" }} size="large" />
-            <span>Confirm selection</span>
+            <span style={{paddingTop: '3px'}}>Confirm selection</span>
           </button>
         </div>
       </div>
