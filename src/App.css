@@ -173,3 +173,7 @@
   padding-top: 12px;
   overflow: hidden;
 }
+.mapToolbar {
+  display: flex;
+  
+}
