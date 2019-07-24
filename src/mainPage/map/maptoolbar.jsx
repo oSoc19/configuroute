@@ -85,7 +85,7 @@ class MapToolbar extends React.Component {
             >
               <input className="prompt" />
               <Button
-                className="marker_button"
+                className="semantic_green_override"
                 type="submit"
                 onClick={() => {
                   saveCurrentRoute();

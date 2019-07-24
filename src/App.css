@@ -102,6 +102,21 @@
   border-radius: 5px;
   border: 2px solid #0b132b;
   margin: 12px;
+  transition: 0.4s;
+}
+
+.button_secondary:hover {
+  color: #28A987;
+  border: 2px solid #28A987;
+  
+}
+
+.button_secondary {
+  width: 127px;
+  height: 45px;
+  border-radius: 5px;
+  border: 2px solid #0b132b;
+  margin: 12px;
 }
 
 .button_profile {
@@ -112,10 +127,12 @@
   margin: 6px;
   transition: 0.2s;
   cursor: pointer;
+  color: #0b132b;
 }
 
 .button_profile:hover {
   background-color: #28A987;
+  color: white;
 }
 
 .horizontalContainer{
@@ -228,8 +245,12 @@
   overflow: hidden;
 }
 
+.acordion_container{
+  overflow: auto;
+  height: -webkit-fill-available;
+}
 
-.marker_button{
+.semantic_green_override{
   background-color: #28A987 !important;
   color: white !important;
   transition: 0.4s !important;
@@ -237,4 +258,23 @@
   font-style: normal !important;
   font-weight: normal !important;
   font-size: 16px !important;
+}
+
+.marker_button{
+  background-color: white !important;
+  color: #0b132b !important;
+  transition: 0.4s !important;
+  font-family: Karla !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-size: 16px !important;
+  border: 1px solid lightgray !important;
+}
+
+.marker_button:hover{
+  color: #28A987 !important;
+}
+
+.marker_button:disabled:hover{
+  color: #0b132b !important;
 }

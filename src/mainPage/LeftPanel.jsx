@@ -407,7 +407,9 @@ export default class LeftPanel extends React.Component {
               <span className="border_right">Add a rule</span>
             </button>
           </div>
-          {this.displayContent()}
+          <div className="acordion_container">
+            {this.displayContent()}
+          </div>
         </div>
       </div>
     );

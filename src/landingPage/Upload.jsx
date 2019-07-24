@@ -38,14 +38,14 @@ class Upload extends React.Component {
   validFileScreen() {
     return (
       <div>
-        <h2 className="color_white"> {this.props.data.file.name} </h2>
-        <Segment>
+        <h2 className="color_white" style={{margin: '12px'}}> {this.props.data.file.name} </h2>
+        <Segment style={{margin: '12px'}}>
           <Label> Size: </Label> {this.props.data.file.size + " bytes"}
         </Segment>
-        <Segment>
+        <Segment style={{margin: '12px'}}>
           <Label> Label: </Label> {this.props.data.configFile["rdfs:label"]}{" "}
-        </Segment>
-        <Segment>
+        </Segment >
+        <Segment style={{margin: '12px'}}>
           <Label> Number of rules: </Label> {this.computeNumberOfRules()}
         </Segment>
       </div>
@@ -83,7 +83,7 @@ class Upload extends React.Component {
               this.props.onConfirm(this.props.data.configFile);
             }}>
             <Icon name={"checkmark"} style={{ width: "20%" }} size="large" />
-            <span>Confirm selection</span>
+            <span style={{paddingTop: '3px'}}>Confirm selection</span>
           </button>
         </div>
       </div>

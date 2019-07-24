@@ -63,7 +63,7 @@ class RuleItem extends React.Component {
         break;
     }
     return (
-      <Segment>
+      <Segment style={{marginRight: 0}}>
         {conclusion} {option}
       </Segment>
     );
