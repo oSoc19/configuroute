@@ -1,15 +1,18 @@
-# Configuroute (osoc19)
+![logo](https://github.com/oSoc19/configuroute/blob/master/logo_text.png)
+# [Configuroute](http://configuroute.be/) (osoc19)
 
 ConfiguRoute is a web application designed for people interested in setting up their very individual route planning system. It consists in an interface designed for easily creating configuration files for any kind of specific vehicle profiles.
+
+![demo gif](https://github.com/oSoc19/configuroute/blob/master/demo.gif)
 
 ## Getting Started
 
 ### Beforehand
-* Checkout the[website](http://configuroute.be/).
-* Get to understand the specifications of the  ontologies: 
+* Checkout [the tool](http://configuroute.be/).
+* Get to understand the specifications of the ontologies: 
   * http://hdelva.be/profile/ns/profile.html
   * http://hdelva.be/tiles/ns/terms.html
-* Take a look at Planner.js https://planner.js.org/
+* Have a look at the [Planner.js project](https://planner.js.org/)
 
 ### Prerequisites
 
@@ -37,6 +40,10 @@ npm start
 This project was started by students during Open Summer of Code 2019, members of the open planner team: a consortium of Open Knowledge Belgium, Anyways, De Lijn, NextMoov and imec working on better route planning solutions with open data https://openplanner.team.
 
 Go take a look at the list of contributors who participated in this project!
+### The team
+* [@WouterVd3](https://github.com/woutervd3)
+* [@KoutchemeCharles](https://github.com/KoutchemeCharles)
+* [@MargotVerb](https://github.com/margotverb)
 
 ## Built with
 
