@@ -64,8 +64,7 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 Thanks to 
 
-* The amazing people of Osoc https://2019.summerofcode.be/
-* [react-json-editor-ajrm](https://github.com/AndrewRedican/react-json-editor-ajrm) - JSON editor
+The amazing people of [Osoc](https://2019.summerofcode.be/)
 
 
 
