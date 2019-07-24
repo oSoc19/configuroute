@@ -10,7 +10,7 @@ const customModalStyle = {
     width: "60%",
     height: "60%",
     padding: 0,
-    borderRadius: '5px',
+    borderRadius: "5px",
     outline: "none",
     border: "none",
     top: "50%",
@@ -27,12 +27,17 @@ const customModalStyle = {
 
 Modal.setAppElement("#root");
 
+/**
+ * This component is the landing page, a modal which is displayed to the user
+ * when the website is (re)loaded [indeed, we do not use cookies yet].
+ */
 class LandingPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      content: "INDEX",
-      fileData: {}
+      content: "INDEX", // what is displayed to the user
+      fileMetadata: {} /* contains the metadata about the file that is imported when
+      the user clicks on the import button*/
     };
 
     this.handleChangeContent = this.handleChangeContent.bind(this);
@@ -40,7 +45,7 @@ class LandingPage extends React.Component {
   }
 
   handleChangeContent(content, data) {
-    this.setState({ content: content, fileData: data });
+    this.setState({ content: content, fileMetadata: data });
   }
 
   handleConfirm(configFile) {
@@ -52,26 +57,26 @@ class LandingPage extends React.Component {
       case "INDEX":
         return (
           <Index
-            ruleTypes={this.props.ruleTypes}
+            typesOfRuleMetadata={this.props.typesOfRuleMetadata}
             onChangeContent={this.handleChangeContent}
           />
         );
       case "UPLOAD":
         return (
           <Upload
-            ruleTypes={this.props.ruleTypes}
+            typesOfRuleMetadata={this.props.typesOfRuleMetadata}
             onConfirm={this.handleConfirm}
             onBack={() => {
               this.handleChangeContent("INDEX");
             }}
-            data={this.state.fileData}
+            data={this.state.fileMetadata}
             onChangeContent={this.handleChangeContent}
           />
         );
       case "NEW":
         return (
           <NewConfigFileForm
-            ruleTypes={this.props.ruleTypes}
+            typesOfRuleMetadata={this.props.typesOfRuleMetadata}
             onConfirm={this.handleConfirm}
             onBack={() => {
               this.handleChangeContent("INDEX");

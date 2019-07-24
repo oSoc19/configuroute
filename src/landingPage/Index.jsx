@@ -1,29 +1,40 @@
 import React from "react";
 import { Button, Grid, Icon, Image, Transition } from "semantic-ui-react";
-import CreateButton from "./CreateButton";
-import ImportButton from "./ImportButton";
 
+/**
+ * This component is the welcoming screen displayed on the landing page
+ * when the website is loaded. It displays the purpose of the tool and invite
+ * the user to choose between creating a new configuration file or starting
+ * from an existing one.
+ */
 class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      screen: "welcoming",
-      errorMessage: "",
-      configFile: "",
-      file: "",
       explanation_visible: false
     };
     this.triggerImportFile = this.triggerImportFile.bind(this);
     this.toggleTextVisibility = this.toggleTextVisibility.bind(this);
   }
 
-  parseConfigurationFile = () => {};
-
+  /**
+   *
+   * This functions triggers the importation of a file from the user's computer.
+   *
+   * @param {*} reactComponent the current Index component. Inside CallBacks
+   * for event listeners, the keyword "this" does not refer to the current React
+   * component, it is the reason why we pass it as an argument.
+   *
+   */
   triggerImportFile(reactComponent) {
     var array = document.getElementsByClassName("import_file_button");
 
     var fileInput = array[0];
-    var ruleTypes = this.props.ruleTypes;
+    var typesOfRuleMetadata = this.props.typesOfRuleMetadata;
+
+    /* because the input tag does not match our styling, we hid it 
+    and we manually trigger the click event when the user clicks on a specific
+    button which is styled to our preferences */
 
     fileInput.click();
     fileInput.addEventListener("change", function(e) {
@@ -42,7 +53,12 @@ class Index extends React.Component {
             if (configFile["@context"] == null) {
               validFile = false;
             }
-            Object.keys(ruleTypes).map(k => {
+
+            /* we test wheter or not the JSON object actually correspond 
+            to a configuration file. Notice that the check is shallow and should
+            be improved to perform a deep checking. */
+
+            Object.keys(typesOfRuleMetadata).map(k => {
               if (configFile[k] == null || !Array.isArray(configFile[k]))
                 validFile = false;
               return true;
@@ -50,6 +66,9 @@ class Index extends React.Component {
           } catch (error) {
             validFile = false;
           }
+
+          /* we return to the Landing page metadata and data of the file that
+          is imported, so that it can be passed to the Upload component*/
 
           if (validFile) {
             reactComponent.props.onChangeContent("UPLOAD", {
@@ -152,7 +171,7 @@ class Index extends React.Component {
               this.triggerImportFile(this);
             }}
           >
-            <Icon name={"download"} style={{ width: "20%" }}/>
+            <Icon name={"download"} style={{ width: "20%" }} />
             <input
               type="file"
               className="import_file_button"
@@ -160,7 +179,9 @@ class Index extends React.Component {
               style={{ display: "none" }}
               accept=".json"
             />
-            <span className="border_right" style={{paddingTop: '3px'}}>Import file</span>
+            <span className="border_right" style={{ paddingTop: "3px" }}>
+              Import file
+            </span>
           </button>
         </div>
       </div>

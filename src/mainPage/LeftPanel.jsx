@@ -1,24 +1,25 @@
 import React from "react";
 import NewRuleForm from "./rules/NewRuleForm";
-import {
-  Button,
-  Accordion,
-  Icon,
-  Menu,
-  Input,
-  Item,
-  Dropdown
-} from "semantic-ui-react";
+import { Icon, Item, Dropdown } from "semantic-ui-react";
 import RuleItem from "./rules/RuleItem";
 import ConfigFileModal from "./ConfigFileModal";
 import BasicPropertiesModal from "../basicPropertiesModal";
 
+/**
+ * The left pannel component  interfaces the mofification of the configuration 
+ * files. It is the actual working environement. The scheme is simple: 
+ * we display all the rules currently defined by the profile in a structured 
+ * and informative way. The user can then decide to:
+ *  - Add a new rule to the configuration file 
+    - Modify how a specific rule will impact the planning system
+    - Remove a rule from the configuration file
+ */
 export default class LeftPanel extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      showModal: false,
+      showNewRuleFormModal: false,
       showConfigFile: false,
       activeIndex: 0,
       selectedKeywords: [],
@@ -26,10 +27,129 @@ export default class LeftPanel extends React.Component {
     };
   }
 
-  handleCloseModal = () => {
-    this.setState({ showModal: false });
+  /**
+   * The following set of functions are used to get information from the ontology
+   * data structure created when a configuration file is loaded (check
+   * queryOntologyForInformation in App.jsx)
+   */
+
+  getLink = description => {
+    var link = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
+        link = description[key];
+      }
+      return key;
+    });
+    return link;
   };
 
+  getComment = description => {
+    var comment = "";
+    Object.keys(description).map(key => {
+      if (key.slice(key.indexOf("#") + 1) === "comment") {
+        comment = description[key];
+      }
+      return key;
+    });
+    return comment;
+  };
+
+  getTagComment = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getComment(description);
+  };
+
+  getValueComment = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getComment(description);
+  };
+
+  getTagLink = keyName => {
+    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
+
+    var description = this.props.rulesSelectOptions.tags[keyName].description;
+    if (description) return this.getLink(description);
+  };
+
+  getValueLink = valueName => {
+    if (!this.props.rulesSelectOptions.values[valueName]) return "";
+    var description = this.props.rulesSelectOptions.values[valueName];
+    if (description) return this.getLink(description);
+  };
+
+  /**
+   * Handling methods
+   */
+
+  handleCloseModal = () => {
+    this.setState({ showNewRuleFormModal: false });
+  };
+
+  /**
+   * Modifies which set of rules are displayed by the accordion in the ui.
+   */
+  handleAccordionClick = e => {
+    const index = parseInt(e.target.id);
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+    this.setState({ activeIndex: newIndex });
+  };
+
+  /**
+   * Called when the user wants to add a new rule to the configuration file.
+   */
+  handleSubmit = formValues => {
+    var newActiveIndex =
+      Object.keys(this.props.typesOfRuleMetadata).indexOf(formValues.ruleType) +
+      1;
+    if (newActiveIndex !== this.state.activeIndex)
+      this.setState({ activeIndex: newActiveIndex });
+    this.handleCloseModal();
+    this.props.onNewRuleSubmit(formValues);
+  };
+
+  handleSelectedKeywordsChange = (e, { value }) => {
+    this.setState({ selectedKeywords: value });
+  };
+
+  /**
+   * Usefull methods
+   */
+
+  /**
+   * Generate a list of all keys and values used in the (terms) ontology.
+   */
+  generateDropdownOptions = () => {
+    if (!this.props.loaded) return [];
+
+    var tags = this.props.rulesSelectOptions.tags;
+    const keyOptions = Object.keys(tags).map(k => {
+      return {
+        key: k,
+        value: k,
+        text: k
+      };
+    });
+
+    const values = this.props.rulesSelectOptions.values;
+    const valueOptions = Object.keys(values).map(k => {
+      return {
+        key: k,
+        value: k,
+        text: k
+      };
+    });
+
+    return [...keyOptions, ...valueOptions];
+  };
+
+  /**
+   * Returns true if the key or its associated value property matches
+   * the selected keyword for the filtering.
+   */
   rulesMatchesKeyword(rule) {
     if (this.state.selectedKeywords.length > 0) {
       if (rule.match) {
@@ -52,15 +172,20 @@ export default class LeftPanel extends React.Component {
     return true;
   }
 
-  insertCharacterInString(string, index, char) {
-    if (string.length > index) {
-      return string.slice(0, index) + char + string.slice(index);
+  /* transform a word written in camel case into its corresponding sentence
+   for instance, "hasMaxSpeed" to "has max speed" */
+  beautifyString(string) {
+    switch (string) {
+      case "rdfs:label":
+        return "Profile";
+      case "hasMaxSpeed":
+        return "Max-speed";
+      case "usePublicTransport":
+        return "Public transportation";
+      default:
     }
-  }
 
-  beautifyString(stringToChange) {
     var upperCasesIndexes = [];
-    var string = stringToChange.slice(0);
 
     for (var i = 1; i < string.length; i++) {
       var l = upperCasesIndexes.length + i;
@@ -70,31 +195,63 @@ export default class LeftPanel extends React.Component {
     }
 
     upperCasesIndexes.map(index => {
-      string = this.insertCharacterInString(string, index, " ");
+      string = string.slice(0, index) + " " + string.slice(index);
       return string;
     });
-    switch (string) {
-      case "rdfs :label":
-        return "Profile";
-      case "has Max Speed":
-        return "Max-speed";
-      case "use Public Transport":
-        return "Public transportation";
-    }
+
     return string;
   }
 
-  handleClick = e => {
-    const index = parseInt(e.target.id);
-    const { activeIndex } = this.state;
-    const newIndex = activeIndex === index ? -1 : index;
-    this.setState({ activeIndex: newIndex });
+  /**
+   * Function called when the user wants to download the configuration file.
+   */
+  download = () => {
+    var element = document.createElement("a");
+    element.setAttribute(
+      "href",
+      "data:text/plain;charset=utf-8," +
+        encodeURIComponent(JSON.stringify(this.props.configFile, null, 2))
+    );
+    element.setAttribute("download", "config.json");
+
+    element.style.display = "none";
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  };
+
+  /**
+   * Render methods
+   */
+
+  displayBasicProperties = () => {
+    return (
+      <React.Fragment key={0}>
+        {Object.keys(this.props.configFile).map(key => {
+          var value = this.props.configFile[key];
+          if (!Array.isArray(value) && !(typeof value === "object")) {
+            var k = this.beautifyString(key) + ": ";
+            return (
+              <div className="color_white basic_properties" key={k}>
+                <span>{k}</span>
+                <span>
+                  <b>{String(value)}</b>
+                </span>
+              </div>
+            );
+          }
+        })}
+      </React.Fragment>
+    );
   };
 
   displayContent() {
     if (this.props.loaded) {
+      // if a configuration file was loaded by the user
       var i = 0;
-      return Object.keys(this.props.ruleTypes).map(ruleType => {
+      return Object.keys(this.props.typesOfRuleMetadata).map(ruleType => {
         i++;
         var j = 0;
         var count = 0;
@@ -106,13 +263,13 @@ export default class LeftPanel extends React.Component {
               }
               id={i}
               onClick={e => {
-                this.handleClick(e);
+                this.handleAccordionClick(e);
               }}
             >
               <span
                 id={i}
                 onClick={e => {
-                  this.handleClick(e);
+                  this.handleAccordionClick(e);
                 }}
               >
                 {this.beautifyString(ruleType.slice(3))}
@@ -168,130 +325,6 @@ export default class LeftPanel extends React.Component {
     }
   }
 
-  handleSubmit = formValues => {
-    var newActiveIndex =
-      Object.keys(this.props.ruleTypes).indexOf(formValues.ruleType) + 1;
-    if (newActiveIndex !== this.state.activeIndex)
-      this.setState({ activeIndex: newActiveIndex });
-    this.handleCloseModal();
-    this.props.onNewRuleSubmit(formValues);
-  };
-
-  displayBasicProperties = () => {
-    return (
-      <React.Fragment key={0}>
-        {Object.keys(this.props.configFile).map(key => {
-          var value = this.props.configFile[key];
-          if (!Array.isArray(value) && !(typeof value === "object")) {
-            var k = this.beautifyString(key) + ": ";
-            return (
-              <div className="color_white basic_properties" key={k}>
-                <span>{k}</span>
-                <span>
-                  <b>{String(value)}</b>
-                </span>
-              </div>
-            );
-          }
-        })}
-      </React.Fragment>
-    );
-  };
-
-  generateDropdownOptions = () => {
-    if (!this.props.loaded) return [];
-
-    var tags = this.props.rulesSelectOptions.tags;
-    const keyOptions = Object.keys(tags).map(k => {
-      return {
-        key: k,
-        value: k,
-        text: k
-        //label: { color: "red", empty: true, circular: true }
-      };
-    });
-
-    const values = this.props.rulesSelectOptions.values;
-    const valueOptions = Object.keys(values).map(k => {
-      return {
-        key: k,
-        value: k,
-        text: k
-        //label: { color: "green", empty: true, circular: true }
-      };
-    });
-
-    return [...keyOptions, ...valueOptions];
-  };
-
-  handleSelectedKeywordsChange = (e, { value }) => {
-    this.setState({ selectedKeywords: value });
-  };
-
-  download = () => {
-    var element = document.createElement("a");
-    element.setAttribute(
-      "href",
-      "data:text/plain;charset=utf-8," +
-        encodeURIComponent(JSON.stringify(this.props.configFile, null, 2))
-    );
-    element.setAttribute("download", "config.json");
-
-    element.style.display = "none";
-    document.body.appendChild(element);
-
-    element.click();
-
-    document.body.removeChild(element);
-  };
-
-  getLink = description => {
-    var link = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "wasInfluencedBy") {
-        link = description[key];
-      }
-      return key;
-    });
-    return link;
-  };
-
-  getComment = description => {
-    var comment = "";
-    Object.keys(description).map(key => {
-      if (key.slice(key.indexOf("#") + 1) === "comment") {
-        comment = description[key];
-      }
-      return key;
-    });
-    return comment;
-  };
-
-  getTagComment = keyName => {
-    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
-    var description = this.props.rulesSelectOptions.tags[keyName].description;
-    if (description) return this.getComment(description);
-  };
-
-  getValueComment = valueName => {
-    if (!this.props.rulesSelectOptions.values[valueName]) return "";
-    var description = this.props.rulesSelectOptions.values[valueName];
-    if (description) return this.getComment(description);
-  };
-
-  getTagLink = keyName => {
-    if (!this.props.rulesSelectOptions.tags[keyName]) return "";
-
-    var description = this.props.rulesSelectOptions.tags[keyName].description;
-    if (description) return this.getLink(description);
-  };
-
-  getValueLink = valueName => {
-    if (!this.props.rulesSelectOptions.values[valueName]) return "";
-    var description = this.props.rulesSelectOptions.values[valueName];
-    if (description) return this.getLink(description);
-  };
-
   render() {
     return (
       <div className="Left-panel background_darkblue">
@@ -334,10 +367,10 @@ export default class LeftPanel extends React.Component {
               </button>
             </div>
           </div>
-          {this.state.showModal && (
+          {this.state.showNewRuleFormModal && (
             <NewRuleForm
-              showModal={this.state.showModal}
-              ruleTypes={this.props.ruleTypes}
+              showNewRuleFormModal={this.state.showNewRuleFormModal}
+              typesOfRuleMetadata={this.props.typesOfRuleMetadata}
               selectOptions={this.props.rulesSelectOptions}
               onSubmit={this.handleSubmit}
               onClose={this.handleCloseModal}
@@ -351,7 +384,7 @@ export default class LeftPanel extends React.Component {
 
           {this.state.showConfigFile && (
             <ConfigFileModal
-              ruleTypes={this.props.ruleTypes}
+              typesOfRuleMetadata={this.props.typesOfRuleMetadata}
               open={this.state.showConfigFile}
               configFile={this.props.configFile}
               onClose={() => {
@@ -400,16 +433,15 @@ export default class LeftPanel extends React.Component {
             <button
               className="button color_white background_green"
               onClick={() => {
-                this.setState({ showModal: true });
+                console.log(this.state.showNewRuleFormModal);
+                this.setState({ showNewRuleFormModal: true });
               }}
             >
               <Icon name={"plus"} style={{ width: "20%" }} />
               <span className="border_right">Add a rule</span>
             </button>
           </div>
-          <div className="acordion_container">
-            {this.displayContent()}
-          </div>
+          <div className="acordion_container">{this.displayContent()}</div>
         </div>
       </div>
     );

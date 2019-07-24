@@ -1,19 +1,14 @@
 import React from "react";
 import {
   Form,
-  Grid,
-  Button,
   Message,
   Dimmer,
   Loader,
   Icon,
-  Label,
-  Menu,
   Divider
 } from "semantic-ui-react";
-import BackButton from "./BackButton.jsx";
-import ConfirmButton from "./ConfirmButton.jsx";
 
+/* JSON-LD information about terms used in configuration file */
 const configFileContext = {
   "@context": {
     osm: "https://w3id.org/openstreetmap/terms#",
@@ -95,20 +90,20 @@ class NewConfigFileForm extends React.Component {
   }
 
   onNewConfigFileCreation = formValues => {
-    var ruleTypes = this.props.ruleTypes;
+    var typesOfRuleMetadata = this.props.typesOfRuleMetadata;
     var configFile = configFileContext;
     // Given by the form
     configFile["rdfs:label"] = formValues.description;
     configFile["hasMaxSpeed"] = Number(formValues.maxSpeed);
     configFile["usePublicTransport"] = formValues.usePublicTransport;
     // creation of default rules for each type of rule
-    Object.keys(this.props.ruleTypes).map(k => {
+    Object.keys(this.props.typesOfRuleMetadata).map(k => {
       configFile[k] = [];
 
       var defaultRule = {};
       defaultRule["concludes"] = {};
-      defaultRule["concludes"][ruleTypes[k]["conclusion"]] =
-        ruleTypes[k]["defaultValue"];
+      defaultRule["concludes"][typesOfRuleMetadata[k]["conclusion"]] =
+        typesOfRuleMetadata[k]["defaultValue"];
       defaultRule["hasOrder"] = 100;
 
       configFile[k].push(defaultRule);
@@ -118,6 +113,7 @@ class NewConfigFileForm extends React.Component {
 
     return configFile;
   };
+
   handleChange = (e, { name, value }) => this.setState({ [name]: value });
 
   form() {
@@ -159,8 +155,11 @@ class NewConfigFileForm extends React.Component {
     );
   }
 
+  /**
+   * This function reads the content of a configuration file from a URL location
+   * as text, parse it and submit it to the App component.
+   */
   startFromProfile(reactComponent, profile_url) {
-    // read text from URL location
     var request = new XMLHttpRequest();
     request.open("GET", profile_url, true);
     request.send(null);
@@ -186,72 +185,77 @@ class NewConfigFileForm extends React.Component {
         <div className="new_file_from">
           <h2 className="color_white">Start from a default profile</h2>
           <div className="profiles_container">
-            <button className="background_white button_profile"
-                name="car"
-                onClick={() => {
-                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                  this.startFromProfile(
-                    this,
-                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json"
-                  );
-                }}
-              >
-                <Icon name="car" size="huge" />
-              </button>
-              <button className="background_white button_profile"
-                name="bike"
-                onClick={() => {
-                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                  this.startFromProfile(
-                    this,
-                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json"
-                  );
-                }}
-              >
-                <Icon name="bicycle" size="huge" />
-              </button>
-              <button className="background_white button_profile"
-                name="default profiles"
-                onClick={() => {
-                  //this.onNewConfigFileCreation(JSON.parse(this.getText()));
-                  this.startFromProfile(
-                    this,
-                    "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json"
-                  );
-                }}
-              >
-                <Icon name="blind" size="huge" />
-              </button>
-              </div>
-            <Divider inverted horizontal>or</Divider>
-            <h2 className="color_white"> Start from scratch </h2>
-            {this.form()}
+            <button
+              className="background_white button_profile"
+              name="car"
+              onClick={() => {
+                this.startFromProfile(
+                  this,
+                  "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json"
+                );
+              }}
+            >
+              <Icon name="car" size="huge" />
+            </button>
+            <button
+              className="background_white button_profile"
+              name="bike"
+              onClick={() => {
+                this.startFromProfile(
+                  this,
+                  "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json"
+                );
+              }}
+            >
+              <Icon name="bicycle" size="huge" />
+            </button>
+            <button
+              className="background_white button_profile"
+              name="default profiles"
+              onClick={() => {
+                this.startFromProfile(
+                  this,
+                  "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json"
+                );
+              }}
+            >
+              <Icon name="blind" size="huge" />
+            </button>
+          </div>
+          <Divider inverted horizontal>
+            or
+          </Divider>
+          <h2 className="color_white"> Start from scratch </h2>
+          {this.form()}
         </div>
         <div className="horizontalContainer">
-          <button className="button_secondary color_dark_blue background_white" onClick={this.props.onBack}>
-              <Icon name="arrow left" />
-              <span>Go back</span>                  
+          <button
+            className="button_secondary color_dark_blue background_white"
+            onClick={this.props.onBack}
+          >
+            <Icon name="arrow left" />
+            <span>Go back</span>
           </button>
-          <button className="button color_white background_green" 
+          <button
+            className="button color_white background_green"
             onClick={() => {
-            var showErrorMessage = false;
-            Object.keys(this.state).map(k => {
-              if (this.state[k] === "" || this.state[k] === null) {
-                showErrorMessage = true;
+              var showErrorMessage = false;
+              Object.keys(this.state).map(k => {
+                if (this.state[k] === "" || this.state[k] === null) {
+                  showErrorMessage = true;
+                }
+                return k;
+              });
+              if (showErrorMessage) {
+                this.setState({ showErrorMessage: true });
+              } else {
+                this.setState({ dimmerActive: true });
+                this.props.onConfirm(this.onNewConfigFileCreation(this.state));
               }
-              return k;
-            });
-            if (showErrorMessage) {
-              this.setState({ showErrorMessage: true });
-            } else {
-              this.setState({ dimmerActive: true });
-              this.props.onConfirm(
-                this.onNewConfigFileCreation(this.state)
-              );
-            }
-            }}>
+            }}
+          >
             <Icon name="checkmark" style={{ width: "20%" }} size="large" />
-            <span style={{paddingTop: '3px'}}>Confirm selection</span>
+            <span style={{ paddingTop: "3px" }}>Confirm selection</span>
           </button>
         </div>
       </div>
