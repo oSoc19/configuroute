@@ -1,6 +1,8 @@
 import React from "react";
 import { Button, Icon, Label } from 'semantic-ui-react';
-
+/**
+ * buttons to place markers
+ */
 export default function MarkerButton(props){
     return(
         <Button disabled={props.disabled} as='div'  labelPosition='right'

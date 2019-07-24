@@ -1,3 +1,7 @@
+/**
+ * TODO: webworker for planner.js querries 
+ * (it seems Create-React-App and Webworkers do not go hand in hand)
+ */
 function doQuerry(map) {
     if(map.state.from_marker.placed && this.state.to_marker.placed){
         map.setState({calculating: true});

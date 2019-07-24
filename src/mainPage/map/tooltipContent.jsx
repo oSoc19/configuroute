@@ -7,6 +7,10 @@ const unselectable = {
     MsUserSelect: 'none',
     UserSelect: 'none'
 }
+/**
+ * tooltip that follows cursor around and displays given map features
+ * TODO: make this querry actual osm data for usefull info
+ */
 class TooltipContent extends React.Component {
   render() {
     const { features } = this.props;

@@ -10,7 +10,9 @@ import {
   Segment
 } from "semantic-ui-react";
 import MarkerButton from "./markerButton";
-
+/**
+ * toolbar displayed above the map
+ */
 class MapToolbar extends React.Component {
   constructor(props) {
     super(props);
