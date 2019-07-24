@@ -127,3 +127,8 @@
   border-right: 1px solid white;
   padding-right: 30px;
 }
+
+.mapToolbar {
+  display: flex;
+  
+}
