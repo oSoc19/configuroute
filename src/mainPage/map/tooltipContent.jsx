@@ -9,12 +9,10 @@ const unselectable = {
 }
 class TooltipContent extends React.Component {
   render() {
-    const { features, show_tooltip } = this.props;
-    var show = false;
+    const { features } = this.props;
     const renderFeature = (feature, i) => {
       let id = feature.layer.id;
       if(id.startsWith("from_marker")){
-        show = true;
         return (
         <div key={i}>
           <strong style={unselectable}>From Marker</strong>
@@ -22,7 +20,6 @@ class TooltipContent extends React.Component {
         </div>
         )
       }else if(id.startsWith("to_marker")){
-        show = true;
         return (
         <div key={i}>
           <strong style={unselectable}>To Marker</strong>
@@ -30,8 +27,7 @@ class TooltipContent extends React.Component {
         </div>
         )
       }
-      else if(id.startsWith("road")){
-        show = true;
+      else{
         return (
           <div key={i}>
             <strong style={unselectable}>{feature.layer['source-layer']}:</strong>
@@ -39,16 +35,12 @@ class TooltipContent extends React.Component {
           </div>
         )
       }
-      else{
-        return;
-      }
     };
     return (
       <div>
         <div>
           {features.map(renderFeature)}
         </div>
-        {show_tooltip(show)}
       </div>
     );
   }

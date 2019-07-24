@@ -195,7 +195,6 @@ class NewConfigFileForm extends React.Component {
                     "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/car.json"
                   );
                 }}
-                icon
               >
                 <Icon name="car" size="huge" />
               </button>
@@ -208,7 +207,6 @@ class NewConfigFileForm extends React.Component {
                     "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/bike.json"
                   );
                 }}
-                icon
               >
                 <Icon name="bicycle" size="huge" />
               </button>
@@ -221,7 +219,6 @@ class NewConfigFileForm extends React.Component {
                     "https://raw.githubusercontent.com/oSoc19/configuroute/master/default_profiles/pedestrian.json"
                   );
                 }}
-                icon
               >
                 <Icon name="blind" size="huge" />
               </button>
@@ -232,7 +229,7 @@ class NewConfigFileForm extends React.Component {
         </div>
         <div className="horizontalContainer">
           <button className="button_secondary color_dark_blue background_white" onClick={this.props.onBack}>
-              <Icon name={"arrow left"} />
+              <Icon name="arrow left" />
               <span>Go back</span>                  
           </button>
           <button className="button color_white background_green" 
@@ -253,7 +250,7 @@ class NewConfigFileForm extends React.Component {
               );
             }
             }}>
-            <Icon name={"checkmark"} style={{ width: "20%" }} size="large" />
+            <Icon name="checkmark" style={{ width: "20%" }} size="large" />
             <span>Confirm selection</span>
           </button>
         </div>

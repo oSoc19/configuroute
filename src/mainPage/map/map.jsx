@@ -141,6 +141,7 @@ class MapPannel extends React.Component{
         .query(query)
         .take(1)
         .on("error", error => {
+          console.log("planner.js gave an error:");
           console.log(error);
           this.setState({ calculating: false });
         })
@@ -423,9 +424,23 @@ class MapPannel extends React.Component{
       (this.state.to_marker.placed || !this.state.to_marker.enabled)
     ) {
       let features = map.queryRenderedFeatures(evt.point);
-      this.setState({ cursor_location: evt.lngLat, map_features: features });
-      map.getCanvas().style.cursor = features.length ? "pointer" : "";
+      //filter out useless informatio
+      let i = 0;
+      let filtered_features = [];
+      for(i = 0; i<features.length; i++){
+        let id = features[i].layer.id;
+        if((id.startsWith("from_marker")
+          || id.startsWith("to_marker")
+          || id.startsWith("road"))){
+            filtered_features.push(features[i]);
+          }
+      }
+      if(features.length > 0){
+        this.setState({ cursor_location: evt.lngLat, map_features: filtered_features });
+        map.getCanvas().style.cursor = "pointer";
+      }
     } else {
+      map.getCanvas().style.cursor =  "";
       this.setState({ cursor_location: evt.lngLat, map_features: undefined });
     }
   }
