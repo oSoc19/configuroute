@@ -11,6 +11,7 @@ const Map = ReactMapboxGl({
     "pk.eyJ1IjoiZ3VndWwiLCJhIjoiY2p4cDVqZXZvMGN6ejNjcm5zdjF6OWR1dSJ9._vc_H7CbewiDCHWYvD4CdQ"
 });
 
+//geojson templates used to define the locations of the markers on the map
 const markerFromGeojson = {
   type: "FeatureCollection",
   features: [
@@ -36,32 +37,33 @@ const markerToGeojson = {
   ]
 };
 
+//active route looks
 const lineLayout = {
   "line-cap": "round",
   "line-join": "round"
 };
-
 const linePaint = {
   "line-color": "#28A987",
   "line-width": 8
 };
 
+//saved route looks
 const savedRouteLinePaint = {
   "line-color": "#0B3463",
   "line-width": 5
 };
-
 const containerStyle = {
   height: "100%",
   width: "100%",
   cursor: ""
 };
 
+
 class MapPannel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      center: [4.5118, 50.6282], //should be props?
+      center: [4.5118, 50.6282],
       zoom: [6.83],
       calculating: false,
       map_features: undefined,
@@ -100,21 +102,19 @@ class MapPannel extends React.Component {
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseClick = this.onMouseClick.bind(this);
     this.calculateRoute = this.calculateRoute.bind(this);
-    this.handleSelectedRoutesChange = this.handleSelectedRoutesChange.bind(
-      this
-    );
-    this.handleSelectedRouteAddition = this.handleSelectedRouteAddition.bind(
-      this
-    );
+    this.handleSelectedRoutesChange = this.handleSelectedRoutesChange.bind(this);
+    this.handleSelectedRouteAddition = this.handleSelectedRouteAddition.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.saveCurrentRoute = this.saveCurrentRoute.bind(this);
     this.updateActiveRouteText = this.updateActiveRouteText.bind(this);
     this.onMouseLeave = this.onMouseLeave.bind(this);
 
+    //initialize planner.js
     this.planner = new Planner();
     this.planner.setProfileID("PEDESTRIAN");
   }
 
+  //insert the updated config file into planner.js
   componentDidUpdate(pervProps) {
     if (pervProps.configFile !== this.props.configFile) {
       this.planner.setDevelopmentProfile(this.props.configFile);
@@ -122,11 +122,13 @@ class MapPannel extends React.Component {
   }
 
   calculateRoute() {
+    //check if start and end locations are known
     if (
       this.state.from_marker.placed &&
       this.state.to_marker.placed &&
       !this.state.calculating
     ) {
+      //let the ui know that a route is buing calculated
       this.setState({ calculating: true });
       let query = {
         roadNetworkOnly: true, // don't mix with publicTransportOnly, for obvious reasons
@@ -143,13 +145,14 @@ class MapPannel extends React.Component {
         .query(query)
         .take(1)
         .on("error", error => {
+          //TODO: planner.js sometimes stops working completly, 
+          //only refresh seems to fix it
           console.log("planner.js gave an error:");
           console.log(error);
           this.setState({ calculating: false });
         })
         .on("data", path => {
-          //console.log("got result:");
-          //console.log(JSON.stringify(path, null, " "));
+          //save coordinates to be drawn in list
           let route_coordinates = [];
           path.steps.forEach(step => {
             route_coordinates.push([
@@ -161,7 +164,7 @@ class MapPannel extends React.Component {
               step.stopLocation.latitude
             ]);
           });
-          //console.log(coordinates);
+          //date used as temp name
           let date = new Date();
           this.setState(prevState => ({
             active_route: {
@@ -178,8 +181,9 @@ class MapPannel extends React.Component {
     }
   }
 
+  
   saveCurrentRoute() {
-    //set the label
+    //set the label for the current route
     this.setState(prevState => ({
       active_route: {
         key: prevState.active_route.key,
@@ -187,6 +191,7 @@ class MapPannel extends React.Component {
         coordinates: prevState.active_route.coordinates
       }
     }));
+    //check if the route being saved is not already saved (same id or name)
     let key = this.state.active_route.key;
     let text = this.state.active_route_label_input;
     let routeExists = false;
@@ -198,7 +203,6 @@ class MapPannel extends React.Component {
         routeExists = true;
         return;
       }
-      console.log(route.text + " - " + text);
       if (route.text.localeCompare(text) === 0) {
         this.setState({
           active_route_label_error: "already used that name!"
@@ -208,6 +212,7 @@ class MapPannel extends React.Component {
       }
     });
     if (!routeExists) {
+      //add the route to the saved routes and clear the textfield
       this.setState(prevState => ({
         saved_routes: [prevState.active_route, ...prevState.saved_routes],
         selectable_routes: [
@@ -221,10 +226,10 @@ class MapPannel extends React.Component {
         active_route_label_input: ""
       }));
     }
-
-    console.log(this.state.saved_routes);
   }
 
+  //keeps the state in sinc with the value of the textfield
+  //and clears the error message when you change the text
   updateActiveRouteText(evt) {
     this.setState({
       active_route_label_input: evt.target.value,
@@ -232,8 +237,10 @@ class MapPannel extends React.Component {
     });
   }
 
+
   onMouseUp(map, evt) {
     var coords = evt.lngLat;
+    //stop dragging the markers and recalculate the route
     if (this.state.from_marker.dragging) {
       this.setState(prevState => ({
         from_marker: {
@@ -255,11 +262,14 @@ class MapPannel extends React.Component {
           lngLat: coords
         }
       }));
-      this.updateTooltip(map, evt);
       this.calculateRoute();
     }
   }
+
+  //gets called when the mat is done loading, ideal place to access
+  //the mapbox gl api directly (not everything can be done trough the react wrapper)
   onStyleLoad(map, e) {
+    //add the markers
     map.addSource("from_marker", {
       type: "geojson",
       data: markerFromGeojson
@@ -306,7 +316,7 @@ class MapPannel extends React.Component {
         // Prevent the default map drag behavior.
         e.preventDefault();
       }
-
+      //enable dragging
       parent.setState(prevState => ({
         from_marker: {
           placed: prevState.from_marker.placed,
@@ -320,12 +330,12 @@ class MapPannel extends React.Component {
       parent.setState({ container_style: containerStyle });
     });
 
+    //do the same for the to marker
     map.on("mouseenter", "to_marker", function() {
       map.setPaintProperty("to_marker", "circle-color", "#3bb2d0");
       containerStyle.cursor = "move";
       parent.setState({ container_style: containerStyle });
     });
-
     map.on("mouseleave", "to_marker", function() {
       map.setPaintProperty("to_marker", "circle-color", "#9f7feb");
       containerStyle.cursor = "";
@@ -352,6 +362,7 @@ class MapPannel extends React.Component {
 
   onMouseClick(map, evt) {
     var coords = evt.lngLat;
+    //if the from marker is enabled but not placed, plop it down here
     if (
       this.state.from_marker.enabled &&
       !this.state.from_marker.placed &&
@@ -367,6 +378,8 @@ class MapPannel extends React.Component {
           lngLat: coords
         }
       }));
+      //if the to marker was not enabled yet, enable it so the user
+      //can place it without having to click the to button
       if (!this.state.to_marker.enabled) {
         this.setState({
           to_marker: {
@@ -378,6 +391,7 @@ class MapPannel extends React.Component {
           }
         });
       }
+    //if the to marker is enabled but not placed, plop it down here
     } else if (
       this.state.to_marker.enabled &&
       !this.state.to_marker.placed &&
@@ -393,9 +407,9 @@ class MapPannel extends React.Component {
           lngLat: coords
         }
       }));
-      this.updateTooltip(map, evt);
     }
-
+    //check if the active route still corresponds with the markers,
+    //if not, recalculate
     if (
       this.state.from_marker.enabled &&
       this.state.to_marker.enabled &&
@@ -417,14 +431,16 @@ class MapPannel extends React.Component {
     }
   }
 
+  //gets called every mouse move
   updateTooltip(map, evt) {
+    //only show if not interacting with markers
     if (
       !(this.state.from_marker.dragging || this.state.to_marker.dragging) &&
       (this.state.from_marker.placed || !this.state.from_marker.enabled) &&
       (this.state.to_marker.placed || !this.state.to_marker.enabled)
     ) {
       let features = map.queryRenderedFeatures(evt.point);
-      //filter out useless informatio
+      //filter out useless information
       let i = 0;
       let filtered_features = [];
       for(i = 0; i<features.length; i++){
@@ -446,6 +462,8 @@ class MapPannel extends React.Component {
   }
 
   onMouseLeave(map, evt) {
+    //make things following the cursor invisible when the cursor is
+    //ot over the map 
     this.setState({ show_tooltip: false });
     if (!this.state.from_marker.placed) {
       map.setLayoutProperty("from_marker", "visibility", "none");
@@ -453,12 +471,11 @@ class MapPannel extends React.Component {
     if (!this.state.to_marker.placed) {
       map.setLayoutProperty("to_marker", "visibility", "none");
     }
-    //console.log("mouse left");
   }
 
   onMouseMove(map, evt) {
     if (!this.state.show_tooltip) {
-      //console.log("mouse entered")
+      //the cursor is over the map again, make things visible again
       this.setState({
         show_tooltip: true
       });
@@ -466,6 +483,8 @@ class MapPannel extends React.Component {
       map.setLayoutProperty("from_marker", "visibility", "visible");
     }
     this.updateTooltip(map, evt);
+
+    //update the positions of the markers to follow the mouse
     if (
       this.state.from_marker.enabled &&
       !this.state.from_marker.placed &&
@@ -502,6 +521,10 @@ class MapPannel extends React.Component {
     }
   }
 
+  //markers are already created (at pos 0,0), this just updates the state
+  //so they follow the cursor
+  //also disable the to marker again so it's easier to place afterwards
+  //(witch also avoids unwillingly calculating very long routes)
   createFromMarker() {
     console.log(this.state.from_marker);
     this.setState(prevState => ({
@@ -535,6 +558,7 @@ class MapPannel extends React.Component {
     }));
   }
 
+  //handler for the selected routes dropdown (adding is not enaabled though)
   handleSelectedRouteAddition = (e, { value }) => {
     console.log("hadleAddition value");
     console.log(value);
@@ -546,6 +570,7 @@ class MapPannel extends React.Component {
     }));
   };
 
+  //handler for the selected routes dropdown
   handleSelectedRoutesChange = (e, { value }) => {
     console.log("hadleChange value");
     console.log(value);
@@ -553,8 +578,11 @@ class MapPannel extends React.Component {
     this.setState({ selected_routes: value });
   };
 
+
   render() {
-    const { center, zoom, from_marker, to_marker } = this.state;
+    const { center, zoom } = this.state;
+    
+    //saved routes selected to be drawn
     const routesToDraw = this.state.selected_routes.map(k => {
       let size = this.state.saved_routes.length;
       let i = 0;
@@ -564,7 +592,6 @@ class MapPannel extends React.Component {
       return (
         <Layer
           key={this.state.saved_routes[i].key}
-          style={{ name: "COOOOL NAME" }}
           type="line"
           layout={lineLayout}
           paint={savedRouteLinePaint}
