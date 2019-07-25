@@ -6,6 +6,16 @@ import OntologyReader from "./lib/OntologyReader";
 import "./App.css";
 import logo from "./assets/logo.jpg";
 
+/**
+ * This file is the entry point of our web application, it contains the central
+ * component, which is the ancester of all other parents. In particular,
+ * it manages the state of the configuration file.
+ */
+
+/**
+ * The properties defines the general tag properties giving information about
+ * the roads.
+ */
 const properties = [
   "access",
   "barrier",
@@ -25,10 +35,16 @@ const properties = [
   "vehicle"
 ];
 
-const ruleTypes = {
+/**
+ * This object is the key data structure which encompass metadata about the type
+ * of rules that can be defined in a transport profile, since the porfile ontoogy
+ * is not yet read dybamically. Meanwhile, by updating this datastructure, the
+ * rest of the code should adapt automatically.
+ */
+const typesOfRuleMetadata = {
   hasAccessRules: {
-    conclusion: "hasAccess",
-    type: "boolean",
+    conclusion: "hasAccess", // what to conclude if this tag of rule is selected
+    type: "boolean", // "typeof" conclusion
     defaultValue: false,
     description: "Determines whether or not a way is accessible."
   },
@@ -59,15 +75,6 @@ const ruleTypes = {
   }
 };
 
-function Header() {
-  return (
-    <header className="App-header">
-      <img src={logo} className="App-logo" alt="logo" />
-      <span className="App-header"> Configuroute </span>
-    </header>
-  );
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -80,32 +87,42 @@ class App extends React.Component {
     };
   }
 
+  /**
+   *
+   * @param {*} configFile
+   * ConfiguRoute fetches the terms used inside a profile dynamically from the OSM
+   * inspired ontology (http://hdelva.be/tiles/ns/terms.html) using the
+   * array of properties defined at the beginning of this file.
+   */
   async queryOntologyForInformation(configFile) {
     var engine = new OntologyReader("http://hdelva.be/tiles/ns/ontology");
     const sourceURL = "https://w3id.org/openstreetmap/terms#";
     var ontology = {
-      tags: {},
-      values: {}
+      tags: {}, // set of all tags/properties ->
+      values: {} // set of all possible values
     };
 
     properties.map(property => {
       ontology.tags[property] = {
-        values: [],
-        description: {}
+        values: [], // the range of possible values that can be associated to the given tag/property
+        description: {} // a description of the given property
       };
       return ontology;
     });
 
     for (var tag of Object.keys(ontology.tags)) {
+      // fetching the range of possible values
       ontology.tags[tag].values = (await engine.getNamedIndividualsForProperty(
         sourceURL + tag
       )).map(value => {
-        return value.slice(sourceURL.length);
+        return value.slice(sourceURL.length); // removing the sourceUrl prefix
       });
+      // fetching the description of the tag/property
       ontology.tags[tag].description = await engine.getEntityDescription(
         sourceURL + tag
       );
 
+      // for each value, fetch its description
       for (var value of ontology.tags[tag].values) {
         ontology.values[value] = await engine.getEntityDescription(
           sourceURL + value
@@ -121,26 +138,35 @@ class App extends React.Component {
     });
   }
 
+  /**
+   * Called when a configuration file is submitted from the landing page
+   */
   handleFileConfirm = configFile => {
     this.queryOntologyForInformation(configFile);
   };
 
-  handleNewRuleSubmit = formValues => {
-    formValues.value = "osm:" + formValues.value;
-    formValues.key = "osm:" + formValues.key;
+  /**
+   * Called when the user wants to add a new rule to the configuration file.
+   */
+  handleNewRuleSubmit = form => {
+    // add back the osm prefix from the terms because it was removed when displayed to the user
+    form.value = "osm:" + form.value;
+    form.key = "osm:" + form.key;
     var configFile = { ...this.state.configFile };
     var isANewRule = true;
-    var conclusionLabel = ruleTypes[formValues.ruleType].conclusion;
+    var conclusionLabel = typesOfRuleMetadata[form.ruleType].conclusion;
 
-    this.state.configFile[formValues.ruleType].map(rule => {
+    // check if this rule is not already present in the configuration file
+    this.state.configFile[form.ruleType].map(rule => {
       if (
+        // if yes, simply update its conclusion value
         rule["match"] &&
-        rule["match"]["hasPredicate"] === formValues.key &&
-        rule["match"]["hasObject"] === formValues.value
+        rule["match"]["hasPredicate"] === form.key &&
+        rule["match"]["hasObject"] === form.value
       ) {
-        var index = configFile[formValues.ruleType].indexOf(rule);
-        configFile[formValues.ruleType][index].concludes[conclusionLabel] =
-          formValues.conclusion;
+        var index = configFile[form.ruleType].indexOf(rule);
+        configFile[form.ruleType][index].concludes[conclusionLabel] =
+          form.conclusion;
         isANewRule = false;
         return false;
       }
@@ -148,35 +174,47 @@ class App extends React.Component {
     });
 
     if (isANewRule) {
-      if (ruleTypes[formValues.ruleType].type === "number") {
-        formValues.conclusion = parseInt(formValues.conclusion);
+      if (typesOfRuleMetadata[form.ruleType].type === "number") {
+        form.conclusion = parseInt(form.conclusion);
       }
 
       let newRule = {
         match: {
-          hasPredicate: formValues.key,
-          hasObject: formValues.value
+          hasPredicate: form.key,
+          hasObject: form.value
         },
         concludes: {
-          [conclusionLabel]: formValues.conclusion
+          [conclusionLabel]: form.conclusion
         },
-        hasOrder: formValues.order
+        hasOrder: form.order
       };
 
-      configFile[formValues.ruleType].unshift(newRule);
+      configFile[form.ruleType].unshift(newRule);
     }
     this.setState({ configFile: configFile, showModal: false });
   };
 
+  /**
+   * Called when the user modifies the value of what can be concluded by a given
+   * rule.
+   *
+   * @param {*} type : the type of rule (priorityRule, accesRule, ...)
+   * @param {*} index : the position of the rule in the array corresponding to its type
+   * @param {*} value : the new value for the conclusion
+   *
+   */
   handleRuleConclusionChange = (type, index, value) => {
-    if (ruleTypes[type].type === "number") value = parseInt(value);
+    if (typesOfRuleMetadata[type].type === "number") value = parseInt(value);
     var configFile = { ...this.state.configFile };
     configFile[type][index]["concludes"][
-      [ruleTypes[type]["conclusion"]]
+      [typesOfRuleMetadata[type]["conclusion"]]
     ] = value;
     this.setState({ configFile: configFile });
   };
 
+  /**
+   * Called when the user wants to delete a rule from the configuration file
+   */
   handleRuleDelete = (type, index) => {
     var configFile = { ...this.state.configFile };
     if (index !== configFile[type].length - 1) {
@@ -185,6 +223,10 @@ class App extends React.Component {
     }
   };
 
+  /**
+   * Called when the user wants to modify basic properties of the configuration
+   * file (non rules properties)
+   */
   handleChangeBasicProperties = newProperties => {
     var label = this.state.configFile["rdfs:label"];
     var speed = this.state.configFile["hasMaxSpeed"];
@@ -205,13 +247,13 @@ class App extends React.Component {
     return (
       <div className="App">
         <LandingPage
-          ruleTypes={ruleTypes}
+          typesOfRuleMetadata={typesOfRuleMetadata}
           onConfirm={this.handleFileConfirm}
           showModal={this.state.showLandingPage}
         />
         <div className="App-content">
           <LeftPanel
-            ruleTypes={ruleTypes}
+            typesOfRuleMetadata={typesOfRuleMetadata}
             rulesSelectOptions={this.state.ontology}
             loaded={this.state.leftLoaded}
             configFile={this.state.configFile}

@@ -10,6 +10,10 @@ import {
 } from "semantic-ui-react";
 import DescriptionItem from "./DescriptionItem";
 
+/**
+ * Displays one rule of the configuration file. Can be directly modified by the
+ * user.
+ */
 class RuleItem extends React.Component {
   constructor(props) {
     super(props);
@@ -63,7 +67,7 @@ class RuleItem extends React.Component {
         break;
     }
     return (
-      <Segment style={{marginRight: 0}}>
+      <Segment style={{ marginRight: 0 }}>
         {conclusion} {option}
       </Segment>
     );

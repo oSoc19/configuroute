@@ -1,6 +1,10 @@
 import React from "react";
 import { Button, Icon } from "semantic-ui-react";
 
+/**
+ * Used by the landing page component to trigger the switch to the NewFileForm
+ * component
+ */
 function CreateButton(props) {
   return (
     <Button

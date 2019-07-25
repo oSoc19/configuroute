@@ -1,37 +1,43 @@
-const SPARQL = require('@comunica/actor-init-sparql');
-
+/**
+ * This file is a React adapted version of the communica-ontology-read
+ * tool. Checkout it out at :
+ * https://github.com/julianrojas87/comunica-ontology-reader
+ */
+const SPARQL = require("@comunica/actor-init-sparql");
 
 export default class OntologyReader {
-    constructor(source) {
-        this._source = [{ type: 'file', value: source }];
-        this._engine = SPARQL.newEngine();
-    }
+  constructor(source) {
+    this._source = [{ type: "file", value: source }];
+    this._engine = SPARQL.newEngine();
+  }
 
-    getEntityDescription(subject) {
-        return new Promise((resolve, reject) => {
-            const sources = this._source;
+  getEntityDescription(subject) {
+    return new Promise((resolve, reject) => {
+      const sources = this._source;
 
-            const query = `
+      const query = `
                   SELECT ?p ?o WHERE {
                     <${subject}> ?p ?o.
                   }`;
 
-            let results = {};
-            this._engine.query(query, { sources }).then(result => {
-                result.bindingsStream.on('data', data => {
-                    results[data.get('?p').value] = data.get('?o').value;
-                }).on('end', () => {
-                    resolve(results);
-                });
-            });
-        });
-    }
+      let results = {};
+      this._engine.query(query, { sources }).then(result => {
+        result.bindingsStream
+          .on("data", data => {
+            results[data.get("?p").value] = data.get("?o").value;
+          })
+          .on("end", () => {
+            resolve(results);
+          });
+      });
+    });
+  }
 
-    getNamedIndividualsForProperty(property) {
-        return new Promise((resolve, reject) => {
-            const sources = this._source;
+  getNamedIndividualsForProperty(property) {
+    return new Promise((resolve, reject) => {
+      const sources = this._source;
 
-            const query = `
+      const query = `
                   PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                   
                   SELECT ?ni WHERE {
@@ -39,14 +45,16 @@ export default class OntologyReader {
                     ?ni a ?range.
                   }`;
 
-            let results = [];
-            this._engine.query(query, { sources }).then(result => {
-                result.bindingsStream.on('data', data => {
-                    results.push(data.get('?ni').value);
-                }).on('end', () => {
-                    resolve(results);
-                });
-            });
-        });
-    }
+      let results = [];
+      this._engine.query(query, { sources }).then(result => {
+        result.bindingsStream
+          .on("data", data => {
+            results.push(data.get("?ni").value);
+          })
+          .on("end", () => {
+            resolve(results);
+          });
+      });
+    });
+  }
 }

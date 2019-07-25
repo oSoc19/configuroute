@@ -13,6 +13,9 @@ import ConfirmButton from "../../landingPage/ConfirmButton";
 import "../../landingPage/landingPage.css";
 import DescriptionItem from "./DescriptionItem";
 
+/**
+ * Displays a form to fill for adding a new rule to the configuration files.
+ */
 class NewRuleForm extends React.Component {
   constructor(props) {
     super(props);
@@ -41,32 +44,16 @@ class NewRuleForm extends React.Component {
     }
   }
 
-  beautifyString(stringToChange) {
-    var upperCasesIndexes = [];
-    var string = stringToChange.slice(0);
-
-    for (var i = 1; i < string.length; i++) {
-      var l = upperCasesIndexes.length + i;
-      if (i && string[i] === string[i].toUpperCase()) {
-        upperCasesIndexes.push(l);
-      }
-    }
-
-    upperCasesIndexes.map(index => {
-      string = this.insertCharacterInString(string, index, " ");
-      return string;
-    });
-    return string;
-  }
-
   form() {
-    const ruleTypeOptions = Object.keys(this.props.ruleTypes).map(k => {
-      return {
-        key: k,
-        value: k,
-        text: this.beautifyString(k.slice(3))
-      };
-    });
+    const ruleTypeOptions = Object.keys(this.props.typesOfRuleMetadata).map(
+      k => {
+        return {
+          key: k,
+          value: k,
+          text: this.props.beautifyString(k.slice(3))
+        };
+      }
+    );
 
     var tags = this.props.selectOptions.tags;
     const keyOptions = Object.keys(tags).map(k => {
@@ -91,13 +78,15 @@ class NewRuleForm extends React.Component {
     let conclusionForm;
     if (
       this.state.ruleType &&
-      this.props.ruleTypes[this.state.ruleType].type === "number"
+      this.props.typesOfRuleMetadata[this.state.ruleType].type === "number"
     ) {
       conclusionForm = (
         <Form.Input
           type="number"
           name="conclusion"
-          placeholder={this.props.ruleTypes[this.state.ruleType].conclusion}
+          placeholder={
+            this.props.typesOfRuleMetadata[this.state.ruleType].conclusion
+          }
           label="conclusion"
           onChange={this.handleChange}
           value={this.state.conclusion}
@@ -105,7 +94,9 @@ class NewRuleForm extends React.Component {
         />
       );
     } else if (this.state.ruleType) {
-      let label = this.props.ruleTypes[this.state.ruleType]["conclusion"];
+      let label = this.props.typesOfRuleMetadata[this.state.ruleType][
+        "conclusion"
+      ];
       conclusionForm = (
         <Form.Checkbox
           name="conclusion"
@@ -173,7 +164,7 @@ class NewRuleForm extends React.Component {
               href={this.state.rulesLink + this.state.ruleType}
               header={this.state.ruleType.slice(3)}
               description={
-                this.props.ruleTypes[this.state.ruleType].description
+                this.props.typesOfRuleMetadata[this.state.ruleType].description
               }
             />
           )}
@@ -239,7 +230,10 @@ class NewRuleForm extends React.Component {
 
   render() {
     return (
-      <Modal open={this.props.showModal} style={{ "border-radius": "12px" }}>
+      <Modal
+        open={this.props.showNewRuleFormModal}
+        style={{ "border-radius": "12px" }}
+      >
         <this.content />
       </Modal>
     );
